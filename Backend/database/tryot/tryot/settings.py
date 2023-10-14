@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
-from private_constants import (
+from .private_constants import (
     DJANGO_SECRECT_KEY,
     
     DB_NAME,
@@ -57,7 +57,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework"
+    "rest_framework",
+    "users.apps.UsersConfig",
+    "items.apps.ItemsConfig",
+    "search.apps.SearchConfig",
 ]
 
 MIDDLEWARE = [
@@ -156,4 +159,4 @@ AWS_S3_REGION_NAME = AWS_S3_REGION_NAME
 AWS_S3_FILE_OVERWRITE = AWS_S3_FILE_OVERWRITE
 AWS_DEFAULT_ACL =  AWS_DEFAULT_ACL
 AWS_S3_VERITY = AWS_S3_VERITY
-DEFAULT_FILE_STORAGE = AWS_S3_VERITY
+DEFAULT_FILE_STORAGE = DEFAULT_FILE_STORAGE
