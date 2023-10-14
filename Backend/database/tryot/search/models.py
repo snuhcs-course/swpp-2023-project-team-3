@@ -15,6 +15,8 @@ class SearchLog(models.Model):
     is_deleted = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default = timezone.now)
 
+    items = models.ManyToManyField(items_models.Item)
+
 class ChatLog(models.Model):
     user_id = models.ForeignKey(
         users_models.User,
@@ -47,32 +49,4 @@ class GptChat(models.Model):
     is_deleted = models.BooleanField(default=False) 
     timestamp = models.DateTimeField(default = timezone.now)
 
-class ItemPageviewLog(models.Model):
-    user_id = models.ForeignKey(
-        users_models.User,
-        null=True,
-        related_name="itemPageviewLog",
-        on_delete=models.SET_NULL,
-    )
-    item_id = models.ForeignKey(
-        items_models.Item,
-        related_name="itemPageviewLog",
-        on_delete=models.CASCADE
-    )
-
-    chat_id = models.ForeignKey(
-        GptChat,
-        blank=True,
-        null=True,
-        related_name="itemPageviewLog",
-        on_delete=models.CASCADE
-    )
-    search_id = models.ForeignKey(
-        SearchLog,
-        blank=True,
-        null=True,
-        related_name="itemPageviewLog",
-        on_delete=models.CASCADE
-    )
-
-    timestamp = models.DateTimeField(default = timezone.now)
+    items = models.ManyToManyField(items_models.Item)
