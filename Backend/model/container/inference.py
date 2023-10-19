@@ -10,6 +10,10 @@ MODEL_PATH = os.path.join(cwd, model_dir)
 class ClipTextEmbedding(object):
     model = None 
     processor = None
+    
+    @classmethod
+    def __init__(cls):
+        cls.model, cls.processor = cls.get_model()
 
     @classmethod
     def get_model(cls):
@@ -20,8 +24,8 @@ class ClipTextEmbedding(object):
 
     @classmethod
     def predict(cls, inputText):
-        model, processor = cls.get_model()
-        input_vectors = processor(text=inputText, return_tensors="pt", max_length=77, padding="max_length", truncation=True)
-        text_embeddings = model.get_text_features(**input_vectors).detach().cpu().numpy()
-        return text_embeddings.tolist()
+        input_vectors = cls.processor(text=inputText, return_tensors="pt", max_length=77, padding="max_length", truncation=True)
+        text_embeddings = cls.model.get_text_features(**input_vectors).detach().cpu().numpy()
+        # text_embeddings = text_embeddings[0].tolist()
+        return text_embeddings.tolist()[0]
 

@@ -4,10 +4,11 @@ from flask import Flask, jsonify, request, Response
 from inference import ClipTextEmbedding
 
 app = Flask(__name__)
+fclip = ClipTextEmbedding()
 
 @app.route("/ping", methods=["GET"])
 def ping():
-    health = ClipTextEmbedding.get_model() is not None  # You can insert a health check here
+    health = fclip.get_model() is not None  # You can insert a health check here
 
     status = 200 if health else 404
     return Response(response="\n", status=status, mimetype="application/json")
@@ -25,7 +26,7 @@ def predict():
             response="This predictor only supports for plain-text in English", status=415, mimetype="text/plain"
         )
 
-    text_embeddings = ClipTextEmbedding.predict(inputText)
+    text_embeddings = fclip.predict(inputText)
     output = {"response":"Sucess", "textEmbedding":text_embeddings}
 
     return Response(response=json.dumps(output), status=200, mimetype="application/json")
