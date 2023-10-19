@@ -4,11 +4,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useState} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SignIn from './src/pages/SignIn';
-import SignUp from './src/pages/SignUp';
-import Chat from './src/pages/Chat';
-import Home from './src/pages/Home';
-import SearchHistory from './src/pages/SearchHistory';
+
+import HomeScreen from "./src/screens/HomeScreen";
+import LoginScreen from "./src/screens/LoginScreen";
+import homeScreen from "./src/screens/HomeScreen";
 
 export type LoggedInParamList = {
   Chat: undefined;
@@ -21,11 +20,13 @@ export type RootStackParamList = {
   SignUp: undefined;
 };
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(true);
+
   return (
     <NavigationContainer>
       {isLoggedIn ? (
@@ -44,11 +45,9 @@ function App() {
                   : 'chatbubble-ellipses-outline';
               }
 
-              // You can return any component that you like here!
-
+              // @ts-ignore
               return (
                 <Icon
-                  //@ts-ignore
                   name={iconName}
                   size={size}
                   color={color}
@@ -56,29 +55,14 @@ function App() {
               );
             },
           })}>
-          <Tab.Screen
-            name="SearchHistory"
-            component={SearchHistory}
-            options={{title: '검색 목록'}}
-          />
-          <Tab.Screen
-            name="Home"
-            component={Home}
-            options={{headerShown: false}}
-          />
-          <Tab.Screen name="Chat" component={Chat} options={{title: '대화'}} />
+          <Tab.Screen name="Home" options={{headerShown: false}} component={homeScreen}/>
         </Tab.Navigator>
       ) : (
         <Stack.Navigator>
           <Stack.Screen
             name="SignIn"
-            component={SignIn}
+            component={LoginScreen}
             options={{title: '로그인'}}
-          />
-          <Stack.Screen
-            name="SignUp"
-            component={SignUp}
-            options={{title: '회원가입'}}
           />
         </Stack.Navigator>
       )}
