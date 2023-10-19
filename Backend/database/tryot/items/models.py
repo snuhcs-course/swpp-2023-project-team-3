@@ -30,13 +30,13 @@ class Item(models.Model):
     name = models.CharField(max_length=256)
     description = models.CharField(max_length = 4096)
 
-    category_id = models.ForeignKey(
+    category = models.ForeignKey(
         Category,
         related_name="items",
         on_delete=models.CASCADE
     )
 
-    brand_id = models.ForeignKey(
+    brand = models.ForeignKey(
         Brand,
         blank=True,
         null=True,
@@ -68,4 +68,4 @@ class Item(models.Model):
     )
 
     def __str__(self):
-        return self.itemName
+        return self.name

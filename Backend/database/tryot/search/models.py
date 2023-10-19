@@ -5,7 +5,7 @@ from users import models as users_models
 from items import models as items_models
 
 class SearchLog(models.Model):
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         users_models.User,
         related_name="search_log",
         null=True,
@@ -18,16 +18,17 @@ class SearchLog(models.Model):
     items = models.ManyToManyField(items_models.Item)
 
 class ChatLog(models.Model):
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         users_models.User,
         related_name="chat_log",
         null=True,
         on_delete=models.SET_NULL
     )
+    is_deleted = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default = timezone.now)
 
 class UserChat(models.Model):
-    log_id = models.ForeignKey(
+    log = models.ForeignKey(
         ChatLog,
         blank=True,
         null=True,
@@ -38,7 +39,7 @@ class UserChat(models.Model):
     timestamp = models.DateTimeField(default = timezone.now)
 
 class GptChat(models.Model):
-    log_id = models.ForeignKey(
+    log = models.ForeignKey(
         ChatLog,
         blank=True,
         null=True,
