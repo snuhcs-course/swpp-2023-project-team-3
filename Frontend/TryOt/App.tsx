@@ -4,13 +4,14 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useState} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-import HomeScreen from "./src/screens/HomeScreen";
-import LoginScreen from "./src/screens/LoginScreen";
-import homeScreen from "./src/screens/HomeScreen";
+import SignIn from './src/pages/SignIn';
+import SignUp from './src/pages/SignUp';
+import Home from './src/pages/Home';
+import SearchHistory from './src/pages/SearchHistory';
+import MyTab from './src/pages/MyTab';
 
 export type LoggedInParamList = {
-  Chat: undefined;
+  MyTab: undefined;
   Home: undefined;
   SearchHistory: undefined;
 };
@@ -20,13 +21,11 @@ export type RootStackParamList = {
   SignUp: undefined;
 };
 
-
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(true);
-
   return (
     <NavigationContainer>
       {isLoggedIn ? (
@@ -39,15 +38,13 @@ function App() {
                 iconName = focused ? 'home' : 'home-outline';
               } else if (route.name === 'SearchHistory') {
                 iconName = focused ? 'podium' : 'podium-outline';
-              } else if (route.name === 'Chat') {
-                iconName = focused
-                  ? 'chatbubble-ellipses'
-                  : 'chatbubble-ellipses-outline';
+              } else if (route.name === 'MyTab') {
+                iconName = focused ? 'person' : 'person-outline';
               }
 
-              // @ts-ignore
               return (
                 <Icon
+                  //@ts-ignore
                   name={iconName}
                   size={size}
                   color={color}
@@ -55,14 +52,33 @@ function App() {
               );
             },
           })}>
-          <Tab.Screen name="Home" options={{headerShown: false}} component={homeScreen}/>
+          <Tab.Screen
+            name="SearchHistory"
+            component={SearchHistory}
+            options={{title: 'query history'}}
+          />
+          <Tab.Screen
+            name="Home"
+            component={Home}
+            options={{headerShown: false, title: 'home'}}
+          />
+          <Tab.Screen
+            name="MyTab"
+            component={MyTab}
+            options={{title: 'my tab'}}
+          />
         </Tab.Navigator>
       ) : (
         <Stack.Navigator>
           <Stack.Screen
             name="SignIn"
-            component={LoginScreen}
+            component={SignIn}
             options={{title: '로그인'}}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{title: '회원가입'}}
           />
         </Stack.Navigator>
       )}
