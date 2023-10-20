@@ -1,6 +1,6 @@
 import React from 'react';
-import {Button, Provider as PaperProvider} from 'react-native-paper';
-import { ButtonProps } from "react-native";
+import {Button} from 'react-native-paper';
+import {ButtonProps} from 'react-native';
 
 interface BlackBasicButtonProps extends ButtonProps {
   onClick?: () => void;
@@ -17,15 +17,15 @@ const BlackBasicButton = (props: BlackBasicButtonProps) => {
   );
 
   return (
-      <Button
+    <Button
       mode="contained"
-        buttonColor={isButtonActive ? activeColor : inactiveColor}
-        style={{padding: 5, borderRadius: 8, height: 50}}
-        onPressIn={() => setIsButtonActive(true)}
-        onPressOut={() => setIsButtonActive(false)}
-        labelStyle={{fontSize: 16}}>
-        {props.buttonText}
-      </Button>
+      buttonColor={isButtonActive ? activeColor : inactiveColor}
+      style={{padding: 5, borderRadius: 8, height: 50}}
+      onPressIn={() => setIsButtonActive(true)}
+      onPressOut={() => setIsButtonActive(false)}
+      labelStyle={{fontSize: 16}}>
+      {props.buttonText}
+    </Button>
   );
 };
 

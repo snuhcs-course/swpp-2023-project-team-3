@@ -4,7 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useState} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SignIn from './src/pages/SignIn';
+import LoginScreen from './src/pages/LoginScreen';
 import SignUp from './src/pages/SignUp';
 import Home from './src/pages/Home';
 import SearchHistory from './src/pages/SearchHistory';
@@ -25,7 +25,12 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
   return (
     <NavigationContainer>
       {isLoggedIn ? (
@@ -72,8 +77,8 @@ function App() {
         <Stack.Navigator>
           <Stack.Screen
             name="SignIn"
-            component={SignIn}
-            options={{title: '로그인'}}
+            component={LoginScreen}
+            options={{ headerShown: false, title: '로그인' }}
           />
           <Stack.Screen
             name="SignUp"

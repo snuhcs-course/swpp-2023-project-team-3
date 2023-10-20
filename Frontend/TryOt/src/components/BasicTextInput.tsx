@@ -2,7 +2,7 @@ import React from 'react';
 import {TextInput, TextInputProps} from 'react-native-paper';
 import {Text} from 'react-native';
 
-interface BasicTextInputProps extends TextInputProps {
+interface BasicTextInput extends TextInputProps {
   label: string;
   width?: number;
   height?: number;
@@ -10,11 +10,10 @@ interface BasicTextInputProps extends TextInputProps {
   errorMessage?: string;
 }
 
-const BasicTextInput = (props: BasicTextInputProps) => {
+const BasicTextInput = (props: BasicTextInput) => {
   return (
     <>
       <TextInput
-        onChangeText={props.onChangeText}
         label={props.label}
         mode="outlined"
         outlineColor={'grey'}
