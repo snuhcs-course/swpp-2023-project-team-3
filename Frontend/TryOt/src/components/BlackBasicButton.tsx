@@ -17,7 +17,9 @@ const BlackBasicButton = (props: BlackBasicButtonProps) => {
       mode="contained"
       buttonColor={props.isButtonActive ? activeColor : inactiveColor}
       style={{padding: 5, borderRadius: 8, height: 50}}
-      labelStyle={{fontSize: 16}}>
+      labelStyle={{fontSize: 16}}
+      onPress={props.onClick}
+      >
       {props.buttonText}
     </Button>
   );
