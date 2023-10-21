@@ -2,7 +2,7 @@
 export interface FashionItem {
   id: string;
   itemUrl: string;
-  imageUrl: [string];
+  imageUrl: string[];
   brand: string;
   shortDescription: string;
   description: string;
@@ -17,7 +17,7 @@ const sampleFashionItem: FashionItem[] = [
     itemUrl:
       'https://www.farfetch.com/kr/shopping/women/sacai-quilted-layered-wool-coat-item-20934097.aspx?storeid=12045https://www.farfetch.com/kr/shopping/women/sacai-quilted-layered-wool-coat-item-20934097.aspx?storeid=12045',
     imageUrl: [
-      'https://cdn-images.farfetch-contents.com/20/93/40/97/20934097_50966688_54.jpg',
+      'https://cdn-images.farfetch-contents.com/20/93/40/97/20934097_50966688_500.jpg',
     ],
     shortDescription: 'quilted layered wool coat',
     description:
