@@ -1,18 +1,16 @@
 import React from 'react';
 import {TextInput, TextInputProps} from 'react-native-paper';
-import {Text} from 'react-native';
+import { Text, View } from "react-native";
 
 interface BasicTextInput extends TextInputProps {
   label: string;
-  width?: number;
-  height?: number;
   isValid?: boolean;
   errorMessage?: string;
 }
 
 const BasicTextInput = (props: BasicTextInput) => {
   return (
-    <>
+    <View style={{paddingBottom: 10}}>
       <TextInput
         label={props.label}
         mode="outlined"
@@ -24,6 +22,8 @@ const BasicTextInput = (props: BasicTextInput) => {
           height: 50,
           fontSize: 16,
         }}
+        onChangeText={props.onChangeText}
+        secureTextEntry={props.secureTextEntry}
         outlineStyle = {{
           borderRadius: 10,
         }}
@@ -31,7 +31,7 @@ const BasicTextInput = (props: BasicTextInput) => {
       {!props.isValid && props.errorMessage && (
         <Text style={{color: 'red'}}>{props.errorMessage}</Text>
       )}
-    </>
+    </View>
   );
 };
 

@@ -20,9 +20,14 @@ function SignUpScreen() {
   //error handling
   const [isEmailValid, setIsEmailValid] = React.useState(true);
   const [isPasswordValid, setIsPasswordValid] = React.useState(true);
-  const [usernameError, setUsernameError] = React.useState(false);
+  const [isUsernameValid, setIsUsernameValid] = React.useState(true);
   const [isConfirmPasswordValid, setIsConfirmPasswordValid] =
     React.useState(true);
+
+  //button disablied
+  const isFormValid = () => {
+    return isEmailValid && isPasswordValid && isConfirmPasswordValid && !isUsernameValid;
+  };
 
   //error messages
   const emailMessageError = 'Please enter a valid email address';
@@ -31,6 +36,7 @@ function SignUpScreen() {
   );
   const usernameMessageError = 'Please enter a valid username';
   const confirmPasswordMessageError = 'Passwords do not match';
+
 
   //functions
   const handleEmailChange = (text: string) => {
@@ -108,6 +114,7 @@ function SignUpScreen() {
           <BlackBasicButton
             buttonText={'Create Account'}
             title={'Create Account'}
+            isButtonActive={isFormValid()}
           />
         </View>
       </View>

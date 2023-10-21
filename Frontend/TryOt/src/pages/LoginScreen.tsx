@@ -29,7 +29,6 @@ function LoginScreen({setLogin}: LoginScreenProps) {
       setPassword(text);
     }
 
-    // Check if both username and password fields are not empty
     if (username !== '' && password !== '') {
       setIsButtonActive(true);
     } else {
