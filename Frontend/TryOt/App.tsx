@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {NavigationContainer, NavigationProp} from '@react-navigation/native';
+import { getFocusedRouteNameFromRoute, NavigationContainer, NavigationProp } from "@react-navigation/native";
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useState} from 'react';
@@ -10,6 +10,7 @@ import Home from './src/pages/Home';
 import SearchHistory from './src/pages/SearchHistory';
 import MyTab from './src/pages/MyTab';
 import Toast from 'react-native-toast-message';
+import Catalog from "./src/pages/Catalog";
 
 export type LoggedInParamList = {
   MyTab: undefined;
@@ -28,7 +29,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = () => {
     Toast.show({
@@ -65,14 +66,27 @@ function App() {
             },
           })}>
           <Tab.Screen
-            name="SearchHistory"
+            name={'SearchHistory'}
             component={SearchHistory}
-            options={{title: 'query history'}}
+            options={{
+              headerShown: false,
+              title: 'query history',
+            }}
           />
           <Tab.Screen
             name="Home"
             component={Home}
-            options={{headerShown: false, title: 'home'}}
+            options={({ route }) => ({
+              headerShown: false,
+              title: 'Home',
+              tabBarStyle: ((route) => {
+                const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
+                if (routeName === 'ItemDetail') {
+                  return {display: 'none'};
+                }
+                return;
+              })(route),
+            })}
           />
           <Tab.Screen
             name="MyTab"
