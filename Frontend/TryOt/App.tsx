@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import { NavigationContainer, NavigationProp } from "@react-navigation/native";
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useState} from 'react';
@@ -20,6 +20,8 @@ export type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
 };
+
+export type RootStackNavigation = NavigationProp<RootStackParamList>;
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();

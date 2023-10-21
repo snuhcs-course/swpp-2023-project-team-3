@@ -1,10 +1,11 @@
 import React from 'react';
-import {Text, Image, View, Dimensions, StyleSheet} from 'react-native';
+import {Image, View, Dimensions, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import BasicTextInput from '../components/BasicTextInput';
 import RememberMeButton from '../components/RememberMeButton';
 import TextLikeButton from '../components/TextLikeButton';
 import BlackBasicButton from '../components/BlackBasicButton';
+import {type RootStackNavigation} from '../../App';
 
 interface LoginScreenProps {
   setLogin: () => void;
@@ -14,14 +15,14 @@ function LoginScreen({setLogin}: LoginScreenProps) {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const navigation = useNavigation();
+  const {navigate} = useNavigation<RootStackNavigation>();
   const handleSignUpClick = () => {
-    navigation.navigate('SignUp');
+    navigate('SignUp');
   };
 
   const [isButtonActive, setIsButtonActive] = React.useState(false);
 
-  const handleTextInputs = (text, field) => {
+  const handleTextInputs = (text: string, field: string) => {
     // Update the state based on the input field
     if (field === 'username') {
       setUsername(text);
