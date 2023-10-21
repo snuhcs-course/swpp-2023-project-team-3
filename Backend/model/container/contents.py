@@ -1,0 +1,4 @@
+ACCESS_KEY = "AKIAU62UU66JKKU2KZ2Z"
+SECRET_KEY = "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"
+BUCKET_NAME = "tryot"
+FILENM = "item_img/img_vector.csv"
