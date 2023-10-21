@@ -14,6 +14,7 @@ import {
 } from '@react-navigation/native-stack';
 import Catalog from './Catalog';
 import Chat from './Chat';
+import { color, fontSize, vh, vw } from '../constants/design';
 
 function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   const [isCatalog, setIsCatalog] = useState(true);
@@ -44,13 +45,13 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
             Chat
           </Text>
         </View>
-        <View style={styles.inputText}>
+        <View style={styles.inputTextWrapper}>
           <Image
-            style={{resizeMode: 'contain', width: '8%', height: '100%'}}
+            style={styles.textInnerImage}
             source={require('../assets/Icon/Logo_Black.png')}
           />
           <TextInput
-            style={{flex: 10, marginLeft: 10}}
+            style={styles.inputText}
             placeholder="찾고 싶은 스타일을 입력해주세요"
             placeholderTextColor="#666"
             importantForAutofill="yes"
@@ -72,25 +73,25 @@ const styles = StyleSheet.create({
   inputWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: Dimensions.get('window').height,
+    height: 100*vh,
     overflowY: 'auto',
     touchAction: 'none',
     userSelect: 'none',
-    backgroundColor: 'white',
+    backgroundColor: color.background,
   },
   titleText: {
     fontFamily: 'Syncopate-Bold',
-    fontSize: 25,
-    color: 'black',
+    fontSize: fontSize.large + 5,
+    color: color.text.title,
     marginBottom: 20,
   },
   optionWrapper: {
-    marginLeft: Dimensions.get('screen').width * 0.05,
+    marginLeft: 5*vw,
     alignSelf: 'flex-start',
     flexDirection: 'row',
     marginTop: 20,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: color.border,
     borderRadius: 8,
   },
   optionText: {
@@ -104,17 +105,26 @@ const styles = StyleSheet.create({
     color: 'white',
     backgroundColor: 'black',
   },
-  inputText: {
+  inputTextWrapper: {
     flexDirection: 'row',
     marginTop: 20,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: color.border,
     borderRadius: 8,
-    width: Dimensions.get('screen').width * 0.9,
+    width: 90*vw,
     paddingLeft: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  textInnerImage: {
+    resizeMode: 'contain', 
+    width: '8%', 
+    height: '100%'
+  },
+  inputText : {
+    flex: 10, 
+    marginLeft: 10
+  }
 });
 
 export type RootStackParamList = {
