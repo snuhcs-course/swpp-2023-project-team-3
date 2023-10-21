@@ -15,6 +15,7 @@ import {
 import Catalog from './Catalog';
 import Chat from './Chat';
 import { color, fontSize, vh, vw } from '../constants/design';
+import ItemDetailScreen from "./ItemDetailScreen";
 
 function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   const [isCatalog, setIsCatalog] = useState(true);
@@ -117,12 +118,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textInnerImage: {
-    resizeMode: 'contain', 
-    width: '8%', 
+    resizeMode: 'contain',
+    width: '8%',
     height: '100%'
   },
   inputText : {
-    flex: 10, 
+    flex: 10,
     marginLeft: 10
   }
 });
@@ -135,6 +136,9 @@ export type RootStackParamList = {
   Chat: {
     searchQuery: string;
   };
+  ItemDetail: {
+    item: any;
+  };
 };
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -142,6 +146,7 @@ export default function Home() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Search" component={Search} />
+      <Stack.Screen name="ItemDetail" component={ItemDetailScreen} />
       <Stack.Screen name="Catalog" component={Catalog as any} />
       <Stack.Screen name="Chat" component={Chat as any} />
     </Stack.Navigator>

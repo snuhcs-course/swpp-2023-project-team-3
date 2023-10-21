@@ -1,6 +1,8 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import React, {useRef} from 'react';
 import {
+  Button,
   Dimensions,
   Image,
   LayoutChangeEvent,
@@ -8,11 +10,12 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
-} from 'react-native';
+  View
+} from "react-native";
 import {RootStackParamList} from './Home';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import RefinedQuery from '../components/RefinedQuery';
+
 
 function Catalog({
   navigation,
@@ -24,12 +27,24 @@ function Catalog({
     const {height} = event.nativeEvent.layout;
     slidingPanelHeight = height;
   };
+
+  //일단 샘플 데이터로 들어감
+  const navigateToItemDetail = () => {
+    // @ts-ignore
+    navigation.navigate('ItemDetail', {itemId: '1'});
+    // Replace 'your_item_id_here' with the actual item ID
+  };
+
+  // @ts-ignore
   return (
     <View
       style={{
         backgroundColor: 'white',
         height: Dimensions.get('window').height,
       }}>
+      <Button onPress={navigateToItemDetail} title={'Test Button'}>
+        Test Button
+      </Button>
       <View style={styles.searchQueryInput}>
         <Text style={{color: 'black'}}>{route.params.searchQuery}</Text>
         <Text style={{color: 'gray'}}>x</Text>
