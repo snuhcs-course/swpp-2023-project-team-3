@@ -4,8 +4,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useState} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SignIn from './src/pages/SignIn';
-import SignUp from './src/pages/SignUp';
+import LoginScreen from './src/pages/LoginScreen';
+import SignUpScreen from './src/pages/SignUpScreen';
 import Home from './src/pages/Home';
 import SearchHistory from './src/pages/SearchHistory';
 import MyTab from './src/pages/MyTab';
@@ -25,7 +25,12 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
   return (
     <NavigationContainer>
       {isLoggedIn ? (
@@ -72,13 +77,18 @@ function App() {
         <Stack.Navigator>
           <Stack.Screen
             name="SignIn"
-            component={SignIn}
-            options={{title: '로그인'}}
-          />
+            options={{ headerShown: false, title: '로그인' }}
+          >
+            {() => <LoginScreen setLogin={handleLogin} />}
+          </Stack.Screen>
           <Stack.Screen
             name="SignUp"
-            component={SignUp}
-            options={{title: '회원가입'}}
+            component={SignUpScreen}
+            options={{
+              title: '',
+              headerTransparent: true,
+              headerTintColor: 'black',
+            }}
           />
         </Stack.Navigator>
       )}
