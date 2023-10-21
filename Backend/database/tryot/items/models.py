@@ -12,7 +12,7 @@ class Category(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return f"{self.name} {self.parent if self.parent else ''}"
     
 class Brand(models.Model):
     name = models.CharField(max_length=64)
@@ -30,11 +30,7 @@ class Item(models.Model):
     name = models.CharField(max_length=256)
     description = models.CharField(max_length = 4096)
 
-    category = models.ForeignKey(
-        Category,
-        related_name="items",
-        on_delete=models.CASCADE
-    )
+    category = models.ManyToManyField(Category)
 
     brand = models.ForeignKey(
         Brand,
@@ -46,7 +42,7 @@ class Item(models.Model):
 
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
-    image_url = models.URLField(blank=True, null=True)
+    image_url = PostgresFields.ArrayField(models.URLField(max_length=512), blank=True, null=True)
     order_url = models.URLField(blank=True, null=True)
 
     gender = models.CharField(max_length=1, choices=GENDER_TYPE, default="U")
@@ -57,12 +53,6 @@ class Item(models.Model):
     )
     color = PostgresFields.ArrayField(
         models.CharField(max_length=32),
-        blank=True,
-        null=True,
-    ) 
-
-    feature_vector = PostgresFields.ArrayField(
-        models.FloatField(),
         blank=True,
         null=True,
     )

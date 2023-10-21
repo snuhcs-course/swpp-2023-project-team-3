@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from serializers import *
+from serializers import NotDeletedModelSerializer
 
 from search.models import *
 
@@ -23,9 +23,15 @@ class GptChatSerializer(NotDeletedModelSerializer):
         model = GptChat
         fields = "__all__"
 
-class ChatLogSerializer(NotDeletedModelSerializer):
+class UserChatWithGptSerializer(NotDeletedModelSerializer):
     gpt_chat = GptChatSerializer(many=True, source="gptChat")
-    user_chat = UserChatSerializer(many=True, source="userChat")
+
+    class Meta:
+        model = UserChat
+        fields = "__all__"
+
+class ChatLogSerializer(NotDeletedModelSerializer):
+    user_chat = UserChatWithGptSerializer(many=True, source="userChat")
 
     class Meta:
         model = ChatLog

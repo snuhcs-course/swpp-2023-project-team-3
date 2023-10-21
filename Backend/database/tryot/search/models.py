@@ -15,7 +15,10 @@ class SearchLog(models.Model):
     is_deleted = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default = timezone.now)
 
-    items = models.ManyToManyField(items_models.Item)
+    items = models.ManyToManyField(items_models.Item, through='SearchItems')
+
+    def __str__(self):
+        return self.query
 
 class ChatLog(models.Model):
     user = models.ForeignKey(
@@ -24,6 +27,7 @@ class ChatLog(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
+    first_query = models.TextField()
     is_deleted = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default = timezone.now)
 
@@ -36,11 +40,14 @@ class UserChat(models.Model):
         on_delete=models.CASCADE
     )
     query = models.TextField()
+    is_deleted = models.BooleanField(default = False)
     timestamp = models.DateTimeField(default = timezone.now)
 
+    items = models.ManyToManyField(items_models.Item, through='ChatItems')
+
 class GptChat(models.Model):
-    log = models.ForeignKey(
-        ChatLog,
+    user_chat = models.ForeignKey(
+        UserChat,
         blank=True,
         null=True,
         related_name="gptChat",
@@ -50,4 +57,29 @@ class GptChat(models.Model):
     is_deleted = models.BooleanField(default=False) 
     timestamp = models.DateTimeField(default = timezone.now)
 
-    items = models.ManyToManyField(items_models.Item)
+class SearchItems(models.Model):
+    search = models.ForeignKey(
+        SearchLog,
+        related_name="searchItems",
+        on_delete=models.CASCADE
+    )
+    item = models.ForeignKey(
+        items_models.Item,
+        related_name="searchItems",
+        on_delete=models.CASCADE
+    )
+    similarity = models.FloatField()
+    
+
+class ChatItems(models.Model):
+    chat = models.ForeignKey(
+        UserChat,
+        related_name="chatItems",
+        on_delete=models.CASCADE
+    )
+    item = models.ForeignKey(
+        items_models.Item,
+        related_name="chatItems",
+        on_delete=models.CASCADE
+    )
+    similarity = models.FloatField()
