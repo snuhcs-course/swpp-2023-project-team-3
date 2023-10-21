@@ -1,8 +1,15 @@
-import React, { useState } from "react";
-import { View, Text, Button, SafeAreaView, StyleSheet, Dimensions } from "react-native";
-import BlackBasicButton from "../components/BlackBasicButton";
-import BasicTextInput from "../components/BasicTextInput";
-import {Button as PaperButton, Menu} from 'react-native-paper';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  Button,
+  SafeAreaView,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
+import BlackBasicButton from '../components/BlackBasicButton';
+import BasicTextInput from '../components/BasicTextInput';
+import {PaperProvider} from 'react-native-paper';
 
 function SignUpScreen() {
   const [email, setEmail] = React.useState('');
@@ -14,11 +21,14 @@ function SignUpScreen() {
   const [isEmailValid, setIsEmailValid] = React.useState(true);
   const [isPasswordValid, setIsPasswordValid] = React.useState(true);
   const [usernameError, setUsernameError] = React.useState(false);
-  const [confirmPasswordError, setConfirmPasswordError] = React.useState(false);
+  const [isConfirmPasswordValid, setIsConfirmPasswordValid] =
+    React.useState(true);
 
   //error messages
   const emailMessageError = 'Please enter a valid email address';
-  const [passwordMessageError, setPasswordMessageError] = useState('Please enter a valid password');
+  const [passwordMessageError, setPasswordMessageError] = useState(
+    'Please enter a valid password',
+  );
   const usernameMessageError = 'Please enter a valid username';
   const confirmPasswordMessageError = 'Passwords do not match';
 
@@ -32,7 +42,6 @@ function SignUpScreen() {
   };
 
   const handlePasswordChange = (text: string) => {
-    // Define your password validation criteria
     const minLength = 6; // Minimum password length
     const hasUppercase = /[A-Z]/.test(text); // At least one uppercase letter
     const hasLowercase = /[a-z]/.test(text); // At least one lowercase letter
@@ -55,46 +64,89 @@ function SignUpScreen() {
     setPasswordMessageError(errorMessage);
   };
 
+  const handleConfirmPasswordChange = (text: string) => {
+    setConfirmPassword(text);
+    if (password !== text) {
+      setIsConfirmPasswordValid(false);
+    } else {
+      setIsConfirmPasswordValid(true);
+    }
+  };
+
   return (
     <View style={styles.root}>
-      <Text style={styles.header}>Create an Account</Text>
-      <View style={{flex: 1, width: Dimensions.get('screen').width * 0.9}}>
-        <BasicTextInput
-          label={'Email'}
-          onChangeText={handleEmailChange}
-          isValid={isEmailValid}
-          errorMessage={emailMessageError}
-        />
-        <BasicTextInput label={'Username'} />
-        <BasicTextInput
-          label={'Password'}
-          onChangeText={handlePasswordChange}
-          secureTextEntry={true}
-          isValid={isPasswordValid}
-          errorMessage={passwordMessageError}
-        />
-        <BasicTextInput label={'Confirm Password'} />
-        <BlackBasicButton buttonText={'Create Account'} title={'Create Account'} />
+      <View style={styles.formContainer}>
+        <View>
+          <View style={styles.headerContainer}>
+            <Text style={styles.header}>Create an Account</Text>
+          </View>
+          <View style={styles.inputContainer}>
+            <BasicTextInput
+              label={'Email'}
+              onChangeText={handleEmailChange}
+              isValid={isEmailValid}
+              errorMessage={emailMessageError}
+            />
+            <BasicTextInput label={'Username'} />
+            <BasicTextInput
+              label={'Password'}
+              onChangeText={handlePasswordChange}
+              secureTextEntry={true}
+              isValid={isPasswordValid}
+              errorMessage={passwordMessageError}
+            />
+            <BasicTextInput
+              label={'Confirm Password'}
+              onChangeText={handleConfirmPasswordChange}
+              secureTextEntry={true}
+              isValid={isConfirmPasswordValid}
+              errorMessage={confirmPasswordMessageError}
+            />
+          </View>
+        </View>
+        <View style={styles.inputContainer}>
+          <BlackBasicButton
+            buttonText={'Create Account'}
+            title={'Create Account'}
+          />
+        </View>
       </View>
       </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: 'space-between',
     alignItems: 'center',
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
     backgroundColor: 'white',
-    display: 'flex',
     flexDirection: 'column',
   },
 
+  headerContainer: {
+    width: Dimensions.get('screen').width * 0.9,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: '10%',
+    paddingBottom: 20,
+  },
+
+  formContainer: {
+    paddingBottom: 20,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: '100%'
+  },
   header: {
     fontSize: 20,
     color: 'black',
+    fontWeight: 'bold',
   },
-})
+  inputContainer: {
+    width: Dimensions.get('screen').width * 0.9,
+  },
+});
 
 export default SignUpScreen;

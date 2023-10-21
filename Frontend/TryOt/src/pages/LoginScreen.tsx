@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, Image, View, Dimensions, StyleSheet} from 'react-native';
-import {useNavigation} from "@react-navigation/native";
+import {useNavigation} from '@react-navigation/native';
 import BasicTextInput from '../components/BasicTextInput';
 import RememberMeButton from '../components/RememberMeButton';
 import TextLikeButton from '../components/TextLikeButton';
@@ -11,38 +11,60 @@ interface LoginScreenProps {
 }
 
 function LoginScreen({setLogin}: LoginScreenProps) {
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
   const navigation = useNavigation();
   const handleSignUpClick = () => {
     navigation.navigate('SignUp');
   };
 
+  const [isButtonActive, setIsButtonActive] = React.useState(false);
+
+  const handleTextInputs = (text, field) => {
+    // Update the state based on the input field
+    if (field === 'username') {
+      setUsername(text);
+    } else if (field === 'password') {
+      setPassword(text);
+    }
+
+    // Check if both username and password fields are not empty
+    if (username !== '' && password !== '') {
+      setIsButtonActive(true);
+    } else {
+      setIsButtonActive(false);
+    }
+  };
+
   return (
-    <View style={styles.root}>
-        <Image
-          source={require('../assets/Icon/Logo_Text.png')}
-          style={styles.logo}
+    <View style={styles.container}>
+      <Image
+        source={require('../assets/Icon/Logo_Text.png')}
+        style={styles.logo}
         resizeMode={'contain'}
+      />
+      <View style={styles.formContainer}>
+        <BasicTextInput
+          label={'Username'}
+          onChangeText={text => handleTextInputs(text, 'username')}
         />
-      <View style={{flex: 1, width: Dimensions.get('screen').width * 0.9}}>
-        <View style={{marginBottom: 10}}>
-          <BasicTextInput label={'Username'} />
+        <BasicTextInput
+          label={'Password'}
+          secureTextEntry={true}
+          onChangeText={text => handleTextInputs(text, 'password')}
+        />
+        <View style={styles.rowContainer}>
+          <RememberMeButton />
+          <TextLikeButton text={'Forgot Password?'} textColor={'black'} />
         </View>
-        <View style={{marginBottom: 10}}>
-          <BasicTextInput label={'Password'} />
-        </View>
-        <View style={{marginBottom: 30}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <RememberMeButton />
-            <TextLikeButton text={'Forgot Password?'} textColor={'black'} />
-          </View>
-        </View>
-        <BlackBasicButton buttonText={'Sign In'} title={'Sign In'} onClick={setLogin}/>
-        <View style={{ marginTop: 20, alignItems: 'center' }}>
+        <BlackBasicButton
+          buttonText={'Sign In'}
+          title={'Sign In'}
+          onClick={setLogin}
+          isButtonActive={isButtonActive}
+        />
+        <View style={styles.signUpContainer}>
           <TextLikeButton
             text={'New to Try-tri? Sign Up'}
             textColor={'black'}
@@ -55,20 +77,29 @@ function LoginScreen({setLogin}: LoginScreenProps) {
 }
 
 const styles = StyleSheet.create({
-  root: {
+  container: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
     backgroundColor: 'white',
-    display: 'flex',
-    flexDirection: 'column',
   },
-
   logo: {
-    width: '50%',
+    width: Dimensions.get('screen').width * 0.5,
   },
-
-
+  formContainer: {
+    width: Dimensions.get('screen').width * 0.9,
+    paddingBottom: 20,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 30,
+  },
+  signUpContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
 });
+
 export default LoginScreen;
