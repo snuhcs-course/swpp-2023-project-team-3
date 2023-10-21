@@ -1,14 +1,19 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-class User(models.Model):
+class User(AbstractUser):
     GENDER_TYPE = [
         ("M", "Male"),
         ("F", "Female"),
     ]
 
-
-    login_id = models.CharField(max_length=64)
-    email = models.EmailField(max_length=128)
-    nickName = models.CharField(max_length=64)
+    id = models.AutoField(primary_key=True)
+    email = models.EmailField(max_length=100, unique=True)
+    nickname = models.CharField(max_length=100, unique=True)
     gender = models.CharField(max_length=1, choices=GENDER_TYPE)
     age = models.IntegerField()
+
+    REQUIRED_FIELDS = ['email', 'nickname', 'gender', 'age']
+    
+    def __str__(self):
+        return self.username
