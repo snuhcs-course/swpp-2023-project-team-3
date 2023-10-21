@@ -5,7 +5,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useState} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LoginScreen from './src/pages/LoginScreen';
-import SignUp from './src/pages/SignUp';
+import SignUpScreen from './src/pages/SignUpScreen';
 import Home from './src/pages/Home';
 import SearchHistory from './src/pages/SearchHistory';
 import MyTab from './src/pages/MyTab';
@@ -77,13 +77,18 @@ function App() {
         <Stack.Navigator>
           <Stack.Screen
             name="SignIn"
-            component={LoginScreen}
             options={{ headerShown: false, title: '로그인' }}
-          />
+          >
+            {() => <LoginScreen setLogin={handleLogin} />}
+          </Stack.Screen>
           <Stack.Screen
             name="SignUp"
-            component={SignUp}
-            options={{title: '회원가입'}}
+            component={SignUpScreen}
+            options={{
+              title: '',
+              headerTransparent: true,
+              headerTintColor: 'black',
+            }}
           />
         </Stack.Navigator>
       )}
