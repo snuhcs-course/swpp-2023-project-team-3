@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.postgres import fields as PostgresFields
 
 class Category(models.Model):
+    id = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=64)
     parent = models.ForeignKey(
         'self',
@@ -15,12 +16,14 @@ class Category(models.Model):
         return f"{self.name} {self.parent if self.parent else ''}"
     
 class Brand(models.Model):
+    id = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=64)
 
     def __str__(self):
         return self.name
     
 class Item(models.Model):
+    id = models.BigIntegerField(primary_key=True)
     GENDER_TYPE = [
         ("M", "Male"),
         ("F", "Female"),
@@ -28,7 +31,7 @@ class Item(models.Model):
     ]
 
     name = models.CharField(max_length=256)
-    description = models.CharField(max_length = 4096)
+    description = models.TextField()
 
     category = models.ManyToManyField(Category)
 
@@ -40,7 +43,7 @@ class Item(models.Model):
         on_delete=models.CASCADE,
     )
 
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     image_url = PostgresFields.ArrayField(models.URLField(max_length=512), blank=True, null=True)
     order_url = models.URLField(blank=True, null=True)
