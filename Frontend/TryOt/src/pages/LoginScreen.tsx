@@ -6,6 +6,7 @@ import RememberMeButton from '../components/RememberMeButton';
 import TextLikeButton from '../components/TextLikeButton';
 import BlackBasicButton from '../components/BlackBasicButton';
 import {type RootStackNavigation} from '../../App';
+import { color, vw } from '../constants/design';
 
 interface LoginScreenProps {
   setLogin: () => void;
@@ -81,13 +82,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: color.background,
   },
   logo: {
-    width: Dimensions.get('screen').width * 0.5,
+    width: 50 * vw,
   },
   formContainer: {
-    width: Dimensions.get('screen').width * 0.9,
+    width: 90 * vw,
     paddingBottom: 20,
   },
   rowContainer: {
