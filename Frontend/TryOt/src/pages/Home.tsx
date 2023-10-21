@@ -47,7 +47,7 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
         <View style={styles.inputText}>
           <Image
             style={{resizeMode: 'contain', width: '8%', height: '100%'}}
-            source={require('../assets/Icon/Logo.png')}
+            source={require('../assets/Icon/Logo_Black.png')}
           />
           <TextInput
             style={{flex: 10, marginLeft: 10}}
