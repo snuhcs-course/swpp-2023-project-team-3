@@ -144,9 +144,14 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Home() {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator
+      screenOptions={{headerShown: false}}
+    >
       <Stack.Screen name="Search" component={Search} />
-      <Stack.Screen name="ItemDetail" component={ItemDetailScreen} />
+      <Stack.Screen
+        name="ItemDetail"
+        component={ItemDetailScreen}
+      />
       <Stack.Screen name="Catalog" component={Catalog as any} />
       <Stack.Screen name="Chat" component={Chat as any} />
     </Stack.Navigator>

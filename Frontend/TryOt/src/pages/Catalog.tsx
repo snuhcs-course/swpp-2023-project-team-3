@@ -32,7 +32,6 @@ function Catalog({
   const navigateToItemDetail = () => {
     // @ts-ignore
     navigation.navigate('ItemDetail', {itemId: '1'});
-    // Replace 'your_item_id_here' with the actual item ID
   };
 
   // @ts-ignore
