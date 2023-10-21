@@ -60,11 +60,18 @@ INSTALLED_APPS = [
 
     "django_extensions",
     "rest_framework",
+    "rest_framework.authtoken",
 
     "users.apps.UsersConfig",
     "items.apps.ItemsConfig",
     "search.apps.SearchConfig",
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -163,3 +170,5 @@ AWS_S3_FILE_OVERWRITE = AWS_S3_FILE_OVERWRITE
 AWS_DEFAULT_ACL =  AWS_DEFAULT_ACL
 AWS_S3_VERITY = AWS_S3_VERITY
 DEFAULT_FILE_STORAGE = DEFAULT_FILE_STORAGE
+
+AUTH_USER_MODEL = 'users.User'
