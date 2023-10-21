@@ -13,14 +13,14 @@ export const fontSize = {
 
 export const color = {
     button : {
-        active : '000000',
-        inActive : 'D3D3D5'
+        active : '#000000',
+        inActive : '#D3D3D5'
     },
-    background : 'ffffff',
+    background : '#ffffff',
     border : 'black',
     text : {
-        title : '000000',
-        active : '000000',
-        inactive : 'D3D3D5'
+        title : '#000000',
+        active : '#000000',
+        inactive : '#D3D3D5'
     }
 }
