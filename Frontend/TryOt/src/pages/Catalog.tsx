@@ -1,13 +1,13 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useRef} from 'react';
 import {
+  Button,
   Dimensions,
   Image,
   LayoutChangeEvent,
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 import {RootStackParamList} from './Home';
@@ -24,12 +24,23 @@ function Catalog({
     const {height} = event.nativeEvent.layout;
     slidingPanelHeight = height;
   };
+
+  //일단 샘플 데이터로 들어감
+  const navigateToItemDetail = () => {
+    // @ts-ignore
+    navigation.navigate('ItemDetail', {itemId: '1'});
+  };
+
+  // @ts-ignore
   return (
     <View
       style={{
         backgroundColor: 'white',
         height: Dimensions.get('window').height,
       }}>
+      <Button onPress={navigateToItemDetail} title={'test button'}>
+        Test Button
+      </Button>
       <View style={styles.searchQueryInput}>
         <Text style={{color: 'black'}}>{route.params.searchQuery}</Text>
         <Text style={{color: 'gray'}}>x</Text>
