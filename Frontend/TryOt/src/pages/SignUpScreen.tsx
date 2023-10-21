@@ -10,6 +10,7 @@ import {
 import BlackBasicButton from '../components/BlackBasicButton';
 import BasicTextInput from '../components/BasicTextInput';
 import {PaperProvider} from 'react-native-paper';
+import { color, fontSize, vw } from '../constants/design';
 
 function SignUpScreen() {
   const [email, setEmail] = React.useState('');
@@ -127,12 +128,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: color.background,
     flexDirection: 'column',
   },
 
   headerContainer: {
-    width: Dimensions.get('screen').width * 0.9,
+    width: 90*vw,
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginTop: '10%',
@@ -147,12 +148,12 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   header: {
-    fontSize: 20,
-    color: 'black',
+    fontSize: fontSize.large,
+    color: color.text.title,
     fontWeight: 'bold',
   },
   inputContainer: {
-    width: Dimensions.get('screen').width * 0.9,
+    width: 90*vw,
   },
 });
 
