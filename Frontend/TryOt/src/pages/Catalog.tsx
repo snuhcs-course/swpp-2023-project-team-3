@@ -1,5 +1,4 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import React, {useRef} from 'react';
 import {
   Button,
@@ -9,13 +8,11 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
-  View
-} from "react-native";
+  View,
+} from 'react-native';
 import {RootStackParamList} from './Home';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import RefinedQuery from '../components/RefinedQuery';
-
 
 function Catalog({
   navigation,
@@ -41,7 +38,7 @@ function Catalog({
         backgroundColor: 'white',
         height: Dimensions.get('window').height,
       }}>
-      <Button onPress={navigateToItemDetail} title={'Test Button'}>
+      <Button onPress={navigateToItemDetail} title={'test button'}>
         Test Button
       </Button>
       <View style={styles.searchQueryInput}>

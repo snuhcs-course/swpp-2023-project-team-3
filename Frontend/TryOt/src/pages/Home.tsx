@@ -14,8 +14,8 @@ import {
 } from '@react-navigation/native-stack';
 import Catalog from './Catalog';
 import Chat from './Chat';
-import { color, fontSize, vh, vw } from '../constants/design';
-import ItemDetailScreen from "./ItemDetailScreen";
+import {color, fontSize, vh, vw} from '../constants/design';
+import ItemDetailScreen from './ItemDetailScreen';
 
 function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   const [isCatalog, setIsCatalog] = useState(true);
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 100*vh,
+    height: 100 * vh,
     overflowY: 'auto',
     touchAction: 'none',
     userSelect: 'none',
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   optionWrapper: {
-    marginLeft: 5*vw,
+    marginLeft: 5 * vw,
     alignSelf: 'flex-start',
     flexDirection: 'row',
     marginTop: 20,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: color.border,
     borderRadius: 8,
-    width: 90*vw,
+    width: 90 * vw,
     paddingLeft: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -120,12 +120,12 @@ const styles = StyleSheet.create({
   textInnerImage: {
     resizeMode: 'contain',
     width: '8%',
-    height: '100%'
+    height: '100%',
   },
-  inputText : {
+  inputText: {
     flex: 10,
-    marginLeft: 10
-  }
+    marginLeft: 10,
+  },
 });
 
 export type RootStackParamList = {
@@ -144,16 +144,33 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Home() {
   return (
-    <Stack.Navigator
-      screenOptions={{headerShown: false}}
-    >
-      <Stack.Screen name="Search" component={Search} />
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Search"
+        component={Search}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="ItemDetail"
         component={ItemDetailScreen}
+        options={{
+          headerShadowVisible: false,
+          headerTitle: '',
+          headerTransparent: true,
+          headerTintColor: 'black',
+        }}
       />
-      <Stack.Screen name="Catalog" component={Catalog as any} />
-      <Stack.Screen name="Chat" component={Chat as any} />
+
+      <Stack.Screen
+        name="Catalog"
+        component={Catalog as any}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Chat"
+        component={Chat as any}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 }
