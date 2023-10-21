@@ -9,6 +9,7 @@ import SignUpScreen from './src/pages/SignUpScreen';
 import Home from './src/pages/Home';
 import SearchHistory from './src/pages/SearchHistory';
 import MyTab from './src/pages/MyTab';
+import Toast from 'react-native-toast-message';
 
 export type LoggedInParamList = {
   MyTab: undefined;
@@ -30,6 +31,10 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const handleLogin = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'Login Success!'
+    });
     setIsLoggedIn(true);
   };
 
@@ -94,6 +99,7 @@ function App() {
           />
         </Stack.Navigator>
       )}
+      <Toast />
     </NavigationContainer>
   );
 }
