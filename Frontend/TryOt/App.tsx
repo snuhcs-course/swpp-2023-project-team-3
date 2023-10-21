@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NavigationContainer, NavigationProp } from "@react-navigation/native";
+import {NavigationContainer, NavigationProp} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useState} from 'react';
@@ -33,7 +33,7 @@ function App() {
   const handleLogin = () => {
     Toast.show({
       type: 'success',
-      text1: 'Login Success!'
+      text1: 'Login Success!',
     });
     setIsLoggedIn(true);
   };
