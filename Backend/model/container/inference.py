@@ -1,4 +1,4 @@
-from s3 import download_imgvector
+# from s3 import download_imgvector
 import torch
 from transformers import CLIPModel, CLIPProcessor
 import os
@@ -23,6 +23,10 @@ class ClipTextEmbedding(object):
     processor = None
     
     @classmethod
+    def _check_model(cls):
+        return cls.model is not None
+
+    @classmethod
     def __init__(cls):
         cls.model, cls.processor = cls._get_model()
 
@@ -42,9 +46,9 @@ class ClipTextEmbedding(object):
     
     @classmethod
     def load_imgVector(cls):
-        if os.path.exists("./img_vectors.csv") == False :
-            print("no such file")
-            download_imgvector()
+        # if os.path.exists("./img_vectors.csv") == False :
+        #     print("no such file")
+        #     download_imgvector()
         img_vector = np.loadtxt("./img_vectors.csv", delimiter=",")
         item_df = pd.read_csv("./item_df.csv")
         subset = item_df[['id']]
@@ -77,3 +81,7 @@ class ClipTextEmbedding(object):
         
         # return matched_objects[:50]
         return matched_objects
+
+if __name__=="__main__":
+    fclip = ClipTextEmbedding()
+    print(fclip._check_model())

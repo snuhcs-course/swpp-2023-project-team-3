@@ -12,7 +12,7 @@ fclip = ClipTextEmbedding()
 
 @app.route("/ping", methods=["GET"])
 def ping():
-    health = fclip._get_model() is not None  # You can insert a health check here
+    health = fclip._check_model()  # You can insert a health check here
 
     status = 200 if health else 404
     return Response(response="\n", status=status, mimetype="application/json")
