@@ -86,7 +86,7 @@ def run():
             description=item.description,
             gender = gender_mapping[item.gender],
             image_url=[item.imageUrl],
-            order_url=item.path,
+            order_url=item.itemUrl,
             brand=brand,
             price=item.itemPrice if not math.isnan(item.itemPrice) else None,
             material=item.materials.split(", "), 
