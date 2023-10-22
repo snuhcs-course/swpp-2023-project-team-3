@@ -12,7 +12,7 @@ fclip = ClipTextEmbedding()
 
 @app.route("/ping", methods=["GET"])
 def ping():
-    health = fclip.get_model() is not None  # You can insert a health check here
+    health = fclip._get_model() is not None  # You can insert a health check here
 
     status = 200 if health else 404
     return Response(response="\n", status=status, mimetype="application/json")
@@ -45,30 +45,30 @@ def predict():
     itemIDList = fclip.get_similarity(inputText)
     output = {"response":"Sucess", "user_id" : user_id, "item_ids":itemIDList, "timestamp" : timestamp}
     
-    async def send_data_to_django():
-        async with httpx.AsyncClient() as client:
-            payload = {
-                "user_id": user_id,
-                "query": inputText,
-                "is_deleted" : False,
-                "timestamp" : timestamp
-            }
-            response = await client.post("django", json=payload)
+    # async def send_data_to_django():
+    #     async with httpx.AsyncClient() as client:
+    #         payload = {
+    #             "user_id": user_id,
+    #             "query": inputText,
+    #             "is_deleted" : False,
+    #             "timestamp" : timestamp
+    #         }
+    #         response = await client.post("django", json=payload)
 
-            if response.status == 200:
-                pass
-            else:
-                pass
+    #         if response.status == 200:
+    #             pass
+    #         else:
+    #             pass
 
-            output = {
-                "response": "Success",
-                "user_id": user_id,
-                "item_ids": itemIDList,
-                "timestamp": timestamp,
-            }
-            return output
+    #         output = {
+    #             "response": "Success",
+    #             "user_id": user_id,
+    #             "item_ids": itemIDList,
+    #             "timestamp": timestamp,
+    #         }
+    #         return output
 
-    send_data_to_django()
+    # send_data_to_django()
 
     """
     Response body
