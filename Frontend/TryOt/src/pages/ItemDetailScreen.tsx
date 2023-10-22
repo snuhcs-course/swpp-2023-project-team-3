@@ -1,38 +1,24 @@
 // ItemDetailScreen.tsx
 import {FashionItem} from '../models/FashionItem';
-import { fetchFashionItemDetails } from "../api/itemDetailApi";
-
 import {View, ScrollView, Text, StyleSheet, Image, Linking} from 'react-native';
 import BlackBasicButton from '../components/BlackBasicButton';
 import {fontSize, vw} from '../constants/design';
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from 'react';
+import {RootStackParamList} from './Home';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-interface ItemDetailScreenProps {
-  item: FashionItem;
-}
-
-function ItemDetailScreen() {
-  const itemId = '19214697';
-  const [item, setItem] = useState<FashionItem | null>(null);
-  const [loading, setLoading] = useState(true); // Loading state
+function ItemDetailScreen({
+  route,
+}: NativeStackScreenProps<RootStackParamList, 'ItemDetail'>) {
+  const item: FashionItem | null = route.params.item; // Receive the entire item from route.params
+  const [loading, setLoading] = useState(!item); // Set loading to true if item is null
 
   useEffect(() => {
-    console.log('Fetching item details...');
-    fetchFashionItemDetails(itemId)
-      .then(fetchedItem => {
-        // Modifying image size
-        fetchedItem.imageUrl = fetchedItem.imageUrl.map(url =>
-          url.replace(/_54/, '_500'),
-        );
-        setItem(fetchedItem);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error("Error fetching item details:", error);
-        setLoading(false);
-      });
-  }, []);
+    if (item) {
+      setLoading(false);
+    }
+  }, [item]);
 
   const openPurchaseURl = () => {
     if (item) {
@@ -50,17 +36,24 @@ function ItemDetailScreen() {
     <View style={styles.container}>
       {loading ? (
         // Show a blank view while loading
-        <View style={{ width: 0, height: 0 }} />
+        <View style={{width: 0, height: 0}} />
       ) : item ? (
-        <ScrollView contentContainerStyle={styles.scrollContainer} scrollEventThrottle={16}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          scrollEventThrottle={16}>
           {/* Scroll View */}
           <View style={styles.imageContainer}>
-            <Image style={{ width: 70 * vw, aspectRatio: 1 }} source={{ uri: item.imageUrl[0] }} />
+            <Image
+              style={{width: 60 * vw, height: 100 * vw, margin: 3*vw}} //TODO: 배율 조정하기
+              source={{uri: item.imageUrl[0].replace(/_54/, '_500')}}
+            />
           </View>
           <View style={styles.descriptionContainer}>
             <View style={styles.brandTitleContainer}>
               <Text style={styles.brandText}>{item.brand}</Text>
-              <Text style={styles.shortDescriptionText}>{item.shortDescription}</Text>
+              <Text style={styles.shortDescriptionText}>
+                {item.shortDescription}
+              </Text>
             </View>
             <Text>$ {item.price}</Text>
             <Text style={styles.descriptionText}>{item.description}</Text>
