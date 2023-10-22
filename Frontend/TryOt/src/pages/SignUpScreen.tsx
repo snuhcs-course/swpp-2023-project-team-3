@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import BlackBasicButton from '../components/BlackBasicButton';
 import BasicTextInput from '../components/BasicTextInput';
-import {PaperProvider} from 'react-native-paper';
 import {ActivityIndicator, PaperProvider} from 'react-native-paper';
 import {color, fontSize, vw} from '../constants/design';
 import axios from 'axios';
@@ -86,7 +85,7 @@ function SignUpScreen() {
     }
     try {
       setLoading(true);
-      const response = await tryAxios('post', 'user/register', {
+      const response = await tryAxios('post', 'user/register/', {
         username,
         password,
         email,

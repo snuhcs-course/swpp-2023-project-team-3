@@ -1,22 +1,22 @@
 export interface RequestTypes {
   post: {
-    'user/signin': LogInInfo;
-    'user/register': Omit<UserInfo & LogInInfo, 'id'>;
+    'user/login/': LogInInfo;
+    'user/register/': Omit<UserInfo & LogInInfo, 'id'>;
   };
   delete: {};
   get: {
-    'user/token-check': Token;
+    'user/token-check/': Token;
   };
 }
 
 export interface ResponseTypes {
   post: {
-    'user/signin': UserInfo & Token;
-    'user/register': {};
+    'user/login/': UserInfo & Token;
+    'user/register/': {};
   };
   delete: {};
   get: {
-    'user/token-check': UserInfo & Token;
+    'user/token-check/': UserInfo & Token;
   };
 }
 
