@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useRef} from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Dimensions,
@@ -13,6 +13,9 @@ import {
 import {RootStackParamList} from './Home';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import RefinedQuery from '../components/RefinedQuery';
+import { searchItems } from "../api/searchItemsApi";
+import { fetchFashionItemDetails } from "../api/itemDetailApi";
+import { FashionItem } from "../models/FashionItem";
 
 function Catalog({
   navigation,
@@ -26,6 +29,29 @@ function Catalog({
   };
 
   //일단 샘플 데이터로 들어감
+  const [items, setItems] = useState<FashionItem[]>([]); // Provide an explicit type
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Call the searchItems API to get item IDs based on the search query
+    searchItems(10, route.params.searchQuery)
+      .then(ids => {
+        Promise.all(ids.map(itemId => fetchFashionItemDetails(itemId)))
+          .then((items) => {
+            setItems(items);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.error('Error fetching item details:', error);
+            setLoading(false);
+          });
+      })
+      .catch((error) => {
+        console.error('Error searching for items:', error);
+        setLoading(false);
+      });
+  }, [route.params.searchQuery]);
+
   const navigateToItemDetail = () => {
     // @ts-ignore
     navigation.navigate('ItemDetail', {itemId: '1'});
