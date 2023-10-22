@@ -20,7 +20,7 @@ import {RootState} from './src/store/reducer';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import userSlice from './src/slices/user';
 import {Alert} from 'react-native';
-import tryAxios from './src/util/TryAxios';
+import tryAxios from './src/util/tryAxios';
 
 export type LoggedInParamList = {
   MyTab: undefined;
