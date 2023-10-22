@@ -1,56 +1,71 @@
 // ItemDetailScreen.tsx
 import {FashionItem} from '../models/FashionItem';
-
 import {View, ScrollView, Text, StyleSheet, Image, Linking} from 'react-native';
 import BlackBasicButton from '../components/BlackBasicButton';
 import {fontSize, vw} from '../constants/design';
 
-//일단은 샘플 데이터로 하기
-import sampleFashionItem from '../models/FashionItem';
+import {useEffect, useState} from 'react';
+import {RootStackParamList} from './Home';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-interface ItemDetailScreenProps {
-  item: FashionItem;
-}
+function ItemDetailScreen({
+  route,
+}: NativeStackScreenProps<RootStackParamList, 'ItemDetail'>) {
+  const item: FashionItem | null = route.params.item; // Receive the entire item from route.params
+  const [loading, setLoading] = useState(!item); // Set loading to true if item is null
 
-function ItemDetailScreen() {
-  const item: FashionItem = sampleFashionItem[0]; //sample item
+  useEffect(() => {
+    if (item) {
+      setLoading(false);
+    }
+  }, [item]);
+
   const openPurchaseURl = () => {
-    Linking.openURL(item.itemUrl)
-      .then(() => {
-        console.log(`Opened URL: ${item.itemUrl}`);
-      })
-      .catch(error => {
-        console.error(`Error opening URL: ${item.itemUrl}`, error);
-      });
+    if (item) {
+      Linking.openURL(item.itemUrl)
+        .then(() => {
+          console.log(`Opened URL: ${item.itemUrl}`);
+        })
+        .catch(error => {
+          console.error(`Error opening URL: ${item.itemUrl}`, error);
+        });
+    }
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        scrollEventThrottle={16}>
-        {/* Scroll View */}
-        <View style={styles.imageContainer}>
-          <Image
-            style={{width: 70 * vw, aspectRatio: 1}}
-            source={{uri: item.imageUrl[0]}}
-          />
-        </View>
-        <View style={styles.descriptionContainer}>
-          <View style={styles.brandTitleContainer}>
-            <Text style={styles.brandText}>{item.brand}</Text>
-            <Text style={styles.shortDescriptionText}>
-              {item.shortDescription}
-            </Text>
+      {loading ? (
+        // Show a blank view while loading
+        <View style={{width: 0, height: 0}} />
+      ) : item ? (
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          scrollEventThrottle={16}>
+          {/* Scroll View */}
+          <View style={styles.imageContainer}>
+            <Image
+              style={{width: 60 * vw, height: 100 * vw, margin: 3 * vw}} //TODO: 배율 조정하기
+              source={{uri: item.imageUrl[0].replace(/_54/, '_500')}}
+            />
           </View>
-          <Text>$ {item.price}</Text>
-          <Text style={styles.descriptionText}>{item.description}</Text>
-        </View>
-        <View style={styles.borderLine} />
-        <View style={styles.queryLogContainer}>
-          <Text>쿼리 기록 (Iteration 4)</Text>
-        </View>
-      </ScrollView>
+          <View style={styles.descriptionContainer}>
+            <View style={styles.brandTitleContainer}>
+              <Text style={styles.brandText}>{item.brand}</Text>
+              <Text style={styles.shortDescriptionText}>
+                {item.shortDescription}
+              </Text>
+            </View>
+            <Text>$ {item.price}</Text>
+            <Text style={styles.descriptionText}>{item.description}</Text>
+          </View>
+          <View style={styles.borderLine} />
+          <View style={styles.queryLogContainer}>
+            <Text>쿼리 기록 (Iteration 4)</Text>
+          </View>
+        </ScrollView>
+      ) : (
+        <Text>Error loading item details.</Text>
+      )}
       <View style={styles.fixedBar}>
         <BlackBasicButton
           buttonText={'Purchase Now'}
