@@ -4,7 +4,7 @@ import {ButtonProps} from 'react-native';
 
 interface BlackBasicButtonProps extends ButtonProps {
   onClick?: () => void;
-  buttonText: String;
+  buttonText: String | React.JSX.Element;
   isButtonActive: boolean;
 }
 
