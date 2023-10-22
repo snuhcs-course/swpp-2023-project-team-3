@@ -14,8 +14,11 @@
     "@react-navigation/bottom-tabs": "^6.5.9",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.14",
+    "@reduxjs/toolkit": "^1.9.7",
+    "axios": "^1.5.1",
     "react": "18.2.0",
     "react-native": "0.72.6",
+    "react-native-encrypted-storage": "^4.0.3",
     "react-native-gesture-handler": "^2.13.3",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
     "react-native-paper": "^5.11.0",
@@ -25,6 +28,7 @@
     "react-native-screens": "^3.26.0",
     "react-native-toast-message": "^2.1.6",
     "react-native-vector-icons": "^10.0.0",
+    "react-redux": "^8.1.3",
     "rn-sliding-up-panel": "^2.4.6"
   },
   "devDependencies": {
