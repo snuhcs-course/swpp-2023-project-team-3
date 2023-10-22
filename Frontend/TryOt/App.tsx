@@ -1,6 +1,12 @@
 import * as React from 'react';
-import {NavigationContainer, NavigationProp} from '@react-navigation/native';
-import {useEffect} from 'react';
+import {
+  getFocusedRouteNameFromRoute,
+  NavigationContainer,
+  NavigationProp,
+} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {useState, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LoginScreen from './src/pages/LoginScreen';
 import SignUpScreen from './src/pages/SignUpScreen';
@@ -15,8 +21,6 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import userSlice from './src/slices/user';
 import {Alert} from 'react-native';
 import tryAxios from './src/util/TryAxios';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 export type LoggedInParamList = {
   MyTab: undefined;
@@ -81,14 +85,27 @@ function AppInner() {
             },
           })}>
           <Tab.Screen
-            name="SearchHistory"
+            name={'SearchHistory'}
             component={SearchHistory}
-            options={{title: 'query history'}}
+            options={{
+              headerShown: false,
+              title: 'query history',
+            }}
           />
           <Tab.Screen
             name="Home"
             component={Home}
-            options={{headerShown: false, title: 'home'}}
+            options={({route}) => ({
+              headerShown: false,
+              title: 'Home',
+              tabBarStyle: (route => {
+                const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
+                if (routeName === 'ItemDetail') {
+                  return {display: 'none'};
+                }
+                return;
+              })(route),
+            })}
           />
           <Tab.Screen
             name="MyTab"

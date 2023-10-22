@@ -1,6 +1,6 @@
 import {Image, Text, View} from 'react-native';
 
-export default function FashionItem({
+export default function GridFashionItem({
   imageSrc,
   title,
   detail,
