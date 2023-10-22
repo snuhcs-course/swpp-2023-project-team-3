@@ -1,25 +1,67 @@
-import React from 'react';
-import {Image, View, Dimensions, StyleSheet} from 'react-native';
+import React, {useCallback} from 'react';
+import {Image, View, Dimensions, StyleSheet, Text, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import BasicTextInput from '../components/BasicTextInput';
-import RememberMeButton from '../components/RememberMeButton';
+import RememberMeButton from '../components/CheckBox';
 import TextLikeButton from '../components/TextLikeButton';
 import BlackBasicButton from '../components/BlackBasicButton';
 import {type RootStackNavigation} from '../../App';
 import {color, vw} from '../constants/design';
+import axios from 'axios';
+import userSlice from '../slices/user';
+import Toast from 'react-native-toast-message';
+import {useAppDispatch} from '../store';
+import {serverName} from '../constants/dev';
+import {ActivityIndicator} from 'react-native-paper';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import useCheckBox from '../components/CheckBox';
+import tryAxios from '../util/tryAxios';
 
-interface LoginScreenProps {
-  setLogin: () => void;
-}
 
-function LoginScreen({setLogin}: LoginScreenProps) {
+function LoginScreen() {
+  const dispatch = useAppDispatch();
+
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
   const {navigate} = useNavigation<RootStackNavigation>();
   const handleSignUpClick = () => {
     navigate('SignUp');
   };
+
+  const [isRememberMe, RememberMeButton] = useCheckBox('Remember Me');
+
+  const onSubmit = useCallback(async () => {
+    if (loading) {
+      return;
+    }
+    if (!username || !username.trim()) {
+      return Alert.alert('notification', 'please enter username.');
+    }
+    if (!password || !password.trim()) {
+      return Alert.alert('notification', 'please enter password.');
+    }
+    try {
+      setLoading(true);
+      const response = await tryAxios('post', 'login', {
+        username,
+        password,
+      });
+      Toast.show({
+        type: 'success',
+        text1: 'login success!',
+      });
+      if (isRememberMe) {
+        await EncryptedStorage.setItem('accessToken', response.token);
+      }
+      dispatch(userSlice.actions.setUser(response));
+    } catch (error) {
+      Alert.alert('알림', 'login fail:(');
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, dispatch, username, password]);
 
   const [isButtonActive, setIsButtonActive] = React.useState(false);
 
@@ -60,9 +102,11 @@ function LoginScreen({setLogin}: LoginScreenProps) {
           <TextLikeButton text={'Forgot Password?'} textColor={'black'} />
         </View>
         <BlackBasicButton
-          buttonText={'Sign In'}
+          buttonText={
+            loading ? <ActivityIndicator color="white" /> : <Text>Sign In</Text>
+          }
           title={'Sign In'}
-          onClick={setLogin}
+          onClick={onSubmit}
           isButtonActive={isButtonActive}
         />
         <View style={styles.signUpContainer}>

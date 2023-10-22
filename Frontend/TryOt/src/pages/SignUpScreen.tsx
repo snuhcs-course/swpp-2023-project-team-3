@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -6,13 +6,22 @@ import {
   SafeAreaView,
   StyleSheet,
   Dimensions,
+  Alert,
 } from 'react-native';
 import BlackBasicButton from '../components/BlackBasicButton';
 import BasicTextInput from '../components/BasicTextInput';
 import {PaperProvider} from 'react-native-paper';
+import {ActivityIndicator, PaperProvider} from 'react-native-paper';
 import {color, fontSize, vw} from '../constants/design';
+import axios from 'axios';
+import {serverName} from '../constants/dev';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackNavigation} from '../../App';
+import Toast from 'react-native-toast-message';
+import tryAxios from '../util/tryAxios';
 
 function SignUpScreen() {
+  const [loading, setLoading] = React.useState(false);
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [username, setUsername] = React.useState('');
@@ -24,6 +33,9 @@ function SignUpScreen() {
   const [isUsernameValid, setIsUsernameValid] = React.useState(true);
   const [isConfirmPasswordValid, setIsConfirmPasswordValid] =
     React.useState(true);
+
+  //navigation for page transition
+  const {navigate} = useNavigation<RootStackNavigation>();
 
   //button disablied
   const isFormValid = () => {
@@ -42,6 +54,57 @@ function SignUpScreen() {
   );
   const usernameMessageError = 'Please enter a valid username';
   const confirmPasswordMessageError = 'Passwords do not match';
+
+  const onSubmit = useCallback(async () => {
+    if (loading) {
+      return;
+    }
+    if (!email || !email.trim()) {
+      return Alert.alert('notification', 'please enter email.');
+    }
+    if (!username || !username.trim()) {
+      return Alert.alert('notification', 'please enter username.');
+    }
+    if (!password || !password.trim()) {
+      return Alert.alert('notification', 'please enter password.');
+    }
+    if (!confirmPassword || !confirmPassword.trim()) {
+      return Alert.alert('notification', 'please enter [confirm password].');
+    }
+    if (
+      !/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(
+        email,
+      )
+    ) {
+      return Alert.alert('알림', '올바른 이메일 주소가 아닙니다.');
+    }
+    if (!/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@^!%*#?&]).{8,50}$/.test(password)) {
+      return Alert.alert(
+        '알림',
+        '비밀번호는 영문,숫자,특수문자($@^!%*#?&)를 모두 포함하여 8자 이상 입력해야합니다.',
+      );
+    }
+    try {
+      setLoading(true);
+      const response = await tryAxios('post', 'register', {
+        username,
+        password,
+        email,
+        gender: 'F',
+        age: 10,
+        nickname: 'hello2',
+      });
+      Toast.show({
+        type: 'success',
+        text1: 'sign up success!',
+      });
+      navigate('SignIn');
+    } catch (error) {
+      Alert.alert('notification', 'Sign up fail');
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, navigate, email, username, password]);
 
   //functions
   const handleEmailChange = (text: string) => {
@@ -98,7 +161,10 @@ function SignUpScreen() {
               isValid={isEmailValid}
               errorMessage={emailMessageError}
             />
-            <BasicTextInput label={'Username'} />
+            <BasicTextInput
+              label={'Username'}
+              onChangeText={text => setUsername(text)}
+            />
             <BasicTextInput
               label={'Password'}
               onChangeText={handlePasswordChange}
@@ -117,9 +183,16 @@ function SignUpScreen() {
         </View>
         <View style={styles.inputContainer}>
           <BlackBasicButton
-            buttonText={'Create Account'}
+            buttonText={
+              loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text>Create Account</Text>
+              )
+            }
             title={'Create Account'}
             isButtonActive={isFormValid()}
+            onClick={onSubmit}
           />
         </View>
       </View>

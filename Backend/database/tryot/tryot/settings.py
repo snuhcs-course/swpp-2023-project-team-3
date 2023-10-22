@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 from .private_constants import (
     DJANGO_SECRECT_KEY,
@@ -45,7 +46,7 @@ SECRET_KEY = DJANGO_SECRECT_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['43.201.105.74']
 
 
 # Application definition
@@ -61,6 +62,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework",
     "rest_framework.authtoken",
+    "whitenoise.runserver_nostatic",
 
     "users.apps.UsersConfig",
     "items.apps.ItemsConfig",
@@ -81,6 +83,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "tryot.urls"
@@ -172,3 +175,5 @@ AWS_S3_VERITY = AWS_S3_VERITY
 DEFAULT_FILE_STORAGE = DEFAULT_FILE_STORAGE
 
 AUTH_USER_MODEL = 'users.User'
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')

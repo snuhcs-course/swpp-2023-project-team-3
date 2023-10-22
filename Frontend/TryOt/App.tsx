@@ -1,8 +1,12 @@
 import * as React from 'react';
-import { getFocusedRouteNameFromRoute, NavigationContainer, NavigationProp } from "@react-navigation/native";
+import {
+  getFocusedRouteNameFromRoute,
+  NavigationContainer,
+  NavigationProp,
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LoginScreen from './src/pages/LoginScreen';
 import SignUpScreen from './src/pages/SignUpScreen';
@@ -10,7 +14,13 @@ import Home from './src/pages/Home';
 import SearchHistory from './src/pages/SearchHistory';
 import MyTab from './src/pages/MyTab';
 import Toast from 'react-native-toast-message';
-import Catalog from "./src/pages/Catalog";
+import {Provider, useSelector} from 'react-redux';
+import store, {useAppDispatch} from './src/store';
+import {RootState} from './src/store/reducer';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import userSlice from './src/slices/user';
+import {Alert} from 'react-native';
+import tryAxios from './src/util/tryAxios';
 
 export type LoggedInParamList = {
   MyTab: undefined;
@@ -25,20 +35,29 @@ export type RootStackParamList = {
 
 export type RootStackNavigation = NavigationProp<RootStackParamList>;
 
-const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator<RootStackParamList>();
+export const Tab = createBottomTabNavigator();
+export const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+function AppInner() {
+  const isLoggedIn = useSelector((state: RootState) => !!state.user.username);
+  const dispatch = useAppDispatch();
 
-  const handleLogin = () => {
-    Toast.show({
-      type: 'success',
-      text1: 'Login Success!',
-    });
-    setIsLoggedIn(true);
-  };
-
+  useEffect(() => {
+    const getTokenAndRefresh = async () => {
+      try {
+        const token = await EncryptedStorage.getItem('accessToken');
+        if (!token) {
+          return;
+        }
+        const response = await tryAxios('get', 'user/token-check', {token});
+        dispatch(userSlice.actions.setUser(response));
+        await EncryptedStorage.setItem('accessToken', response.token);
+      } catch (error) {
+        Alert.alert('notification', 'please try login again.');
+      }
+    };
+    getTokenAndRefresh();
+  }, [dispatch]);
   return (
     <NavigationContainer>
       {isLoggedIn ? (
@@ -76,10 +95,10 @@ function App() {
           <Tab.Screen
             name="Home"
             component={Home}
-            options={({ route }) => ({
+            options={({route}) => ({
               headerShown: false,
               title: 'Home',
-              tabBarStyle: ((route) => {
+              tabBarStyle: (route => {
                 const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
                 if (routeName === 'ItemDetail') {
                   return {display: 'none'};
@@ -98,10 +117,9 @@ function App() {
         <Stack.Navigator>
           <Stack.Screen
             name="SignIn"
-            options={{ headerShown: false, title: '로그인' }}
-          >
-            {() => <LoginScreen setLogin={handleLogin} />}
-          </Stack.Screen>
+            options={{headerShown: false, title: '로그인'}}
+            component={LoginScreen}
+          />
           <Stack.Screen
             name="SignUp"
             component={SignUpScreen}
@@ -118,4 +136,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Provider store={store}>
+      <AppInner />
+    </Provider>
+  );
+}
