@@ -6,7 +6,7 @@ import BlackBasicButton from '../components/BlackBasicButton';
 import {fontSize, vw} from '../constants/design';
 
 //일단은 샘플 데이터로 하기
-import sampleFashionItem from '../models/FashionItem';
+import sampleFashionItem from '../constants/sampleFashionItem';
 
 interface ItemDetailScreenProps {
   item: FashionItem;
