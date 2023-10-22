@@ -1,6 +1,6 @@
 import React from 'react';
 import {TextInput, TextInputProps} from 'react-native-paper';
-import { Text, View } from "react-native";
+import {Text, View} from 'react-native';
 
 interface BasicTextInput extends TextInputProps {
   label: string;
@@ -24,7 +24,7 @@ const BasicTextInput = (props: BasicTextInput) => {
         }}
         onChangeText={props.onChangeText}
         secureTextEntry={props.secureTextEntry}
-        outlineStyle = {{
+        outlineStyle={{
           borderRadius: 10,
         }}
       />

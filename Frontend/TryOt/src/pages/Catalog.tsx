@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Button,
   Dimensions,
@@ -9,10 +9,15 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
 } from 'react-native';
 import {RootStackParamList} from './Home';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import RefinedQuery from '../components/RefinedQuery';
+import {searchItems} from '../api/searchItemsApi';
+import {fetchFashionItemDetails} from '../api/itemDetailApi';
+import {FashionItem} from '../models/FashionItem';
+import CatalogItem from '../components/CatalogItem';
 
 function Catalog({
   navigation,
@@ -25,10 +30,32 @@ function Catalog({
     slidingPanelHeight = height;
   };
 
-  //일단 샘플 데이터로 들어감
-  const navigateToItemDetail = () => {
+  const [items, setItems] = useState<FashionItem[]>([]); // Provide an explicit type
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Call the searchItems API to get item IDs based on the search query
+    searchItems(10, route.params.searchQuery)
+      .then(ids => {
+        Promise.all(ids.map(itemId => fetchFashionItemDetails(itemId)))
+          .then(items => {
+            setItems(items);
+            setLoading(false);
+          })
+          .catch(error => {
+            console.error('Error fetching item details:', error);
+            setLoading(false);
+          });
+      })
+      .catch(error => {
+        console.error('Error searching for items:', error);
+        setLoading(false);
+      });
+  }, [route.params.searchQuery]);
+
+  const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
-    navigation.navigate('ItemDetail', {itemId: '1'});
+    navigation.navigate('ItemDetail', {item});
   };
 
   // @ts-ignore
@@ -38,9 +65,6 @@ function Catalog({
         backgroundColor: 'white',
         height: Dimensions.get('window').height,
       }}>
-      <Button onPress={navigateToItemDetail} title={'test button'}>
-        Test Button
-      </Button>
       <View style={styles.searchQueryInput}>
         <Text style={{color: 'black'}}>{route.params.searchQuery}</Text>
         <Text style={{color: 'gray'}}>x</Text>
@@ -48,7 +72,7 @@ function Catalog({
       <View
         style={styles.refinedQueryShow}
         onTouchStart={() => {
-          panelRef.current?.show(slidingPanelHeight);
+          //panelRef.current?.show(slidingPanelHeight);
         }}>
         <Image
           style={{resizeMode: 'contain', width: '5%', height: '100%'}}
@@ -63,24 +87,17 @@ function Catalog({
         />
       </View>
       <View style={styles.grayBar} />
-      <View style={styles.itemList}>
-        <Image
-          style={{width: '40%', marginTop: 30}}
-          source={require('../assets/dressSample/sample(1).png')}
-        />
-        <Image
-          style={{width: '40%', marginTop: 30}}
-          source={require('../assets/dressSample/sample(2).png')}
-        />
-        <Image
-          style={{width: '40%', marginTop: 30}}
-          source={require('../assets/dressSample/sample(3).png')}
-        />
-        <Image
-          style={{width: '40%', marginTop: 30}}
-          source={require('../assets/dressSample/sample(4).png')}
-        />
-      </View>
+      <ScrollView>
+        <View style={styles.catalogGrid}>
+          {items.map(item => (
+            <CatalogItem
+              key={item.id}
+              fashionItem={item}
+              onNavigateToDetail={navigateToItemDetail}
+            />
+          ))}
+        </View>
+      </ScrollView>
       <SlidingUpPanel
         ref={c => (panelRef.current = c)}
         // draggableRange={{top: Dimensions.get('window').height, bottom: 0}}
@@ -165,6 +182,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'row',
     flexWrap: 'wrap',
+  },
+  catalogGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
   },
   slidingPanel: {
     backgroundColor: 'white',
