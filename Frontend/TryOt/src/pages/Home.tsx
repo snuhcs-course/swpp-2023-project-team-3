@@ -16,7 +16,7 @@ import Catalog from './Catalog';
 import Chat from './Chat';
 import {color, fontSize, vh, vw} from '../constants/design';
 import ItemDetailScreen from './ItemDetailScreen';
-import { FashionItem } from "../models/FashionItem";
+import {FashionItem} from '../models/FashionItem';
 
 function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   const [isCatalog, setIsCatalog] = useState(true);

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { FashionItem } from "../models/FashionItem";
+import {FashionItem} from '../models/FashionItem';
 
 //Base url for calling item detail
 const BASE_URL = 'http://43.201.105.74/items/item-info';

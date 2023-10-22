@@ -10,7 +10,7 @@ import {
 import BlackBasicButton from '../components/BlackBasicButton';
 import BasicTextInput from '../components/BasicTextInput';
 import {PaperProvider} from 'react-native-paper';
-import { color, fontSize, vw } from '../constants/design';
+import {color, fontSize, vw} from '../constants/design';
 
 function SignUpScreen() {
   const [email, setEmail] = React.useState('');
@@ -27,7 +27,12 @@ function SignUpScreen() {
 
   //button disablied
   const isFormValid = () => {
-    return isEmailValid && isPasswordValid && isConfirmPasswordValid && !isUsernameValid;
+    return (
+      isEmailValid &&
+      isPasswordValid &&
+      isConfirmPasswordValid &&
+      !isUsernameValid
+    );
   };
 
   //error messages
@@ -37,7 +42,6 @@ function SignUpScreen() {
   );
   const usernameMessageError = 'Please enter a valid username';
   const confirmPasswordMessageError = 'Passwords do not match';
-
 
   //functions
   const handleEmailChange = (text: string) => {
@@ -119,7 +123,7 @@ function SignUpScreen() {
           />
         </View>
       </View>
-      </View>
+    </View>
   );
 }
 
@@ -133,7 +137,7 @@ const styles = StyleSheet.create({
   },
 
   headerContainer: {
-    width: 90*vw,
+    width: 90 * vw,
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginTop: '10%',
@@ -145,7 +149,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: '100%'
+    height: '100%',
   },
   header: {
     fontSize: fontSize.large,
@@ -153,7 +157,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputContainer: {
-    width: 90*vw,
+    width: 90 * vw,
   },
 });
 

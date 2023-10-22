@@ -44,7 +44,7 @@ function ItemDetailScreen({
           {/* Scroll View */}
           <View style={styles.imageContainer}>
             <Image
-              style={{width: 60 * vw, height: 100 * vw, margin: 3*vw}} //TODO: 배율 조정하기
+              style={{width: 60 * vw, height: 100 * vw, margin: 3 * vw}} //TODO: 배율 조정하기
               source={{uri: item.imageUrl[0].replace(/_54/, '_500')}}
             />
           </View>

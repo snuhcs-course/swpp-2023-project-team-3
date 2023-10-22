@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { FashionItem } from "../models/FashionItem";
-import { fontSize, vw } from "../constants/design";
+import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import {FashionItem} from '../models/FashionItem';
+import {fontSize, vw} from '../constants/design';
 
 const CatalogItem = ({
   fashionItem,
@@ -17,11 +17,13 @@ const CatalogItem = ({
   return (
     <TouchableOpacity onPress={navigateToDetail} style={styles.container}>
       <Image
-        source={{ uri: fashionItem.imageUrl[0].replace(/_54/, '_500') }}
+        source={{uri: fashionItem.imageUrl[0].replace(/_54/, '_500')}}
         style={styles.image}
       />
       <Text style={styles.brand}>{fashionItem.brand}</Text>
-      <Text style={styles.shortDescription}>{fashionItem.shortDescription}</Text>
+      <Text style={styles.shortDescription}>
+        {fashionItem.shortDescription}
+      </Text>
       <View style={styles.priceContainer}>
         <Text style={[styles.price]}>${fashionItem.price}</Text>
       </View>
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 50*vw,
+    height: 50 * vw,
   },
   brand: {
     fontWeight: 'bold',
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
   shortDescription: {
     fontSize: fontSize.small,
     color: 'black',
-    marginBottom: 10*vw,
+    marginBottom: 10 * vw,
   },
   priceContainer: {
     position: 'absolute',
@@ -60,9 +62,8 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: fontSize.middle,
-    color: 'black'
+    color: 'black',
   },
 });
 
 export default CatalogItem;
-

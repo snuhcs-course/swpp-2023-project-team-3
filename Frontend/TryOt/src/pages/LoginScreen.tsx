@@ -6,7 +6,7 @@ import RememberMeButton from '../components/RememberMeButton';
 import TextLikeButton from '../components/TextLikeButton';
 import BlackBasicButton from '../components/BlackBasicButton';
 import {type RootStackNavigation} from '../../App';
-import { color, vw } from '../constants/design';
+import {color, vw} from '../constants/design';
 
 interface LoginScreenProps {
   setLogin: () => void;

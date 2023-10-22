@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Button,
   Dimensions,
@@ -9,15 +9,15 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import {RootStackParamList} from './Home';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import RefinedQuery from '../components/RefinedQuery';
-import { searchItems } from "../api/searchItemsApi";
-import { fetchFashionItemDetails } from "../api/itemDetailApi";
-import { FashionItem } from "../models/FashionItem";
-import CatalogItem from "../components/CatalogItem";
+import {searchItems} from '../api/searchItemsApi';
+import {fetchFashionItemDetails} from '../api/itemDetailApi';
+import {FashionItem} from '../models/FashionItem';
+import CatalogItem from '../components/CatalogItem';
 
 function Catalog({
   navigation,
@@ -38,16 +38,16 @@ function Catalog({
     searchItems(10, route.params.searchQuery)
       .then(ids => {
         Promise.all(ids.map(itemId => fetchFashionItemDetails(itemId)))
-          .then((items) => {
+          .then(items => {
             setItems(items);
             setLoading(false);
           })
-          .catch((error) => {
+          .catch(error => {
             console.error('Error fetching item details:', error);
             setLoading(false);
           });
       })
-      .catch((error) => {
+      .catch(error => {
         console.error('Error searching for items:', error);
         setLoading(false);
       });
@@ -72,7 +72,7 @@ function Catalog({
       <View
         style={styles.refinedQueryShow}
         onTouchStart={() => {
-          panelRef.current?.show(slidingPanelHeight);
+          //panelRef.current?.show(slidingPanelHeight);
         }}>
         <Image
           style={{resizeMode: 'contain', width: '5%', height: '100%'}}
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   catalogGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   slidingPanel: {
     backgroundColor: 'white',
