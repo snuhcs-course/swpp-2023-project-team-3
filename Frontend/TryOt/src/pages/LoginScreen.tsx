@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, {useCallback} from 'react';
 import {Image, View, Dimensions, StyleSheet, Text, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import BasicTextInput from '../components/BasicTextInput';
@@ -6,16 +6,16 @@ import RememberMeButton from '../components/CheckBox';
 import TextLikeButton from '../components/TextLikeButton';
 import BlackBasicButton from '../components/BlackBasicButton';
 import {type RootStackNavigation} from '../../App';
-import { color, vw } from '../constants/design';
+import {color, vw} from '../constants/design';
 import axios from 'axios';
 import userSlice from '../slices/user';
 import Toast from 'react-native-toast-message';
-import { useAppDispatch } from '../store';
-import { serverName } from '../constants/dev';
-import { ActivityIndicator } from 'react-native-paper';
+import {useAppDispatch} from '../store';
+import {serverName} from '../constants/dev';
+import {ActivityIndicator} from 'react-native-paper';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import useCheckBox from '../components/CheckBox';
-import tryAxios from '../util/TryAxios';
+import tryAxios from '../util/tryAxios';
 
 function LoginScreen() {
   const dispatch = useAppDispatch();
@@ -29,7 +29,7 @@ function LoginScreen() {
     navigate('SignUp');
   };
 
-  const [isRememberMe, RememberMeButton] = useCheckBox('Remember Me')
+  const [isRememberMe, RememberMeButton] = useCheckBox('Remember Me');
 
   const onSubmit = useCallback(async () => {
     if (loading) {
@@ -44,23 +44,17 @@ function LoginScreen() {
     try {
       setLoading(true);
       const response = await tryAxios('post', 'login', {
-        username, password
-      })
+        username,
+        password,
+      });
       Toast.show({
         type: 'success',
-        text1: 'login success!'
+        text1: 'login success!',
       });
-      dispatch(
-        userSlice.actions.setUser({
-          username, accessToken : response.token
-        }),
-      );
-      if(isRememberMe){
-        await EncryptedStorage.setItem(
-          'accessToken',
-          response.token,
-        );
+      if (isRememberMe) {
+        await EncryptedStorage.setItem('accessToken', response.token);
       }
+      dispatch(userSlice.actions.setUser(response));
     } catch (error) {
       Alert.alert('알림', 'login fail:(');
     } finally {
@@ -107,11 +101,9 @@ function LoginScreen() {
           <TextLikeButton text={'Forgot Password?'} textColor={'black'} />
         </View>
         <BlackBasicButton
-          buttonText={loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text>Sign In</Text>
-          )}
+          buttonText={
+            loading ? <ActivityIndicator color="white" /> : <Text>Sign In</Text>
+          }
           title={'Sign In'}
           onClick={onSubmit}
           isButtonActive={isButtonActive}

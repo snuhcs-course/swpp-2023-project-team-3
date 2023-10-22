@@ -11,13 +11,13 @@ import {
 import BlackBasicButton from '../components/BlackBasicButton';
 import BasicTextInput from '../components/BasicTextInput';
 import {ActivityIndicator, PaperProvider} from 'react-native-paper';
-import { color, fontSize, vw } from '../constants/design';
+import {color, fontSize, vw} from '../constants/design';
 import axios from 'axios';
-import { serverName } from '../constants/dev';
-import { useNavigation } from '@react-navigation/native';
-import { RootStackNavigation } from '../../App';
+import {serverName} from '../constants/dev';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackNavigation} from '../../App';
 import Toast from 'react-native-toast-message';
-import tryAxios from '../util/TryAxios';
+import tryAxios from '../util/tryAxios';
 
 function SignUpScreen() {
   const [loading, setLoading] = React.useState(false);
@@ -34,11 +34,16 @@ function SignUpScreen() {
     React.useState(true);
 
   //navigation for page transition
-  const {navigate} = useNavigation<RootStackNavigation>();   
-    
+  const {navigate} = useNavigation<RootStackNavigation>();
+
   //button disablied
   const isFormValid = () => {
-    return isEmailValid && isPasswordValid && isConfirmPasswordValid && !isUsernameValid;
+    return (
+      isEmailValid &&
+      isPasswordValid &&
+      isConfirmPasswordValid &&
+      !isUsernameValid
+    );
   };
 
   //error messages
@@ -81,15 +86,20 @@ function SignUpScreen() {
     try {
       setLoading(true);
       const response = await tryAxios('post', 'register', {
-        username, password, email, gender : "female", age : 10,nickname : 'hello2'
-      })
+        username,
+        password,
+        email,
+        gender: 'F',
+        age: 10,
+        nickname: 'hello2',
+      });
       Toast.show({
         type: 'success',
-        text1: 'sign up success!'
+        text1: 'sign up success!',
       });
       navigate('SignIn');
     } catch (error) {
-        Alert.alert('notification', 'Sign up fail');
+      Alert.alert('notification', 'Sign up fail');
     } finally {
       setLoading(false);
     }
@@ -150,9 +160,9 @@ function SignUpScreen() {
               isValid={isEmailValid}
               errorMessage={emailMessageError}
             />
-            <BasicTextInput 
-              label={'Username'} 
-              onChangeText={text=>setUsername(text)}
+            <BasicTextInput
+              label={'Username'}
+              onChangeText={text => setUsername(text)}
             />
             <BasicTextInput
               label={'Password'}
@@ -172,18 +182,20 @@ function SignUpScreen() {
         </View>
         <View style={styles.inputContainer}>
           <BlackBasicButton
-            buttonText={loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text>Create Account</Text>
-            )}
+            buttonText={
+              loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text>Create Account</Text>
+              )
+            }
             title={'Create Account'}
             isButtonActive={isFormValid()}
             onClick={onSubmit}
           />
         </View>
       </View>
-      </View>
+    </View>
   );
 }
 
@@ -197,7 +209,7 @@ const styles = StyleSheet.create({
   },
 
   headerContainer: {
-    width: 90*vw,
+    width: 90 * vw,
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginTop: '10%',
@@ -209,7 +221,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: '100%'
+    height: '100%',
   },
   header: {
     fontSize: fontSize.large,
@@ -217,7 +229,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputContainer: {
-    width: 90*vw,
+    width: 90 * vw,
   },
 });
 
