@@ -1,7 +1,7 @@
 export interface RequestTypes {
   post: {
-    login: LogInInfo;
-    register: Omit<UserInfo & LogInInfo, 'id'>;
+    'user/signin': LogInInfo;
+    'user/register': Omit<UserInfo & LogInInfo, 'id'>;
   };
   delete: {};
   get: {
@@ -11,8 +11,8 @@ export interface RequestTypes {
 
 export interface ResponseTypes {
   post: {
-    login: UserInfo & Token;
-    register: {};
+    'user/signin': UserInfo & Token;
+    'user/register': {};
   };
   delete: {};
   get: {

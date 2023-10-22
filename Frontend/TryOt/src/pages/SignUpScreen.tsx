@@ -85,13 +85,13 @@ function SignUpScreen() {
     }
     try {
       setLoading(true);
-      const response = await tryAxios('post', 'register', {
+      const response = await tryAxios('post', 'user/register', {
         username,
         password,
         email,
         gender: 'F',
         age: 10,
-        nickname: 'hello2',
+        nickname: 'test',
       });
       Toast.show({
         type: 'success',
