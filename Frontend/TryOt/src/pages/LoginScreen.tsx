@@ -1,22 +1,18 @@
 import React, {useCallback} from 'react';
-import {Image, View, Dimensions, StyleSheet, Text, Alert} from 'react-native';
+import {Image, View, StyleSheet, Text, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import BasicTextInput from '../components/BasicTextInput';
-import RememberMeButton from '../components/CheckBox';
 import TextLikeButton from '../components/TextLikeButton';
 import BlackBasicButton from '../components/BlackBasicButton';
 import {type RootStackNavigation} from '../../App';
 import {color, vw} from '../constants/design';
-import axios from 'axios';
 import userSlice from '../slices/user';
 import Toast from 'react-native-toast-message';
 import {useAppDispatch} from '../store';
-import {serverName} from '../constants/dev';
 import {ActivityIndicator} from 'react-native-paper';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import useCheckBox from '../components/CheckBox';
 import tryAxios from '../util/tryAxios';
-
 
 function LoginScreen() {
   const dispatch = useAppDispatch();
@@ -29,7 +25,6 @@ function LoginScreen() {
   const handleSignUpClick = () => {
     navigate('SignUp');
   };
-
   const [isRememberMe, RememberMeButton] = useCheckBox('Remember Me');
 
   const onSubmit = useCallback(async () => {
@@ -44,7 +39,7 @@ function LoginScreen() {
     }
     try {
       setLoading(true);
-      const response = await tryAxios('post', 'login', {
+      const response = await tryAxios('post', 'user/login/', {
         username,
         password,
       });

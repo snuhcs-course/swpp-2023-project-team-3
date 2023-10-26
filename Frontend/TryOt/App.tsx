@@ -49,7 +49,8 @@ function AppInner() {
         if (!token) {
           return;
         }
-        const response = await tryAxios('get', 'user/token-check', {token});
+        //TODO - token parameter
+        const response = await tryAxios('get', 'user/token-check/', {token});
         dispatch(userSlice.actions.setUser(response));
         await EncryptedStorage.setItem('accessToken', response.token);
       } catch (error) {
