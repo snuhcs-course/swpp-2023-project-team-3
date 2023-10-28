@@ -9,14 +9,7 @@ import pandas as pd
 cwd = os.getcwd()
 model_dir = "model_config"
 MODEL_PATH = os.path.join(cwd, model_dir)
-
-"""
-before run this code
-model = CLIPModel.from_pretrained("patrickjohncyh/fashion-clip")
-processor = CLIPProcessor.from_pretrained("patrickjohncyh/fashion-clip")
-model.save_pretrained("./model_config")
-processor.save_pretrained("./model_config)
-"""
+FASHIONCLIP_SOURCE = "patrickjohncyh/fashion-clip"
 
 class ClipTextEmbedding(object):
     model = None 
@@ -33,8 +26,14 @@ class ClipTextEmbedding(object):
     @classmethod
     def _get_model(cls):
         if cls.model == None:
-            model = CLIPModel.from_pretrained(MODEL_PATH)
-            processor = CLIPProcessor.from_pretrained(MODEL_PATH)
+            if os.path.exists(MODEL_PATH) == False:
+                model = CLIPModel.from_pretrained(FASHIONCLIP_SOURCE)
+                processor = CLIPProcessor.from_pretrained(FASHIONCLIP_SOURCE)
+                model.save_pretrained(MODEL_PATH)
+                processor.save_pretrained(MODEL_PATH)
+            else :
+                model = CLIPModel.from_pretrained(MODEL_PATH)
+                processor = CLIPProcessor.from_pretrained(MODEL_PATH)
         return model, processor
 
     @classmethod
