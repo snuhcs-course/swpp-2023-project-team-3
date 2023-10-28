@@ -9,16 +9,26 @@ interface SearchItemsResponse {
   user_id: number;
   item_ids: string[];
   timestamp: number;
+  gpt_usable: boolean;
+  text: string[]; //refined_queries
+  target_index: string[];
 }
+
+//reponse: 0, 1, 2
 
 export const searchItems = async (
   userId: number,
-  searchText: string,
+  searchText: string[],
+  gpt_usable: boolean,
+  target_index: string[],
+
 ): Promise<string[]> => {
   try {
     const requestBody = {
       user_id: 10, //테스트라서 10으로 고정
       text: searchText,
+      gpt_usable: gpt_usable,
+      target_index: target_index,
     };
 
     const response = await axios.post<SearchItemsResponse>(

@@ -1,14 +1,18 @@
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import { Switch } from 'react-native-paper';
+import {useState} from 'react';
+import BlackBasicButton from "./BlackBasicButton";
 
 export default function RefinedQuery({query}: {query: string}) {
+  const [isSwitchOn, setIsSwitchOn] = useState(true);
+  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+
   return (
     <View style={styles.queryWrapper}>
       <Text style={[styles.refinedQuery, {fontSize: 15, fontWeight: 'normal'}]}>
-        blah blah blah
+        {query}
       </Text>
-      <Text style={[styles.refinedQuery, {fontSize: 15, color: 'gray'}]}>
-        X
-      </Text>
+      <Switch value={isSwitchOn} onValueChange={onToggleSwitch}/>
     </View>
   );
 }

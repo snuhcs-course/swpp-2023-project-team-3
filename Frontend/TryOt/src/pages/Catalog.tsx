@@ -18,11 +18,12 @@ import {searchItems} from '../api/searchItemsApi';
 import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import {FashionItem} from '../models/FashionItem';
 import CatalogItem from '../components/CatalogItem';
+import QueryRefineModal from "../components/QueryRefineModal";
 
 function Catalog({
-  navigation,
-  route,
-}: NativeStackScreenProps<RootStackParamList, 'Catalog'>) {
+                   navigation,
+                   route,
+                 }: NativeStackScreenProps<RootStackParamList, 'Catalog'>) {
   const panelRef = useRef<SlidingUpPanel | null>(null);
   let slidingPanelHeight: number;
   const onLayout = (event: LayoutChangeEvent) => {
@@ -36,21 +37,21 @@ function Catalog({
   useEffect(() => {
     // Call the searchItems API to get item IDs based on the search query
     searchItems(10, route.params.searchQuery)
-      .then(ids => {
-        Promise.all(ids.map(itemId => fetchFashionItemDetails(itemId)))
-          .then(items => {
-            setItems(items);
-            setLoading(false);
-          })
-          .catch(error => {
-            console.error('Error fetching item details:', error);
-            setLoading(false);
-          });
-      })
-      .catch(error => {
-        console.error('Error searching for items:', error);
-        setLoading(false);
-      });
+        .then(ids => {
+          Promise.all(ids.map(itemId => fetchFashionItemDetails(itemId)))
+              .then(items => {
+                setItems(items);
+                setLoading(false);
+              })
+              .catch(error => {
+                console.error('Error fetching item details:', error);
+                setLoading(false);
+              });
+        })
+        .catch(error => {
+          console.error('Error searching for items:', error);
+          setLoading(false);
+        });
   }, [route.params.searchQuery]);
 
   const navigateToItemDetail = (item: FashionItem) => {
@@ -60,91 +61,46 @@ function Catalog({
 
   // @ts-ignore
   return (
-    <View
-      style={{
-        backgroundColor: 'white',
-        height: Dimensions.get('window').height,
-      }}>
-      <View style={styles.searchQueryInput}>
-        <Text style={{color: 'black'}}>{route.params.searchQuery}</Text>
-        <Text style={{color: 'gray'}}>x</Text>
-      </View>
       <View
-        style={styles.refinedQueryShow}
-        onTouchStart={() => {
-          //panelRef.current?.show(slidingPanelHeight);
-        }}>
-        <Image
-          style={{resizeMode: 'contain', width: '5%', height: '100%'}}
-          source={require('../assets/Icon/Vector.png')}
-        />
-        <Text style={{color: 'black'}}>
-          GPT has refined your query into new queries
-        </Text>
-        <Image
-          style={{resizeMode: 'contain', width: '5%', height: '100%'}}
-          source={require('../assets/Icon/Arrow.png')}
-        />
-      </View>
-      <View style={styles.grayBar} />
-      <ScrollView>
-        <View style={styles.catalogGrid}>
-          {items.map(item => (
-            <CatalogItem
-              key={item.id}
-              fashionItem={item}
-              onNavigateToDetail={navigateToItemDetail}
-            />
-          ))}
+          style={{
+            backgroundColor: 'white',
+            height: Dimensions.get('window').height,
+          }}>
+        <View style={styles.searchQueryInput}>
+          <Text style={{color: 'black'}}>{route.params.searchQuery}</Text>
+          <Text style={{color: 'gray'}}>x</Text>
         </View>
-      </ScrollView>
-      <SlidingUpPanel
-        ref={c => (panelRef.current = c)}
-        // draggableRange={{top: Dimensions.get('window').height, bottom: 0}}
-      >
-        <View style={styles.slidingPanel} onLayout={onLayout}>
-          <Pressable
-            style={[
-              styles.grayBar,
-              {width: 50, marginVertical: 10, borderRadius: 10},
-            ]}
-            onPress={() => {
-              panelRef.current?.hide();
-            }}
+        <View
+            style={styles.refinedQueryShow}
+            onTouchStart={() => {
+              panelRef.current?.show(slidingPanelHeight);
+            }}>
+          <Image
+              style={{resizeMode: 'contain', width: '5%', height: '100%'}}
+              source={require('../assets/Icon/Vector.png')}
           />
-          <View style={{alignSelf: 'flex-start', paddingLeft: '5%'}}>
-            <Text
-              style={[
-                styles.slidingPanelText,
-                {fontSize: 20, marginVertical: '5%'},
-              ]}>
-              Query Refinement
-            </Text>
-            <Text style={[styles.slidingPanelText, {fontSize: 18}]}>
-              Original Query
-            </Text>
-            <Text
-              style={[
-                styles.slidingPanelText,
-                {fontSize: 15, fontWeight: 'normal'},
-              ]}>
-              {route.params.searchQuery}
-            </Text>
-            <Text
-              style={[
-                styles.slidingPanelText,
-                {fontSize: 18, marginTop: '5%'},
-              ]}>
-              GPT Refined Query
-            </Text>
-            <RefinedQuery query="blah blah blah" />
-            <RefinedQuery query="blah blah blah" />
-            <RefinedQuery query="blah blah blah" />
-            <RefinedQuery query="blah blah blah" />
-          </View>
+          <Text style={{color: 'black'}}>
+            GPT has refined your query into new queries
+          </Text>
+          <Image
+              style={{resizeMode: 'contain', width: '5%', height: '100%'}}
+              source={require('../assets/Icon/Arrow.png')}
+          />
         </View>
-      </SlidingUpPanel>
-    </View>
+        <View style={styles.grayBar} />
+        <ScrollView>
+          <View style={styles.catalogGrid}>
+            {items.map(item => (
+                <CatalogItem
+                    key={item.id}
+                    fashionItem={item}
+                    onNavigateToDetail={navigateToItemDetail}
+                />
+            ))}
+          </View>
+        </ScrollView>
+          <QueryRefineModal bottomSheetModalRef={panelRef} refinedQueries={["This is original query", "This is refined query"]} />
+      </View>
   );
 }
 
