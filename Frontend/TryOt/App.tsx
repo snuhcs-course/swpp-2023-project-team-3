@@ -8,18 +8,18 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useState, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import LoginScreen from './src/pages/LoginScreen';
-import SignUpScreen from './src/pages/SignUpScreen';
-import Home from './src/pages/Home';
-import SearchHistory from './src/pages/SearchHistory';
-import MyTab from './src/pages/MyTab';
+import LoginScreen from './src/screens/LoginScreen';
+import SignUpScreen from './src/screens/SignUpScreen';
+import Home from './src/screens/Home';
+import SearchHistory from './src/screens/SearchHistory';
+import MyTab from './src/screens/MyTab';
 import Toast from 'react-native-toast-message';
 import {Provider, useSelector} from 'react-redux';
 import store, {useAppDispatch} from './src/store';
 import {RootState} from './src/store/reducer';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import userSlice from './src/slices/user';
-import {Alert} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import tryAxios from './src/util/tryAxios';
 
 export type LoggedInParamList = {
@@ -64,8 +64,15 @@ function AppInner() {
       {isLoggedIn ? (
         <Tab.Navigator
           screenOptions={({route}) => ({
+            tabBarStyle: {
+              backgroundColor: 'black',
+              position: 'absolute',
+            },
+
+            tabBarActiveTintColor: 'white',
+
             tabBarIcon: ({focused, color, size}) => {
-              let iconName: string;
+              let iconName = "";
 
               if (route.name === 'Home') {
                 iconName = focused ? 'home' : 'home-outline';
@@ -76,12 +83,11 @@ function AppInner() {
               }
 
               return (
-                <Icon
-                  //@ts-ignore
-                  name={iconName}
-                  size={size}
-                  color={color}
-                />
+                  <Icon
+                      name={iconName}
+                      size={size}
+                      color={color}
+                  />
               );
             },
           })}>
@@ -104,7 +110,7 @@ function AppInner() {
                 if (routeName === 'ItemDetail') {
                   return {display: 'none'};
                 }
-                return;
+                return { backgroundColor: 'black', position: 'absolute'}
               })(route),
             })}
           />
