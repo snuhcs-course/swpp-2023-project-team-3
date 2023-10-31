@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Dimensions,
   Image, ScrollView,
@@ -31,8 +31,13 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
       searchQuery: inputText,
     });
   };
-  const randomIndex = Math.floor(Math.random() * queryPlaceholders.length);
-  const placeholderText = queryPlaceholders[randomIndex];
+
+  const [placeholderText, setPlaceholderText] = useState('');
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * queryPlaceholders.length);
+    const placeholderText = queryPlaceholders[randomIndex];
+    setPlaceholderText(placeholderText);
+  }, []);
 
   return (
         <View>
