@@ -66,11 +66,10 @@ function AppInner() {
           screenOptions={({route}) => ({
             tabBarStyle: {
               backgroundColor: 'black',
-              position: 'absolute',
             },
 
             tabBarActiveTintColor: 'white',
-
+            tabBarHideOnKeyboard: true,
             tabBarIcon: ({focused, color, size}) => {
               let iconName = "";
 
@@ -110,7 +109,7 @@ function AppInner() {
                 if (routeName === 'ItemDetail') {
                   return {display: 'none'};
                 }
-                return { backgroundColor: 'black', position: 'absolute'}
+                return { backgroundColor: 'black', tabBarHideOnKeyboard: true}
               })(route),
             })}
           />
