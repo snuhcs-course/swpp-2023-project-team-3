@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {
   Dimensions,
-  Image,
+  Image, ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -30,44 +30,46 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
     });
   };
   return (
-    <DismissKeyboardView>
-      <View style={styles.inputWrapper}>
-        <View>
-          <Text style={styles.titleText}>FInD YOUR STYLE</Text>
-        </View>
-        <View style={styles.optionWrapper}>
-          <Text
-            style={[styles.optionText, isCatalog ? styles.choosenText : {}]}
-            onPress={onPressHandler}>
-            Catalog
-          </Text>
-          <Text
-            onPress={onPressHandler}
-            style={[styles.optionText, isCatalog ? {} : styles.choosenText]}>
-            Chat
-          </Text>
-        </View>
-        <View style={styles.inputTextWrapper}>
-          <Image
-            style={styles.textInnerImage}
-            source={require('../assets/Icon/Logo_Black.png')}
-          />
-          <TextInput
-            style={styles.inputText}
-            placeholder="찾고 싶은 스타일을 입력해주세요"
-            placeholderTextColor="#666"
-            importantForAutofill="yes"
-            returnKeyType="next"
-            clearButtonMode="while-editing"
-            blurOnSubmit={false}
-            onSubmitEditing={onSubmitEditingHandler}
-            onChangeText={text => {
-              setInputText(text);
-            }}
-          />
-        </View>
-      </View>
-    </DismissKeyboardView>
+      <DismissKeyboardView>
+        <ScrollView keyboardShouldPersistTaps="handled">
+          <View style={styles.inputWrapper}>
+            <View>
+              <Text style={styles.titleText}>FInD YOUR STYLE</Text>
+            </View>
+            <View style={styles.optionWrapper}>
+              <Text
+                  style={[styles.optionText, isCatalog ? styles.choosenText : {}]}
+                  onPress={onPressHandler}>
+                Catalog
+              </Text>
+              <Text
+                  onPress={onPressHandler}
+                  style={[styles.optionText, isCatalog ? {} : styles.choosenText]}>
+                Chat
+              </Text>
+            </View>
+            <View style={styles.inputTextWrapper}>
+              <Image
+                  style={styles.textInnerImage}
+                  source={require('../assets/Icon/Logo_Black.png')}
+              />
+              <TextInput
+                  style={styles.inputText}
+                  placeholder="찾고 싶은 스타일을 입력해주세요"
+                  placeholderTextColor="#666"
+                  importantForAutofill="yes"
+                  returnKeyType="next"
+                  clearButtonMode="while-editing"
+                  blurOnSubmit={false}
+                  onSubmitEditing={onSubmitEditingHandler}
+                  onChangeText={text => {
+                    setInputText(text);
+                  }}
+              />
+            </View>
+          </View>
+        </ScrollView>
+      </DismissKeyboardView>
   );
 }
 

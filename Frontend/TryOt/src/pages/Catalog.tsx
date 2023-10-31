@@ -1,15 +1,15 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect, useRef, useState} from 'react';
 import {
-  Button,
-  Dimensions,
-  Image,
-  LayoutChangeEvent,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
+    Button,
+    Dimensions,
+    Image,
+    LayoutChangeEvent,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
+    ScrollView, TextInput,
 } from 'react-native';
 import {RootStackParamList} from './Home';
 import SlidingUpPanel from 'rn-sliding-up-panel';
@@ -31,33 +31,65 @@ function Catalog({
     slidingPanelHeight = height;
   };
 
-  const [items, setItems] = useState<FashionItem[]>([]); // Provide an explicit type
+  const [query, setQuery] = useState<string>(route.params.searchQuery);
+  const [items, setItems] = useState<FashionItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQueries, setSearchQueries] = useState<string[]>([query]);
+  const [targetIndex,setTargetIndex] = useState<number[]>([1,0,0,0]); //TODO: 이거 글로벌 값으로 대체
+    const [gptUsable, setGPTUsable] = useState<number>(0); //TODO: 이거 글로벌 값으로 대체
 
-  useEffect(() => {
-    // Call the searchItems API to get item IDs based on the search query
-    searchItems(10, route.params.searchQuery)
-        .then(ids => {
-          Promise.all(ids.map(itemId => fetchFashionItemDetails(itemId)))
-              .then(items => {
-                setItems(items);
-                setLoading(false);
-              })
-              .catch(error => {
-                console.error('Error fetching item details:', error);
-                setLoading(false);
-              });
-        })
-        .catch(error => {
-          console.error('Error searching for items:', error);
-          setLoading(false);
+
+
+    const handleRefineSearch = () => {
+        fetchData().catch(error => {
+            console.log(error);
         });
-  }, [route.params.searchQuery]);
+    }
 
-  const navigateToItemDetail = (item: FashionItem) => {
+    async function fetchData() {
+        setItems([]);
+        console.log("call fetch data");
+        if (panelRef.current) {
+            panelRef.current.hide();
+        }
+
+        setLoading(true);
+        try {
+            const response = await searchItems(10, searchQueries, gptUsable, targetIndex);
+            console.log("current gpt usable: ", gptUsable);
+            setTargetIndex(response.target_index);
+            setSearchQueries(response.text);
+
+            //TODO: fix to use flat list and pagination
+            const first20ItemIds = response.item_ids.slice(0, 20); // Extract the first 20 item_ids
+            console.log(first20ItemIds);
+            const itemDetails = await Promise.all(first20ItemIds.map(itemId => fetchFashionItemDetails(itemId)));
+            setItems(itemDetails);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchData().catch(error => {
+            console.log(error);
+        });
+    }, [route.params.searchQuery]);
+
+
+    const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
     navigation.navigate('ItemDetail', {item});
   };
+
+    const changeQueryText = (text: string) => {
+        setQuery(text);
+        setTargetIndex([1,0,0,0]);
+        setSearchQueries([text]);
+        //이때부터 새로운 지피티 use start
+    }
 
   // @ts-ignore
   return (
@@ -66,10 +98,16 @@ function Catalog({
             backgroundColor: 'white',
             height: Dimensions.get('window').height,
           }}>
-        <View style={styles.searchQueryInput}>
-          <Text style={{color: 'black'}}>{route.params.searchQuery}</Text>
-          <Text style={{color: 'gray'}}>x</Text>
-        </View>
+          <TextInput
+              style={styles.searchQueryInput}
+              value={query}
+              onChangeText={changeQueryText}
+              importantForAutofill="yes"
+              returnKeyType="next"
+              clearButtonMode="while-editing"
+              onSubmitEditing={handleRefineSearch}
+              blurOnSubmit={false}
+          />
         <View
             style={styles.refinedQueryShow}
             onTouchStart={() => {
@@ -99,7 +137,7 @@ function Catalog({
             ))}
           </View>
         </ScrollView>
-          <QueryRefineModal bottomSheetModalRef={panelRef} refinedQueries={["This is original query", "This is refined query"]} />
+          <QueryRefineModal onSearch={fetchData} onLayout={onLayout} bottomSheetModalRef={panelRef} refinedQueries={searchQueries}  setTargetIndex={setTargetIndex} targetIndex={targetIndex} setGPTUsable={setGPTUsable}/>
       </View>
   );
 }
@@ -107,12 +145,12 @@ function Catalog({
 const styles = StyleSheet.create({
   searchQueryInput: {
     padding: 10,
-    paddingRight: 20,
     width: Dimensions.get('screen').width * 0.9,
+      height: Dimensions.get('screen').height * 0.05,
     margin: Dimensions.get('screen').width * 0.05,
     marginBottom: 10,
     backgroundColor: '#eee',
-    borderRadius: 5,
+    borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

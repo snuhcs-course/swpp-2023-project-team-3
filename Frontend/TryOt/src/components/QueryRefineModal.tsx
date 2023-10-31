@@ -1,18 +1,36 @@
-import React from 'react';
-import {View, Text, StyleSheet, Pressable, Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, Pressable, Dimensions, LayoutChangeEvent, Button} from 'react-native';
 import RefinedQuery from "./RefinedQuery";
 import SlidingUpPanel from "rn-sliding-up-panel";
 import BlackBasicButton from "./BlackBasicButton";
+import {searchItems} from "../api/searchItemsApi";
+import {fetchFashionItemDetails} from "../api/itemDetailApi";
+import BasicTextInput from "./BasicTextInput";
 
 interface QueryRefineModalProps {
-    onLayout: () => void;
+    targetIndex: number[],
+    setTargetIndex: (targetIndex: number[]) => void,
+    onLayout: (event: LayoutChangeEvent) => void;
     bottomSheetModalRef: any;
     refinedQueries: string[]; // Original + refined queries (length of 6)
-    onSearch?: (targetIndex: string[]) => void;
+    onSearch: () => void;
     onClose?: () => void;
+   setGPTUsable: (gpt_usable: number) => void;
 }
 
-function QueryRefineModal({onLayout, bottomSheetModalRef, refinedQueries}: QueryRefineModalProps) {
+function QueryRefineModal({onSearch, targetIndex, setTargetIndex, onLayout, bottomSheetModalRef, refinedQueries, setGPTUsable}: QueryRefineModalProps) {
+    const handleToggleSwitch = (index: number) => {
+        const updatedTargetIndex = [...targetIndex];
+        updatedTargetIndex[index+1] = updatedTargetIndex[index+1] === 1 ? 0 : 1;
+        setTargetIndex(updatedTargetIndex);
+        console.log(updatedTargetIndex);
+    };
+
+    const handleSearch = () => {
+        onSearch();
+        bottomSheetModalRef.current?.hide();
+    }
+
     return (
         <SlidingUpPanel ref={bottomSheetModalRef}>
             <View style={styles.slidingPanel} onLayout={onLayout}>
@@ -36,6 +54,10 @@ function QueryRefineModal({onLayout, bottomSheetModalRef, refinedQueries}: Query
                     <Text style={[styles.slidingPanelText, {fontSize: 18}]}>
                         Original Query
                     </Text>
+                    <Button title={"Turn on GPT"} onPress={() => {
+                        setGPTUsable(1);
+                    }}
+                    />
                     <Text
                         style={[
                             styles.slidingPanelText,
@@ -51,10 +73,10 @@ function QueryRefineModal({onLayout, bottomSheetModalRef, refinedQueries}: Query
                         GPT Refined Query
                     </Text>
                     {refinedQueries.slice(1).map((query, index) => (
-                        <RefinedQuery key={index} query={query} />
+                        <RefinedQuery key={index} query={query} handleToggleSwitch={handleToggleSwitch} index={index} />
                     ))}
                 </View>
-                <BlackBasicButton buttonText={"Regenerate Search"} isButtonActive={true} title={"Regenerate Search"} />
+                <BlackBasicButton buttonText={"Regenerate Search"} isButtonActive={true} title={"Regenerate Search"} onClick={handleSearch}/>
             </View>
         </SlidingUpPanel>
     );
@@ -78,6 +100,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
         marginBottom: 20,
+        zIndex: 1.
     },
     searchButton: {
         backgroundColor: 'blue',

@@ -1,11 +1,19 @@
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import { Switch } from 'react-native-paper';
 import {useState} from 'react';
-import BlackBasicButton from "./BlackBasicButton";
 
-export default function RefinedQuery({query}: {query: string}) {
+interface RefinedQueryProps {
+  query: string;
+  handleToggleSwitch: (index: number) => void;
+  index: number,
+}
+
+export default function RefinedQuery({ query, handleToggleSwitch, index}: RefinedQueryProps) {
   const [isSwitchOn, setIsSwitchOn] = useState(true);
-  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+  const onToggleSwitch = () => {
+    setIsSwitchOn(!isSwitchOn);
+    handleToggleSwitch(index);
+  }
 
   return (
     <View style={styles.queryWrapper}>
