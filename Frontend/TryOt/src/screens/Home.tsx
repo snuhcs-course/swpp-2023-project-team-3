@@ -8,6 +8,8 @@ import {
   View,
 } from 'react-native';
 
+import {queryPlaceholders} from "../constants/queryPlaceholders";
+
 import {
   NativeStackScreenProps,
   createNativeStackNavigator,
@@ -29,6 +31,9 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
       searchQuery: inputText,
     });
   };
+  const randomIndex = Math.floor(Math.random() * queryPlaceholders.length);
+  const placeholderText = queryPlaceholders[randomIndex];
+
   return (
         <View>
           <View style={styles.inputWrapper}>
@@ -54,7 +59,7 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
               />
               <TextInput
                   style={styles.inputText}
-                  placeholder="cottagecore style.."
+                  placeholder={placeholderText}
                   placeholderTextColor="#666"
                   importantForAutofill="yes"
                   returnKeyType="next"
