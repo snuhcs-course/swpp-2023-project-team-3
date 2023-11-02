@@ -1,3 +1,4 @@
+from flask_restx import Api, Resource, reqparse
 from typing import List
 import os
 import json
@@ -7,6 +8,9 @@ from datetime import datetime
 from gpt import GPT
 
 app = Flask(__name__)
+api = Api(app, version='1.0', title='API 문서', description='Swagger 문서', doc="/api-docs")
+test_api = api.namespace('test', description='조회 API')
+
 fclip = ClipTextEmbedding()
 gpt = GPT()
 
@@ -19,12 +23,19 @@ def inputQuery(queryList:List[str])->List[int]:
     itemIDList = itemdf['id'].tolist()
     return itemIDList
 
-# django_api_url = "http://your-django-api-url.com"  # Replace with the actual URL
+@test_api.route('/')
+class Test(Resource):
+    def get(self):
+        health = fclip._check_model()
+        status = 200 if health else 404
+        return Response(response="\n", status=status, mimetype="application/json")
+    
+    def post(self):
+        return Response(response=output, status=status, mimetype="application/json")
 
 @app.route("/ping", methods=["GET"])
 def ping():
     health = fclip._check_model()  # You can insert a health check here
-
     status = 200 if health else 404
     return Response(response="\n", status=status, mimetype="application/json")
 
@@ -40,7 +51,7 @@ def predict():
         {
             "user_id" : 1203,
             "gpt_usable" : 0 | 1, Number
-            "text" : ["A-Line Dresses and Skirts", "NA", "NA", "NA"] // first index of list is user query for default
+            "text" : ["A-Line Dresses and Skirts"] // first index of list is user query for default
             "target_index" : [1, 0|1, 0|1, 0|1]
         }
         """
@@ -66,7 +77,7 @@ def predict():
                 if index != 0 and targetIndex[index] == 1:
                     queryList.append(inputs['text'][index].strip())
             itemIDList = inputQuery(queryList)
-            outReason = "Sucess!"
+            outReason = 0
         else : 
             # gpt를 처음 쓸 때
             gptResponse = gpt.get_response(inputs['text'][0])
@@ -74,7 +85,6 @@ def predict():
             print(gptResponse)
             try : 
                 gptResponses = gptResponse.split(",")
-                print(gptResponses)
                 gptInputs = gptResponses[1:]
             except :
                 outReason = 1
@@ -85,9 +95,11 @@ def predict():
                     if cnt < 3:
                         responseQueryList.append(query.strip())
                         queryList.append(query.strip())
-                print(len(queryList))
                 itemIDList = inputQuery(queryList)
-                outReason = "Sucess!"
+                targetIndex = []
+                for i in range(len(queryList)):
+                    targetIndex.append(1)
+                outReason = 0
             else :
                 outReason = 2
     else :
@@ -97,39 +109,14 @@ def predict():
             if index != 0 and targetIndex[index] == 1:
                 queryList.append(inputs['text'][index].strip())
             itemIDList = inputQuery(queryList)
-            outReason = "Sucess!"
+            outReason = 0
     usedQuery = responseQueryList
-    output = {"response":outReason, "user_id" : user_id, "text":usedQuery, 'target_index':targetIndex, "item_ids":itemIDList, "timestamp" : timestamp}
+    output = {"response":outReason, "gpt_usable":gptUsable, "user_id" : user_id, "text":usedQuery, 'target_index':targetIndex, "item_ids":itemIDList, "timestamp" : timestamp}
     
-    # async def send_data_to_django():
-    #     async with httpx.AsyncClient() as client:
-    #         payload = {
-    #             "user_id": user_id,
-    #             "query": inputText,
-    #             "is_deleted" : False,
-    #             "timestamp" : timestamp
-    #         }
-    #         response = await client.post("django", json=payload)
-
-    #         if response.status == 200:
-    #             pass
-    #         else:
-    #             pass
-
-    #         output = {
-    #             "response": "Success",
-    #             "user_id": user_id,
-    #             "item_ids": itemIDList,
-    #             "timestamp": timestamp,
-    #         }
-    #         return output
-
-    # send_data_to_django()
-
     """
     Response body
     {
-        "response" : string,
+        "response" : number,
         "user_id" : number,
         "text" : String[],
         "target_index : Integer[],
