@@ -2,14 +2,15 @@ import {createSlice} from '@reduxjs/toolkit';
 import {Token, UserInfo} from '../types/server';
 
 const initialState: UserInfo & Token = {
-  id: '',
-  username: '',
+  id: 'initial',
+  username: 'initialUsername',
   age: 20,
   gender: 'female',
-  email: '',
+  email: 'initalEmail',
   token: '',
-  nickname: '',
+  nickname: 'initialNickname',
 };
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
