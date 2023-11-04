@@ -161,7 +161,6 @@ export default function Home() {
           headerTintColor: 'black',
         }}
       />
-
       <Stack.Screen
         name="Catalog"
         component={Catalog as any}

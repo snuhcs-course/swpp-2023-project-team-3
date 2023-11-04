@@ -12,7 +12,7 @@ import LoginScreen from './src/pages/LoginScreen';
 import SignUpScreen from './src/pages/SignUpScreen';
 import Home from './src/pages/Home';
 import SearchHistory from './src/pages/SearchHistory';
-import MyTab from './src/pages/MyTab';
+import MyTab from './src/pages/MyTab/MyTab';
 import Toast from 'react-native-toast-message';
 import {Provider, useSelector} from 'react-redux';
 import store, {useAppDispatch} from './src/store';
@@ -21,11 +21,13 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import userSlice from './src/slices/user';
 import {Alert} from 'react-native';
 import tryAxios from './src/util/tryAxios';
+import ChangePasswordScreen from "./src/pages/MyTab/ChangePasswordScreen";
 
 export type LoggedInParamList = {
   MyTab: undefined;
   Home: undefined;
   SearchHistory: undefined;
+  ChangePassword: undefined;
 };
 
 export type RootStackParamList = {
@@ -62,58 +64,59 @@ function AppInner() {
   return (
     <NavigationContainer>
       {isLoggedIn ? (
-        <Tab.Navigator
-          screenOptions={({route}) => ({
-            tabBarIcon: ({focused, color, size}) => {
-              let iconName: string;
+          <Tab.Navigator
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                  let iconName: string;
 
-              if (route.name === 'Home') {
-                iconName = focused ? 'home' : 'home-outline';
-              } else if (route.name === 'SearchHistory') {
-                iconName = focused ? 'podium' : 'podium-outline';
-              } else if (route.name === 'MyTab') {
-                iconName = focused ? 'person' : 'person-outline';
-              }
+                  if (route.name === 'Home') {
+                    iconName = focused ? 'home' : 'home-outline';
+                  } else if (route.name === 'SearchHistory') {
+                    iconName = focused ? 'podium' : 'podium-outline';
+                  } else if (route.name === 'MyTab') {
+                    iconName = focused ? 'person' : 'person-outline';
+                  }
 
-              return (
-                <Icon
-                  //@ts-ignore
-                  name={iconName}
-                  size={size}
-                  color={color}
-                />
-              );
-            },
-          })}>
-          <Tab.Screen
-            name={'SearchHistory'}
-            component={SearchHistory}
-            options={{
-              headerShown: false,
-              title: 'query history',
-            }}
-          />
-          <Tab.Screen
-            name="Home"
-            component={Home}
-            options={({route}) => ({
-              headerShown: false,
-              title: 'Home',
-              tabBarStyle: (route => {
-                const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
-                if (routeName === 'ItemDetail') {
-                  return {display: 'none'};
-                }
-                return;
-              })(route),
-            })}
-          />
-          <Tab.Screen
-            name="MyTab"
-            component={MyTab}
-            options={{title: 'my tab', headerShown: false}}
-          />
-        </Tab.Navigator>
+                  return (
+                      <Icon
+                          //@ts-ignore
+                          name={iconName}
+                          size={size}
+                          color={color}
+                      />
+                  );
+                },
+              })}
+          >
+            <Tab.Screen
+                name="SearchHistory"
+                component={SearchHistory}
+                options={{
+                  headerShown: false,
+                  title: 'query history',
+                }}
+            />
+            <Tab.Screen
+                name="Home"
+                component={Home}
+                options={({ route }) => ({
+                  headerShown: false,
+                  title: 'Home',
+                  tabBarStyle: (route => {
+                    const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
+                    if (routeName === 'ItemDetail') {
+                      return { display: 'none' };
+                    }
+                    return;
+                  })(route),
+                })}
+            />
+            <Tab.Screen
+                name="MyTab"
+                component={MyTab}
+                options={{ title: 'my tab', headerShown: false }}
+            />
+          </Tab.Navigator>
       ) : (
         <Stack.Navigator>
           <Stack.Screen
