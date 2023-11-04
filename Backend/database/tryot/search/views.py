@@ -35,6 +35,7 @@ def saveChat(request):
         if request.method == 'POST':
             # decode body
             data = json.loads(request.body.decode('utf-8'))
+            return_value = {}
 
             # save chatroom -> user chat -> gpt chat
             # saving chatroom info
@@ -45,6 +46,7 @@ def saveChat(request):
                 if chatRoomSerializer.is_valid(raise_exception=True):
                     chatRoomSerializer.save()
                     chatroomId = chatRoomSerializer.data["id"]
+                    return_value["chatroom_id"] = chatroomId
                 else:
                     return Response(chatRoomSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
@@ -55,9 +57,9 @@ def saveChat(request):
             else:
                 return Response(userChatSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
             userChatId = userChatSerializer.data["id"]
-
-            for item, similarity in data["items"]:
-                chatItemsSerializer = ChatItemsSerializer(data={"chat": userChatId, "item": item, "similarity": similarity})
+            
+            for item, info in data["items"].items():
+                chatItemsSerializer = ChatItemsSerializer(data={"chat": userChatId, "item": item, "similarity": info[0]})
                 if chatItemsSerializer.is_valid(raise_exception=True):
                     chatItemsSerializer.save()
                 else:
@@ -74,21 +76,24 @@ def saveChat(request):
 
             if gptChatSerializer.is_valid(raise_exception=True):
                 gptChatSerializer.save()
-                return Response(status=status.HTTP_201_CREATED)
+                return Response(return_value, status=status.HTTP_201_CREATED)
             else:
                 return Response(gptChatSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except:
+    except Exception as error:
+        print("An error occurred: ", error)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @transaction.atomic()
 def saveSearch(request):
     if request.method == 'POST':
+        print(request.body)
         data = json.loads(request.body.decode('utf-8'))
+        print(data)
         searchLogSerializer = SearchLogSerializer(data = data)
         if searchLogSerializer.is_valid():
             searchLogSerializer.save()
-            return Response(status=status.HTTP_201_CREATED)
+            return Response({"user_id": data["user"], "log_id": searchLogSerializer.data["id"]}, status=status.HTTP_201_CREATED)
         else:
             return Response(searchLogSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
