@@ -1,7 +1,7 @@
 import os
 import openai
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationChain, LLMChain
+from langchain.chains import LLMChain
 from langchain.prompts import (
     ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, AIMessagePromptTemplate, MessagesPlaceholder
     )
@@ -17,8 +17,8 @@ llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo-0301")
 response_schemas = [
     ResponseSchema(name="answer", description="Answer to the human's question. This is the only part that will be visible to the human."),
     ResponseSchema(name="human_query", description="A short phrase that can encapsulate what the human wants"),
-    ResponseSchema(name="new_fashion_items", description="A 0 or 1 flag that ")
-    ResponseSchema(name="fashion_items", description="list of fashion items generated")
+    ResponseSchema(name="fashion_items", description="list of fashion items generated"),
+    ResponseSchema(name="new_fashion_items_flag", description="A binary flag that indicates whether the output for fashion_items has been updated or not")
 ]
 
 output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
@@ -36,7 +36,8 @@ Second, you need to summarize into a short phrase what the user wants.
 Your response for this second part should go into the "human_query" part of the final json output format.
 Third, once you have collected enough information about what the user needs, you should give a list of fashion items that suits the human's needs.
 Put this into the "fashion_items" part of the final json output format.
-Fourth,
+Fourth, if you have generated a new list of fashion items because what the user wants has changed, set the binary flag to 1. The default value if 0.
+This binary value goes into the "new_fashion_items_flag" part of the final json output format.
 """
 
 human_template = """
@@ -64,6 +65,7 @@ prompt = ChatPromptTemplate(
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 chain = LLMChain(llm=llm, prompt=prompt, verbose=True, memory=memory)
 output_dict = output_parser.parse(chain.predict(question="what should i wear for high school reunion"))
-print(output_dict.get("answer"))
-print(output_dict.get("query"))
-print(output_dict.get("fashion_items"))
+print(f"answer: {output_dict.get('answer')}")
+print(f"human_query: {output_dict.get('human_query')}")
+print(f"fashion_items: {output_dict.get('fashion_items')}")
+print(f"flag: {output_dict.get('new_fashion_items_flag')}")
