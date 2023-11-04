@@ -67,17 +67,24 @@ async def predict():
             if cnt < 3:
                 queryList.append(query.strip())
         finalDict, sendDict = fclip.ret_queries(queryList)
-        
+        sendDict["user"] = user_id
+        sendDict["timestamp"] = timestamp
         async def post_log(sendDict):
+            testing ="http://127.0.0.1:5000/tests"
             response = requests.post("http://43.201.105.74/history/search-record/", json=sendDict)
             return response
         
         response = await post_log(sendDict)
+        # response = json.load(response.decode("utf-8"))
 
     else :
         return Response(response={"Your query is not related to Fashion."}, status=400, mimetype="application/json")
+    
     if response.status_code == 200:
+        response = response.json()
+        log_id = response.get("log_id")
         output = {"user_id": user_id,
+                  "log_id" : log_id,
                 "text" : queryList,
                 "items":finalDict,
                 "timestamp":timestamp}
