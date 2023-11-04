@@ -121,3 +121,9 @@ def delete_account(request):
             user.delete()
             return Response(status=status.HTTP_200_OK)
     return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+# @api_view(['GET'])
+# def reset_password(request):
+#     if request.method == "POST":
+#         return Response()
+#     return Response()
