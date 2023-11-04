@@ -69,7 +69,7 @@ async def predict():
         finalDict, sendDict = fclip.ret_queries(queryList)
         
         async def post_log(sendDict):
-            response = requests.post("http://127.0.0.1:5000/tests", json=sendDict)
+            response = requests.post("http://43.201.105.74/history/search-record/", json=sendDict)
             return response
         
         response = await post_log(sendDict)
