@@ -23,7 +23,6 @@ interface QueryRefineModalProps {
 
 function QueryRefineModal({refineModalVisible, hideRefineModal, onSearch, targetIndex, setTargetIndex, refinedQueries}: QueryRefineModalProps) {
     const {gptUsable} = useSelector((state: RootState) => state.user);
-    const [gptUsableLocal, setGPTUsableLocal] = useState<boolean>(gptUsable);
 
     const handleToggleSwitch = (index: number) => {
         const updatedTargetIndex = [...targetIndex];

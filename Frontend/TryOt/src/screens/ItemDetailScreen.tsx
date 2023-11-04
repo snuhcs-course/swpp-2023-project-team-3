@@ -35,13 +35,11 @@ function ItemDetailScreen({
   return (
     <View style={styles.container}>
       {loading ? (
-        // Show a blank view while loading
         <View style={{width: 0, height: 0}} />
       ) : item ? (
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           scrollEventThrottle={16}>
-          {/* Scroll View */}
           <View style={styles.imageContainer}>
             <Image
               style={{width: 60 * vw, height: 100 * vw, margin: 3 * vw}} //TODO: 배율 조정하기
@@ -55,7 +53,7 @@ function ItemDetailScreen({
                 {item.shortDescription}
               </Text>
             </View>
-            <Text>$ {item.price}</Text>
+            <Text>{item.price}</Text>
             <Text style={styles.descriptionText}>{item.description}</Text>
           </View>
           <View style={styles.borderLine} />

@@ -2,7 +2,7 @@ import axios from 'axios';
 import {FashionItem} from '../models/FashionItem';
 
 //Base url for calling item detail
-const BASE_URL = 'http://43.201.105.74/items/item-info';
+const BASE_URL = 'http://127.0.0.1/items/item-info';
 
 // Fetches the details of a fashion item.
 export const fetchFashionItemDetails = async (
@@ -26,3 +26,4 @@ export const fetchFashionItemDetails = async (
     throw error;
   }
 };
+

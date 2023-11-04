@@ -22,62 +22,132 @@ import QueryRefineModal from "../components/QueryRefineModal";
 import { PaperProvider } from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
 import {vw} from "../constants/design";
+import {useSelector} from "react-redux";
+import {RootState} from "../store/reducer";
 
-function Catalog({
-                   navigation,
-                   route,
-                 }: NativeStackScreenProps<RootStackParamList, 'Catalog'>) {
-  const panelRef = useRef<SlidingUpPanel | null>(null);
-  let slidingPanelHeight: number;
-  const onLayout = (event: LayoutChangeEvent) => {
-    const {height} = event.nativeEvent.layout;
-    slidingPanelHeight = height;
-  };
+type ItemSimilarityDictionary = { [key: string]: number };
+interface Dictionaries {
+    userQueryIds: ItemSimilarityDictionary;
+    gptQuery1_Ids: ItemSimilarityDictionary;
+    gptQuery2_Ids: ItemSimilarityDictionary;
+    gptQuery3_Ids: ItemSimilarityDictionary;
+}
 
-  const [query, setQuery] = useState<string>(route.params.searchQuery);
-  const [items, setItems] = useState<FashionItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQueries, setSearchQueries] = useState<string[]>([query]);
-  const [targetIndex,setTargetIndex] = useState<number[]>([1,0,0,0]); //TODO: 이거 글로벌 값으로 대체
-    const [gptUsable, setGPTUsable] = useState<number>(0); //TODO: 이거 글로벌 값으로 대체
 
+function Catalog({navigation, route,}: NativeStackScreenProps<RootStackParamList, 'Catalog'>) {
+    const {gptUsable, id} = useSelector((state: RootState) => state.user);
+    const [query, setQuery] = useState<string>(route.params.searchQuery);
+    const [items, setItems] = useState<FashionItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [searchQueries, setSearchQueries] = useState<string[]>([query]);
+    const [targetIndex,setTargetIndex] = useState<number[]>([]);
+
+    //search results (+pagination)
+    const [page, setPage] = useState(1);
+    const [pageSize] = useState(20); // Number of items to load per page
+    const [searchResults, setSearchResults] = useState([]);
+
+    const [userQueryIds, setUserQueryIds] = useState<ItemSimilarityDictionary>({});
+    const [gptQuery1_Ids, setGptQuery1_Ids] = useState<ItemSimilarityDictionary>({});
+    const [gptQuery2_Ids, setGptQuery2_Ids] = useState<ItemSimilarityDictionary>({});
+    const [gptQuery3_Ids, setGptQuery3_Ids] = useState<ItemSimilarityDictionary>({});
+
+    const [mergedIds, setMergedIds] = useState<ItemSimilarityDictionary>({});
+
+    //refine modal
     const [refineModalVisible, setLogoutModalVisible] = useState(false);
     const showRefineModal = () => setLogoutModalVisible(true);
     const hideRefineModal = () => setLogoutModalVisible(false);
 
+    //refine search only changes the combination of gpt queries
     const handleRefineSearch = () => {
-        fetchData().catch(error => {
+        mergeAndSortItemIds();
+        fetchItemDetails().catch(error => {
             console.log(error);
         });
     }
 
-    async function fetchData() {
-        setItems([]);
-        console.log("call fetch data");
+    //for fetching entire data for one search
+    async function fetchItemIds() {
+        try {
+            const response = await searchItems(id, query);
+            setSearchQueries(response.text);
+            setGptQuery1_Ids(response.items.gpt_query1);
+            setGptQuery2_Ids(response.items.gpt_query2);
+            setGptQuery3_Ids(response.items.gpt_query3);
+            setUserQueryIds(response.items.query);
+
+            mergeAndSortItemIds();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    //for fetching the item details with pagination
+    async function fetchItemDetails() {
         setLoading(true);
         try {
-            const response = await searchItems(10, searchQueries, gptUsable, targetIndex);
-            console.log("current gpt usable: ", gptUsable);
-            setTargetIndex(response.target_index);
-            setSearchQueries(response.text);
+            // Calculate the range of item indexes to fetch for the current page
+            const startIndex = (page - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
 
-            //TODO: fix to use flat list and pagination
-            const first20ItemIds = response.item_ids.slice(0, 20); // Extract the first 20 item_ids
-            console.log(first20ItemIds);
-            const itemDetails = await Promise.all(first20ItemIds.map(itemId => fetchFashionItemDetails(itemId)));
-            setItems(itemDetails);
+            /// Convert the mergedIds dictionary into an array of key-value pairs
+            const mergedArray = Object.entries(mergedIds);
+
+            const slicedItems = mergedArray.slice(startIndex, endIndex);
+
+            const slicedMergedIds = Object.fromEntries(slicedItems);
+            const itemIdsToFetch = Object.keys(slicedMergedIds);
+            const itemDetails = await Promise.all(itemIdsToFetch.map(itemId => fetchFashionItemDetails(itemId)));
+            setItems(prevItems => [...prevItems, ...itemDetails]);
             setLoading(false);
+
+            // If there are more items to fetch, increment the current page
+            if (endIndex < mergedArray.length) {
+                setPage(page + 1);
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
             setLoading(false);
         }
     }
 
+    //for merging and sorting the fetched item ids and their similarities
+    function mergeAndSortItemIds() {
+        const dictionaries: Dictionaries = { userQueryIds, gptQuery1_Ids, gptQuery2_Ids, gptQuery3_Ids };
+        const mergedDictionary: ItemSimilarityDictionary = { ...dictionaries.userQueryIds }; //유저의 검색 기록은 항상 적용됨
+
+        targetIndex.forEach((index, i) => {
+            if (index === 1) {
+                const dictionaryName = `gptQuery${i + 1}_Ids` as keyof Dictionaries;
+                Object.assign(mergedDictionary, dictionaries[dictionaryName]);
+            }
+        });
+
+        const mergedArray: [number, number][] = Object.entries(mergedDictionary).map(([key, value]) => [parseInt(key, 10), value]);
+        mergedArray.sort((a, b) => a[1] - b[1]);
+        const sortedMergedDictionary: ItemSimilarityDictionary = Object.fromEntries(mergedArray);
+
+        // Use the mergedDictionary here
+        setMergedIds(mergedDictionary);
+    }
+
+
     useEffect(() => {
-        fetchData().catch(error => {
+        if (gptUsable) {
+            setTargetIndex([1,1,1,1]);
+        }else{
+            setTargetIndex([1,0,0,0]);
+        }
+
+        fetchItemIds().catch(error => {
             console.log(error);
         });
-    }, [route.params.searchQuery]);
+
+        fetchItemDetails().catch(error => {
+            console.log(error);
+        });
+    }, [route.params.searchQuery, page]);
 
 
     const navigateToItemDetail = (item: FashionItem) => {
@@ -135,7 +205,7 @@ function Catalog({
             ))}
           </View>
         </ScrollView>
-          <QueryRefineModal hideRefineModal={hideRefineModal} refinedQueries={searchQueries} onSearch={fetchData} refineModalVisible={refineModalVisible} setTargetIndex={setTargetIndex} targetIndex={targetIndex} />
+          <QueryRefineModal hideRefineModal={hideRefineModal} refinedQueries={searchQueries} onSearch={handleRefineSearch} refineModalVisible={refineModalVisible} setTargetIndex={setTargetIndex} targetIndex={targetIndex} />
       </View>
       </PaperProvider>
   );
