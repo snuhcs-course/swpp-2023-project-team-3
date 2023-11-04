@@ -114,7 +114,17 @@ function AppInner() {
             <Tab.Screen
                 name="MyTab"
                 component={MyTab}
-                options={{ title: 'my tab', headerShown: false }}
+                options={ ({route }) => ({
+                  title: 'my tab',
+                  headerShown: false,
+                  tabBarStyle: (route => {
+                    const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
+                    if (routeName === 'ChangePassword') {
+                      return { display: 'none' };
+                    }
+                    return;
+                  })(route),
+                })}
             />
           </Tab.Navigator>
       ) : (

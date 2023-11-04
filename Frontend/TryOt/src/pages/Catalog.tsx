@@ -18,6 +18,7 @@ import {searchItems} from '../api/searchItemsApi';
 import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import {FashionItem} from '../models/FashionItem';
 import CatalogItem from '../components/CatalogItem';
+import userSlice from '../slices/user';
 
 function Catalog({
   navigation,

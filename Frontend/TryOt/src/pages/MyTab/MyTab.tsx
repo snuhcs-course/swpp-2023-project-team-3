@@ -5,12 +5,9 @@ import {Switch, Modal, Portal, PaperProvider} from 'react-native-paper';
 import CatalogItem from '../../components/CatalogItem';
 import userSlice from "../../slices/user";
 import {useSelector} from "react-redux";
+import { useDispatch } from 'react-redux';
 import {RootState} from "../../store/reducer";
 import {color, fontSize, vh, vw} from '../../constants/design';
-import { useNavigation } from '@react-navigation/native';
-import ItemDetailScreen from "../ItemDetailScreen";
-import Catalog from "../Catalog";
-import Chat from "../Chat";
 import ChangePasswordScreen from "./ChangePasswordScreen";
 import {createNativeStackNavigator, NativeStackScreenProps} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../Home";
@@ -18,7 +15,8 @@ import {FashionItem} from "../../models/FashionItem";
 
 function MyPageScreen({navigation}: NativeStackScreenProps<MyTabStackParamList>) {
     const [isGPTRefineOn, setIsGPTRefineOn] = React.useState(false);
-    const { email, nickname, gender, username } = useSelector((state: RootState) => state.user);
+    const { email, nickname, gender, username, gptUsable} = useSelector((state: RootState) => state.user);
+    const dispatch = useDispatch();
 
     const [logoutModalVisible, setLogoutModalVisible] = React.useState(false);
 
@@ -33,11 +31,12 @@ function MyPageScreen({navigation}: NativeStackScreenProps<MyTabStackParamList>)
     }
 
     const handlePasswordChange = () => {
-        navigation.navigate('ChangePassword');
+        navigation.navigate('ChangePasswordScreen');
     }
 
-    const handleGenderChange = () => {
-        console.log('pressed gender change')
+    const handleGPTRefineOn = (newValue: boolean) => {
+        setIsGPTRefineOn(newValue);
+        userSlice.actions.setGPTUsable(isGPTRefineOn);
     }
 
     return (
@@ -57,7 +56,7 @@ function MyPageScreen({navigation}: NativeStackScreenProps<MyTabStackParamList>)
                     <Text style={styles.text}>Turn on/off GPT refinement</Text>
                     <Switch
                         value={isGPTRefineOn}
-                        onValueChange={() => setIsGPTRefineOn(!isGPTRefineOn)}
+                        onValueChange={handleGPTRefineOn}
                     />
                 </View>
                 <View style={styles.TableRow}>
@@ -97,6 +96,7 @@ function MyPageScreen({navigation}: NativeStackScreenProps<MyTabStackParamList>)
 const styles = StyleSheet.create({
     container: {
         backgroundColor: color.background,
+        paddingTop: 20,
     },
 
     userInfoContainer: {
@@ -185,8 +185,8 @@ const styles = StyleSheet.create({
 })
 
 export type MyTabStackParamList = {
-    MyTab: undefined;
-    ChangePassword: undefined;
+    MyPageScreen: undefined;
+    ChangePasswordScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<MyTabStackParamList>();
@@ -194,12 +194,12 @@ export default function MyTab() {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="MyTab"
+                name="MyPageScreen"
                 component={MyPageScreen}
                 options={{headerShown: false}}
             />
             <Stack.Screen
-                name="ChangePassword"
+                name="ChangePasswordScreen"
                 component={ChangePasswordScreen}
                 options={{
                     headerShadowVisible: false,
