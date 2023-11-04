@@ -28,16 +28,14 @@ export default function RefinedQuery({ query, handleToggleSwitch, index}: Refine
 const styles = StyleSheet.create({
   queryWrapper: {
     padding: 10,
-    width: Dimensions.get('window').width * 0.9,
-    marginBottom: 5,
     backgroundColor: 'white',
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 5,
     marginTop: 10,
+    width: "100%",
   },
   refinedQuery: {
     color: 'black',

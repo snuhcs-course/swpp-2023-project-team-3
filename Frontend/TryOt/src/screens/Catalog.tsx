@@ -9,7 +9,7 @@ import {
     StyleSheet,
     Text,
     View,
-    ScrollView, TextInput,
+    ScrollView, TextInput, TouchableOpacity,
 } from 'react-native';
 import {RootStackParamList} from './Home';
 import SlidingUpPanel from 'rn-sliding-up-panel';
@@ -19,6 +19,9 @@ import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import {FashionItem} from '../models/FashionItem';
 import CatalogItem from '../components/CatalogItem';
 import QueryRefineModal from "../components/QueryRefineModal";
+import { PaperProvider } from 'react-native-paper';
+import Icon from "react-native-vector-icons/Ionicons";
+import {vw} from "../constants/design";
 
 function Catalog({
                    navigation,
@@ -38,7 +41,9 @@ function Catalog({
   const [targetIndex,setTargetIndex] = useState<number[]>([1,0,0,0]); //TODO: 이거 글로벌 값으로 대체
     const [gptUsable, setGPTUsable] = useState<number>(0); //TODO: 이거 글로벌 값으로 대체
 
-
+    const [refineModalVisible, setLogoutModalVisible] = useState(false);
+    const showRefineModal = () => setLogoutModalVisible(true);
+    const hideRefineModal = () => setLogoutModalVisible(false);
 
     const handleRefineSearch = () => {
         fetchData().catch(error => {
@@ -49,16 +54,14 @@ function Catalog({
     async function fetchData() {
         setItems([]);
         console.log("call fetch data");
-        if (panelRef.current) {
-            panelRef.current.hide();
-        }
-
         setLoading(true);
         try {
             const response = await searchItems(10, searchQueries, gptUsable, targetIndex);
             console.log("current gpt usable: ", gptUsable);
             setTargetIndex(response.target_index);
-            setSearchQueries(response.text);
+            //setSearchQueries(response.text);
+
+            setSearchQueries(["oroginal", "text 1", "text 2", "text 3"]);
 
             //TODO: fix to use flat list and pagination
             const first20ItemIds = response.item_ids.slice(0, 20); // Extract the first 20 item_ids
@@ -93,6 +96,7 @@ function Catalog({
 
   // @ts-ignore
   return (
+      <PaperProvider>
       <View
           style={{
             backgroundColor: 'white',
@@ -111,19 +115,15 @@ function Catalog({
         <View
             style={styles.refinedQueryShow}
             onTouchStart={() => {
-              panelRef.current?.show(slidingPanelHeight);
+              showRefineModal();
             }}>
           <Image
               style={{resizeMode: 'contain', width: '5%', height: '100%'}}
               source={require('../assets/Icon/Vector.png')}
           />
-          <Text style={{color: 'black'}}>
+          <Text style={{color: 'black', paddingRight: 5*vw}}>
             GPT has refined your query into new queries
           </Text>
-          <Image
-              style={{resizeMode: 'contain', width: '5%', height: '100%'}}
-              source={require('../assets/Icon/Arrow.png')}
-          />
         </View>
         <View style={styles.grayBar} />
         <ScrollView>
@@ -137,8 +137,9 @@ function Catalog({
             ))}
           </View>
         </ScrollView>
-          <QueryRefineModal onSearch={fetchData} onLayout={onLayout} bottomSheetModalRef={panelRef} refinedQueries={searchQueries}  setTargetIndex={setTargetIndex} targetIndex={targetIndex} setGPTUsable={setGPTUsable}/>
+          <QueryRefineModal hideRefineModal={hideRefineModal} refinedQueries={searchQueries} onSearch={fetchData} refineModalVisible={refineModalVisible} setTargetIndex={setTargetIndex} targetIndex={targetIndex} />
       </View>
+      </PaperProvider>
   );
 }
 

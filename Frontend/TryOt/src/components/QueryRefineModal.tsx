@@ -1,121 +1,96 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Pressable, Dimensions, LayoutChangeEvent, Button} from 'react-native';
+import {View, Text, StyleSheet, Pressable, Dimensions, LayoutChangeEvent, Button, TouchableOpacity} from 'react-native';
 import RefinedQuery from "./RefinedQuery";
 import SlidingUpPanel from "rn-sliding-up-panel";
 import BlackBasicButton from "./BlackBasicButton";
 import {searchItems} from "../api/searchItemsApi";
 import {fetchFashionItemDetails} from "../api/itemDetailApi";
 import BasicTextInput from "./BasicTextInput";
+import userSlice from "../slices/user";
+import {useSelector} from "react-redux";
+import {RootState} from "../store/reducer";
+import {Modal, Portal} from "react-native-paper";
+import {fontSize, vw} from "../constants/design";
 
 interface QueryRefineModalProps {
+    refineModalVisible: boolean;
+    hideRefineModal: () => void;
     targetIndex: number[],
     setTargetIndex: (targetIndex: number[]) => void,
-    onLayout: (event: LayoutChangeEvent) => void;
-    bottomSheetModalRef: any;
     refinedQueries: string[]; // Original + refined queries (length of 6)
     onSearch: () => void;
-    onClose?: () => void;
-   setGPTUsable: (gpt_usable: number) => void;
 }
 
-function QueryRefineModal({onSearch, targetIndex, setTargetIndex, onLayout, bottomSheetModalRef, refinedQueries, setGPTUsable}: QueryRefineModalProps) {
+function QueryRefineModal({refineModalVisible, hideRefineModal, onSearch, targetIndex, setTargetIndex, refinedQueries}: QueryRefineModalProps) {
+    const {gptUsable} = useSelector((state: RootState) => state.user);
+    const [gptUsableLocal, setGPTUsableLocal] = useState<boolean>(gptUsable);
+
     const handleToggleSwitch = (index: number) => {
         const updatedTargetIndex = [...targetIndex];
         updatedTargetIndex[index+1] = updatedTargetIndex[index+1] === 1 ? 0 : 1;
         setTargetIndex(updatedTargetIndex);
-        console.log(updatedTargetIndex);
     };
 
     const handleSearch = () => {
         onSearch();
-        bottomSheetModalRef.current?.hide();
+        hideRefineModal();
     }
 
     return (
-        <SlidingUpPanel ref={bottomSheetModalRef}>
-            <View style={styles.slidingPanel} onLayout={onLayout}>
-                <Pressable
-                    style={[
-                        styles.grayBar,
-                        {width: 50, marginVertical: 10, borderRadius: 10},
-                    ]}
-                    onPress={() => {
-                        bottomSheetModalRef.current?.hide();
-                    }}
-                />
-                <View style={{alignSelf: 'flex-start', paddingLeft: '5%'}}>
-                    <Text
-                        style={[
-                            styles.slidingPanelText,
-                            {fontSize: 20, marginVertical: '5%'},
-                        ]}>
-                        Query Refinement
-                    </Text>
-                    <Text style={[styles.slidingPanelText, {fontSize: 18}]}>
-                        Original Query
-                    </Text>
-                    <Button title={"Turn on GPT"} onPress={() => {
-                        setGPTUsable(1);
-                    }}
-                    />
-                    <Text
-                        style={[
-                            styles.slidingPanelText,
-                            {fontSize: 15, fontWeight: 'normal'},
-                        ]}>
-                        {refinedQueries[0]}
-                    </Text>
-                    <Text
-                        style={[
-                            styles.slidingPanelText,
-                            {fontSize: 18, marginTop: '5%'},
-                        ]}>
-                        GPT Refined Query
-                    </Text>
-                    {refinedQueries.slice(1).map((query, index) => (
-                        <RefinedQuery key={index} query={query} handleToggleSwitch={handleToggleSwitch} index={index} />
-                    ))}
+        <Portal>
+            <Modal visible={refineModalVisible} onDismiss={hideRefineModal} contentContainerStyle={styles.modalContainerStyle}>
+                <View style={styles.inputContainerStyle}>
+                    <Text style={styles.headerText}>Query Refinement</Text>
+                    <Text style={styles.middleHeaderText}>Original Query</Text>
+                    <Text style={[styles.middleHeaderText, {fontSize: fontSize.small, fontWeight: 'normal'}]}>{refinedQueries[0]}</Text>
+                    <Text style={styles.middleHeaderText}>GPT Refined Query</Text>
+                    <View style={styles.refinedQueriesContainer}>
+                        {refinedQueries.slice(1).map((query, index) => (
+                            <RefinedQuery key={index} query={query} handleToggleSwitch={handleToggleSwitch} index={index} />
+                        ))}
+                    </View>
+                    <BlackBasicButton buttonText={"Regenerate Search"} isButtonActive={true} title={"Regenerate Search"} onClick={handleSearch}/>
                 </View>
-                <BlackBasicButton buttonText={"Regenerate Search"} isButtonActive={true} title={"Regenerate Search"} onClick={handleSearch}/>
-            </View>
-        </SlidingUpPanel>
+            </Modal>
+        </Portal>
     );
 }
 
 const styles = StyleSheet.create({
-    grayBar: {
-        width: Dimensions.get('screen').width,
-        height: Dimensions.get('screen').height * 0.01,
-        backgroundColor: '#eee',
-    },
-    slidingPanel: {
-        backgroundColor: 'white',
-        borderRadius: 20,
+    modalContainerStyle: {
         justifyContent: 'center',
         alignItems: 'center',
-        paddingBottom: '10%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        width: 90* vw,
+        alignSelf: 'center',
+        padding: 4*vw,
     },
-    slidingPanelText: {
+
+    inputContainerStyle: {
+        backgroundColor: 'white',
+        flexDirection: 'column',
+        alignSelf: "flex-start",
+        width: '100%'
+    },
+
+    refinedQueriesContainer: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        backgroundColor: 'white',
+        paddingBottom: "5%"
+    },
+    headerText: {
         color: 'black',
         fontWeight: 'bold',
-        fontSize: 20,
-        marginBottom: 20,
-        zIndex: 1.
+        fontSize: fontSize.large,
+        marginBottom: 5*vw,
     },
-    searchButton: {
-        backgroundColor: 'blue',
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 10,
-    },
-    closeButton: {
-        backgroundColor: 'red',
-        padding: 10,
-        borderRadius: 10,
-    },
-    buttonText: {
-        color: 'white',
-        textAlign: 'center',
+    middleHeaderText: {
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: fontSize.middle,
+        marginBottom: 2 * vw,
     },
 });
 

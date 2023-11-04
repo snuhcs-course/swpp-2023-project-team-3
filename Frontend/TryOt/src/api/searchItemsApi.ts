@@ -25,8 +25,8 @@ export const searchItems = async (
     const requestBody = {
       user_id: 10, //테스트라서 10으로 고정
       text: searchText,
-      gpt_usable: gpt_usable,
-      target_index: target_index,
+      gpt_usable: 1,
+      target_index: [1,1,1,1],
     };
 
     const response = await axios.post<SearchItemsResponse>(
@@ -45,3 +45,5 @@ export const searchItems = async (
     throw new Error(`API request failed`);
   }
 };
+
+//TODO: add clicked item
