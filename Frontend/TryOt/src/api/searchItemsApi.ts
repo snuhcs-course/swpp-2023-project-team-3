@@ -13,7 +13,6 @@ interface SearchItemsResponse {
   target_index: number[];
 }
 
-//response: 0, 1, 2
 
 export const searchItems = async (
     userId: number,
@@ -37,6 +36,7 @@ export const searchItems = async (
     if (response.data.response == 0) {
       return response.data;
     } else {
+      console.log("ddddd");
       console.log(response.data);
       throw new Error('API response indicates failure');
     }

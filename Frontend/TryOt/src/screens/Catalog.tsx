@@ -59,9 +59,7 @@ function Catalog({
             const response = await searchItems(10, searchQueries, gptUsable, targetIndex);
             console.log("current gpt usable: ", gptUsable);
             setTargetIndex(response.target_index);
-            //setSearchQueries(response.text);
-
-            setSearchQueries(["oroginal", "text 1", "text 2", "text 3"]);
+            setSearchQueries(response.text);
 
             //TODO: fix to use flat list and pagination
             const first20ItemIds = response.item_ids.slice(0, 20); // Extract the first 20 item_ids
