@@ -8,7 +8,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useState, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import Home from './src/screens/Home';
 import SearchHistory from './src/screens/SearchHistory';
@@ -21,11 +20,13 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import userSlice from './src/slices/user';
 import {Alert, Text, View} from 'react-native';
 import tryAxios from './src/util/tryAxios';
+import ChangePasswordScreen from "./src/pages/MyTab/ChangePasswordScreen";
 
 export type LoggedInParamList = {
   MyTab: undefined;
   Home: undefined;
   SearchHistory: undefined;
+  ChangePassword: undefined;
 };
 
 export type RootStackParamList = {
@@ -62,6 +63,7 @@ function AppInner() {
   return (
     <NavigationContainer>
       {isLoggedIn ? (
+<<<<<<< HEAD
         <Tab.Navigator
           screenOptions={({route}) => ({
             tabBarStyle: {
@@ -72,15 +74,22 @@ function AppInner() {
             tabBarHideOnKeyboard: true,
             tabBarIcon: ({focused, color, size}) => {
               let iconName = "";
+=======
+          <Tab.Navigator
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                  let iconName: string;
+>>>>>>> feature/front/myPage
 
-              if (route.name === 'Home') {
-                iconName = focused ? 'home' : 'home-outline';
-              } else if (route.name === 'SearchHistory') {
-                iconName = focused ? 'podium' : 'podium-outline';
-              } else if (route.name === 'MyTab') {
-                iconName = focused ? 'person' : 'person-outline';
-              }
+                  if (route.name === 'Home') {
+                    iconName = focused ? 'home' : 'home-outline';
+                  } else if (route.name === 'SearchHistory') {
+                    iconName = focused ? 'podium' : 'podium-outline';
+                  } else if (route.name === 'MyTab') {
+                    iconName = focused ? 'person' : 'person-outline';
+                  }
 
+<<<<<<< HEAD
               return (
                   <Icon
                       name={iconName}
@@ -119,6 +128,58 @@ function AppInner() {
             options={{title: 'my tab'}}
           />
         </Tab.Navigator>
+=======
+                  return (
+                      <Icon
+                          //@ts-ignore
+                          name={iconName}
+                          size={size}
+                          color={color}
+                      />
+                  );
+                },
+              })}
+          >
+            <Tab.Screen
+                name="SearchHistory"
+                component={SearchHistory}
+                options={{
+                  headerShown: false,
+                  title: 'query history',
+                }}
+            />
+            <Tab.Screen
+                name="Home"
+                component={Home}
+                options={({ route }) => ({
+                  headerShown: false,
+                  title: 'Home',
+                  tabBarStyle: (route => {
+                    const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
+                    if (routeName === 'ItemDetail') {
+                      return { display: 'none' };
+                    }
+                    return;
+                  })(route),
+                })}
+            />
+            <Tab.Screen
+                name="MyTab"
+                component={MyTab}
+                options={ ({route }) => ({
+                  title: 'my tab',
+                  headerShown: false,
+                  tabBarStyle: (route => {
+                    const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
+                    if (routeName === 'ChangePassword') {
+                      return { display: 'none' };
+                    }
+                    return;
+                  })(route),
+                })}
+            />
+          </Tab.Navigator>
+>>>>>>> feature/front/myPage
       ) : (
         <Stack.Navigator>
           <Stack.Screen
