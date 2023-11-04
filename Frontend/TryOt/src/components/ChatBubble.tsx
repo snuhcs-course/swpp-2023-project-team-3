@@ -1,4 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
+import React, {StyleSheet, Text, View} from 'react-native';
+import {vw} from '../constants/design';
 
 export default function ChatBubble({
   who,
@@ -19,14 +20,14 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'flex-start',
-    margin: '3%',
+    margin: ((vw * 10) / 360) * 100,
   },
   title: {
     color: '#999',
-    fontSize: 15,
+    fontSize: 12,
   },
   content: {
     color: 'black',
-    fontSize: 17,
+    fontSize: 14,
   },
 });

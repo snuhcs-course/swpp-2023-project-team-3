@@ -1,15 +1,16 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect, useRef, useState} from 'react';
 import {
-    Button,
-    Dimensions,
-    Image,
-    LayoutChangeEvent,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
-    ScrollView, TextInput,
+  Button,
+  Dimensions,
+  Image,
+  LayoutChangeEvent,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TextInput,
 } from 'react-native';
 import {RootStackParamList} from './Home';
 import SlidingUpPanel from 'rn-sliding-up-panel';
@@ -18,12 +19,12 @@ import {searchItems} from '../api/searchItemsApi';
 import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import {FashionItem} from '../models/FashionItem';
 import CatalogItem from '../components/CatalogItem';
-import QueryRefineModal from "../components/QueryRefineModal";
+import QueryRefineModal from '../components/QueryRefineModal';
 
 function Catalog({
-                   navigation,
-                   route,
-                 }: NativeStackScreenProps<RootStackParamList, 'Catalog'>) {
+  navigation,
+  route,
+}: NativeStackScreenProps<RootStackParamList, 'Catalog'>) {
   const panelRef = useRef<SlidingUpPanel | null>(null);
   let slidingPanelHeight: number;
   const onLayout = (event: LayoutChangeEvent) => {
@@ -35,110 +36,122 @@ function Catalog({
   const [items, setItems] = useState<FashionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQueries, setSearchQueries] = useState<string[]>([query]);
-  const [targetIndex,setTargetIndex] = useState<number[]>([1,0,0,0]); //TODO: 이거 글로벌 값으로 대체
-    const [gptUsable, setGPTUsable] = useState<number>(0); //TODO: 이거 글로벌 값으로 대체
+  const [targetIndex, setTargetIndex] = useState<number[]>([1, 0, 0, 0]); //TODO: 이거 글로벌 값으로 대체
+  const [gptUsable, setGPTUsable] = useState<number>(0); //TODO: 이거 글로벌 값으로 대체
 
+  const handleRefineSearch = () => {
+    fetchData().catch(error => {
+      console.log(error);
+    });
+  };
 
-
-    const handleRefineSearch = () => {
-        fetchData().catch(error => {
-            console.log(error);
-        });
+  async function fetchData() {
+    setItems([]);
+    console.log('call fetch data');
+    if (panelRef.current) {
+      panelRef.current.hide();
     }
 
-    async function fetchData() {
-        setItems([]);
-        console.log("call fetch data");
-        if (panelRef.current) {
-            panelRef.current.hide();
-        }
+    setLoading(true);
+    try {
+      const response = await searchItems(
+        10,
+        searchQueries,
+        gptUsable,
+        targetIndex,
+      );
+      console.log('current gpt usable: ', gptUsable);
+      setTargetIndex(response.target_index);
+      setSearchQueries(response.text);
 
-        setLoading(true);
-        try {
-            const response = await searchItems(10, searchQueries, gptUsable, targetIndex);
-            console.log("current gpt usable: ", gptUsable);
-            setTargetIndex(response.target_index);
-            setSearchQueries(response.text);
-
-            //TODO: fix to use flat list and pagination
-            const first20ItemIds = response.item_ids.slice(0, 20); // Extract the first 20 item_ids
-            console.log(first20ItemIds);
-            const itemDetails = await Promise.all(first20ItemIds.map(itemId => fetchFashionItemDetails(itemId)));
-            setItems(itemDetails);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setLoading(false);
-        }
+      //TODO: fix to use flat list and pagination
+      const first20ItemIds = response.item_ids.slice(0, 20); // Extract the first 20 item_ids
+      console.log(first20ItemIds);
+      const itemDetails = await Promise.all(
+        first20ItemIds.map(itemId => fetchFashionItemDetails(itemId)),
+      );
+      setItems(itemDetails);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLoading(false);
     }
+  }
 
-    useEffect(() => {
-        fetchData().catch(error => {
-            console.log(error);
-        });
-    }, [route.params.searchQuery]);
+  useEffect(() => {
+    fetchData().catch(error => {
+      console.log(error);
+    });
+  }, [route.params.searchQuery]);
 
-
-    const navigateToItemDetail = (item: FashionItem) => {
+  const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
     navigation.navigate('ItemDetail', {item});
   };
 
-    const changeQueryText = (text: string) => {
-        setQuery(text);
-        setTargetIndex([1,0,0,0]);
-        setSearchQueries([text]);
-        //이때부터 새로운 지피티 use start
-    }
+  const changeQueryText = (text: string) => {
+    setQuery(text);
+    setTargetIndex([1, 0, 0, 0]);
+    setSearchQueries([text]);
+    //이때부터 새로운 지피티 use start
+  };
 
   // @ts-ignore
   return (
+    <View
+      style={{
+        backgroundColor: 'white',
+        height: Dimensions.get('window').height,
+      }}>
+      <TextInput
+        style={styles.searchQueryInput}
+        value={query}
+        onChangeText={changeQueryText}
+        importantForAutofill="yes"
+        returnKeyType="next"
+        clearButtonMode="while-editing"
+        onSubmitEditing={handleRefineSearch}
+        blurOnSubmit={false}
+      />
       <View
-          style={{
-            backgroundColor: 'white',
-            height: Dimensions.get('window').height,
-          }}>
-          <TextInput
-              style={styles.searchQueryInput}
-              value={query}
-              onChangeText={changeQueryText}
-              importantForAutofill="yes"
-              returnKeyType="next"
-              clearButtonMode="while-editing"
-              onSubmitEditing={handleRefineSearch}
-              blurOnSubmit={false}
-          />
-        <View
-            style={styles.refinedQueryShow}
-            onTouchStart={() => {
-              panelRef.current?.show(slidingPanelHeight);
-            }}>
-          <Image
-              style={{resizeMode: 'contain', width: '5%', height: '100%'}}
-              source={require('../assets/Icon/Vector.png')}
-          />
-          <Text style={{color: 'black'}}>
-            GPT has refined your query into new queries
-          </Text>
-          <Image
-              style={{resizeMode: 'contain', width: '5%', height: '100%'}}
-              source={require('../assets/Icon/Arrow.png')}
-          />
-        </View>
-        <View style={styles.grayBar} />
-        <ScrollView>
-          <View style={styles.catalogGrid}>
-            {items.map(item => (
-                <CatalogItem
-                    key={item.id}
-                    fashionItem={item}
-                    onNavigateToDetail={navigateToItemDetail}
-                />
-            ))}
-          </View>
-        </ScrollView>
-          <QueryRefineModal onSearch={fetchData} onLayout={onLayout} bottomSheetModalRef={panelRef} refinedQueries={searchQueries}  setTargetIndex={setTargetIndex} targetIndex={targetIndex} setGPTUsable={setGPTUsable}/>
+        style={styles.refinedQueryShow}
+        onTouchStart={() => {
+          panelRef.current?.show(slidingPanelHeight);
+        }}>
+        <Image
+          style={{resizeMode: 'contain', width: '5%', height: '100%'}}
+          source={require('../assets/Icon/Vector.png')}
+        />
+        <Text style={{color: 'black'}}>
+          GPT has refined your query into new queries
+        </Text>
+        <Image
+          style={{resizeMode: 'contain', width: '5%', height: '100%'}}
+          source={require('../assets/Icon/Arrow.png')}
+        />
       </View>
+      <View style={styles.grayBar} />
+      <ScrollView>
+        <View style={styles.catalogGrid}>
+          {items.map(item => (
+            <CatalogItem
+              key={item.id}
+              fashionItem={item}
+              onNavigateToDetail={navigateToItemDetail}
+            />
+          ))}
+        </View>
+      </ScrollView>
+      <QueryRefineModal
+        onSearch={fetchData}
+        onLayout={onLayout}
+        bottomSheetModalRef={panelRef}
+        refinedQueries={searchQueries}
+        setTargetIndex={setTargetIndex}
+        targetIndex={targetIndex}
+        setGPTUsable={setGPTUsable}
+      />
+    </View>
   );
 }
 
@@ -146,7 +159,7 @@ const styles = StyleSheet.create({
   searchQueryInput: {
     padding: 10,
     width: Dimensions.get('screen').width * 0.9,
-      height: Dimensions.get('screen').height * 0.05,
+    height: Dimensions.get('screen').height * 0.05,
     margin: Dimensions.get('screen').width * 0.05,
     marginBottom: 10,
     backgroundColor: '#eee',
