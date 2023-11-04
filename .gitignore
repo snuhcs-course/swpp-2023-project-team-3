@@ -323,6 +323,7 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/kotlin,androidstudio,django
 
-# for macos
+# .DS_Store for macos
 .DS_Store
+*/.DS_Store
 */*/.DS_Store
