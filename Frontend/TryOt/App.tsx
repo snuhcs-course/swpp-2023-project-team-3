@@ -40,7 +40,7 @@ export const Tab = createBottomTabNavigator();
 export const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppInner() {
-    const isLoggedIn = true //useSelector((state: RootState) => !!state.user.username);
+    const isLoggedIn = useSelector((state: RootState) => !!state.user.username);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -65,10 +65,8 @@ function AppInner() {
             {isLoggedIn ? (
                 <Tab.Navigator
                     screenOptions={({route}) => ({
-                        tabBarStyle: {
-                            backgroundColor: 'black',
-                        },
-
+                        tabBarActiveBackgroundColor: 'black',
+                        tabBarInactiveBackgroundColor: 'black',
                         tabBarActiveTintColor: 'white',
                         tabBarHideOnKeyboard: true,
                         tabBarIcon: ({focused, color, size}) => {
@@ -124,7 +122,7 @@ function AppInner() {
                             headerShown: false,
                             tabBarStyle: (route => {
                                 const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
-                                if (routeName === 'ChangePassword') {
+                                if (routeName === 'ChangePasswordScreen') {
                                     return { display: 'none' };
                                 }
                                 return;
