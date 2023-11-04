@@ -8,5 +8,6 @@ urlpatterns = [
     path('login/', user_login, name='login'),
     path('token-check/<str:token>', user_login_continue, name='login-continue'),
     path('logout/', user_logout, name='logout'),
-    path('change-password/', change_password, name='change-password')
+    path('change-password/', change_password, name='change-password'),
+    path('delete-account/', delete_account, name='delete-account')
 ]

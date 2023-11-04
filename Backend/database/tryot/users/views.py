@@ -83,8 +83,6 @@ def change_password(request):
         uid = request.data.get("user_id")
         oldPassword = request.data.get("old_password")
         newPassword = request.data.get("new_password")
-        print(oldPassword)
-        print(newPassword)
         
         try:
             user = User.objects.get(id=uid)
@@ -106,4 +104,20 @@ def change_password(request):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_account(request):
+    if request.method =="POST":
+        uid = request.data.get("user_id")
+        try:
+            user = User.objects.get(id=uid)
+        except Exception as e:
+            return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if user:
+            user.delete()
+            return Response(status=status.HTTP_200_OK)
     return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
