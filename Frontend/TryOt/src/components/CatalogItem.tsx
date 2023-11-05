@@ -33,7 +33,7 @@ const CatalogItem = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: 40 * vw,
+    width: '40%',
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 10,

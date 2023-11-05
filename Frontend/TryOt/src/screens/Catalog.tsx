@@ -1,6 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
-import {Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, View,} from 'react-native';
+import {Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, TextInput, View,} from 'react-native';
 import {RootStackParamList} from './Home';
 import {searchItems} from '../api/searchItemsApi';
 import {fetchFashionItemDetails} from '../api/itemDetailApi';
@@ -21,18 +21,16 @@ function Catalog({
   const {gptUsable, id} = useSelector((state: RootState) => state.user);
   const [query, setQuery] = useState<string>(route.params.searchQuery);
   const [items, setItems] = useState<FashionItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [searchQueries, setSearchQueries] = useState<string[]>([query]);
   const [targetIndex, setTargetIndex] = useState<number[]>([]);
 
   //search results (+pagination)
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20); // Number of items to load per page
-  const [searchResults, setSearchResults] = useState([]);
-
 
   const [itemDataArray, setItemDataArray] = useState<ItemSimilarityDictionary[]>([]);
-  const [mergedIds, setMergedIds] = useState< [string, number][]>([]);
+  const [sortedIds, setSortedIds] = useState< string[]>(['']);
 
   //refine modal
   const [refineModalVisible, setLogoutModalVisible] = useState(false);
@@ -41,6 +39,7 @@ function Catalog({
 
   //refine search only changes the combination of gpt queries
   const handleRefineSearch = () => {
+    setItems([]); //보일 아이템들은 초기화
     mergeAndSortItemIds();
     fetchItemDetails().catch(error => {
       console.log(error);
@@ -60,7 +59,7 @@ function Catalog({
 
       setItemDataArray(() => {return [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids]});
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching id data:', error);
     }
   }
 
@@ -68,36 +67,29 @@ function Catalog({
   async function fetchItemDetails() {
     setLoading(true);
     try {
-      // Calculate the range of item indexes to fetch for the current page
       const startIndex = (page - 1) * pageSize;
       const endIndex = startIndex + pageSize;
-      const slicedItems = mergedIds.slice(startIndex, endIndex);
-      const slicedMergedIds = Object.fromEntries(slicedItems);
-      const itemIdsToFetch = Object.keys(slicedMergedIds);
+      const slicedIds = sortedIds.slice(startIndex, endIndex);
       const itemDetails = await Promise.all(
-        itemIdsToFetch.map(itemId => fetchFashionItemDetails(itemId)),
+        slicedIds.map(itemId => fetchFashionItemDetails(itemId)),
       );
-
       setItems(prevItems => [...prevItems, ...itemDetails]);
       setLoading(false);
-
-      // If there are more items to fetch, increment the current page
-      if (endIndex < mergedIds.length) {
-        setPage(page + 1);
-      }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching item detail data:', error);
       setLoading(false);
     }
   }
 
   //for merging each query dictionary
-  function mergeDictionaries(dictionaries: ItemSimilarityDictionary[]) {
-    return dictionaries.reduce((result, dictionary) => {
-      for (const key in dictionary) {
-        if (dictionary.hasOwnProperty(key)) {
-          if (result[key] === undefined || dictionary[key] > result[key]) {
-            result[key] = dictionary[key];
+  function mergeDictionaries() {
+    return itemDataArray.reduce((result, dictionary, index) => {
+      if (targetIndex[index] === 1) {
+        for (const key in dictionary) {
+          if (dictionary.hasOwnProperty(key)) {
+            if (result[key] === undefined || dictionary[key] > result[key]) {
+              result[key] = dictionary[key];
+            }
           }
         }
       }
@@ -112,44 +104,41 @@ function Catalog({
 
   //for merging and sorting the fetched item ids and their similarities
   function mergeAndSortItemIds() {
-    const mergedDictionary: ItemSimilarityDictionary = mergeDictionaries(itemDataArray);
-    console.log(mergedDictionary);
+    const mergedDictionary: ItemSimilarityDictionary = mergeDictionaries();
     const sortedMergedDictionary = sortDictionaryByValues(mergedDictionary);
-    setMergedIds(() => sortedMergedDictionary);
+    const idArrays = sortedMergedDictionary.map(([id, _]) => id);
+    setSortedIds(idArrays);
   }
+
+  const fetchData = async () => {
+    //초기화
+    setItems([]);
+    setPage(1);
+
+    if (gptUsable) {
+      setTargetIndex([1, 1, 1, 1]);
+    } else {
+      setTargetIndex([1, 0, 0, 0]);
+    }
+
+    try {
+      await fetchItemIds();
+      mergeAndSortItemIds();
+      await fetchItemDetails();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     console.log("------Catalog is rendered------");
-    const fetchData = async () => {
-      if (gptUsable) {
-        setTargetIndex([1, 1, 1, 1]);
-      } else {
-        setTargetIndex([1, 0, 0, 0]);
-      }
-
-      try {
-        await fetchItemIds();
-        mergeAndSortItemIds();
-        await fetchItemDetails();
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     fetchData();
-  }, [route.params.searchQuery, page]);
+  }, []);
 
 
   const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
     navigation.navigate('ItemDetail', {item});
-  };
-
-  const changeQueryText = (text: string) => {
-    setQuery(text);
-    setTargetIndex([1, 0, 0, 0]);
-    setSearchQueries([text]);
-    //이때부터 새로운 지피티 use start
   };
 
   // @ts-ignore
@@ -163,11 +152,11 @@ function Catalog({
         <TextInput
           style={styles.searchQueryInput}
           value={query}
-          onChangeText={changeQueryText}
+          onChangeText={(text: string) => {setQuery(text)}}
           importantForAutofill="yes"
           returnKeyType="next"
           clearButtonMode="while-editing"
-          onSubmitEditing={handleRefineSearch}
+          onSubmitEditing={() => fetchData()}
           blurOnSubmit={false}
         />
         <View
@@ -184,17 +173,22 @@ function Catalog({
           </Text>
         </View>
         <View style={styles.grayBar} />
-        <ScrollView>
-          <View style={styles.catalogGrid}>
-            {items.map(item => (
-              <CatalogItem
-                key={item.id}
-                fashionItem={item}
-                onNavigateToDetail={navigateToItemDetail}
-              />
-            ))}
-          </View>
-        </ScrollView>
+        <FlatList
+            data={items}
+            numColumns={2}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+                <CatalogItem
+                    fashionItem={item}
+                    onNavigateToDetail={navigateToItemDetail}
+                />
+            )}
+            contentContainerStyle={styles.catalogGrid}
+            onEndReached={() => {
+              setPage((prevPage) => prevPage + 1);
+            }}
+            onEndReachedThreshold={0.1}
+        />
         <QueryRefineModal
           hideRefineModal={hideRefineModal}
           refinedQueries={searchQueries}
@@ -244,9 +238,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   catalogGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    flexGrow: 1,
+    margin: 8, // Adjust as needed
+    padding: 16,
+    backgroundColor: 'white', // Adjust as needed
+    width: '100%',
   },
   slidingPanel: {
     backgroundColor: 'white',
