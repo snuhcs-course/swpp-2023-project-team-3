@@ -23,6 +23,16 @@ class GptChatSerializer(NotDeletedModelSerializer):
         model = GptChat
         fields = "__all__"
 
+class ChatItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatItems
+        fields = "__all__"
+
+class SearchItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SearchItems
+        fields = "__all__"
+
 class UserChatWithGptSerializer(NotDeletedModelSerializer):
     gpt_chat = GptChatSerializer(many=True, source="gptChat")
 

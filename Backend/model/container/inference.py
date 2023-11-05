@@ -1,10 +1,8 @@
-import torch
 from transformers import CLIPModel, CLIPProcessor
 import os
 import json
 import numpy as np
 import pandas as pd
-import openai
 from typing import List
 
 cwd = os.getcwd()
@@ -70,5 +68,28 @@ class ClipTextEmbedding(object):
         for i in range(similarities.shape[0]):
             subset[f'query_{i}'] = similarities[i]
 
-        matched_objects = subset.copy()
-        return matched_objects
+        itemdf = subset.copy()
+        return itemdf
+
+    @classmethod
+    def ret_queries(cls, queryList:List[str]):
+        itemdf = cls.get_similarity(queryList)
+        means = []
+        for col in itemdf.columns.tolist():
+            if col != "id":
+                means.append(itemdf[col].mean())
+        means = np.array(means)
+        threshold = means.max()
+        returnDict = {}
+        sendDict = {}
+        dict_key = ["query", "gpt_query1", "gpt_query2", "gpt_query3"]
+        for i, query in enumerate(queryList):
+            tmpDict = {}
+            tmpdf = itemdf[["id", f'query_{i}']]
+            for j in range(len(tmpdf)):
+                if tmpdf.iloc[j][f'query_{i}'] >= threshold:
+                    tmpDict[int(tmpdf.iloc[j]['id'])] = tmpdf.iloc[j][f'query_{i}']
+            sendDict[dict_key[i]] = query
+            returnDict[dict_key[i]] = tmpDict
+
+        return returnDict, sendDict
