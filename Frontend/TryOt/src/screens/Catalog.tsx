@@ -28,12 +28,6 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
 
 type ItemSimilarityDictionary = {[key: string]: number};
-interface Dictionaries {
-  userQueryIds: ItemSimilarityDictionary;
-  gptQuery1_Ids: ItemSimilarityDictionary;
-  gptQuery2_Ids: ItemSimilarityDictionary;
-  gptQuery3_Ids: ItemSimilarityDictionary;
-}
 
 function Catalog({
   navigation,
@@ -51,19 +45,8 @@ function Catalog({
   const [pageSize] = useState(20); // Number of items to load per page
   const [searchResults, setSearchResults] = useState([]);
 
-  const [userQueryIds, setUserQueryIds] = useState<ItemSimilarityDictionary>(
-    {},
-  );
-  const [gptQuery1_Ids, setGptQuery1_Ids] = useState<ItemSimilarityDictionary>(
-    {},
-  );
-  const [gptQuery2_Ids, setGptQuery2_Ids] = useState<ItemSimilarityDictionary>(
-    {},
-  );
-  const [gptQuery3_Ids, setGptQuery3_Ids] = useState<ItemSimilarityDictionary>(
-    {},
-  );
 
+  const [itemDataArray, setItemDataArray] = useState<ItemSimilarityDictionary[]>([]);
   const [mergedIds, setMergedIds] = useState<ItemSimilarityDictionary>({});
 
   //refine modal
@@ -84,14 +67,14 @@ function Catalog({
     try {
       const response = await searchItems(id, query);
       setSearchQueries(response.text);
-      setGptQuery1_Ids(response.items.gpt_query1);
-      setGptQuery2_Ids(response.items.gpt_query2);
-      setGptQuery3_Ids(response.items.gpt_query3);
-      setUserQueryIds(response.items.query);
 
-      mergeAndSortItemIds();
+      const userQueryIds = response.items.query;
+      const gpt1Ids = response.items.gpt_query1;
+      const gpt2Ids = response.items.gpt_query2;
+      const gpt3Ids = response.items.gpt_query3;
+
+      setItemDataArray(() => {return [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids]});
     } catch (error) {
-      console.log('Here!!');
       console.error('Error fetching data:', error);
     }
   }
@@ -114,6 +97,7 @@ function Catalog({
       const itemDetails = await Promise.all(
         itemIdsToFetch.map(itemId => fetchFashionItemDetails(itemId)),
       );
+      //console.log(itemDetails);
       setItems(prevItems => [...prevItems, ...itemDetails]);
       setLoading(false);
 
@@ -129,49 +113,54 @@ function Catalog({
 
   //for merging and sorting the fetched item ids and their similarities
   function mergeAndSortItemIds() {
-    const dictionaries: Dictionaries = {
-      userQueryIds,
-      gptQuery1_Ids,
-      gptQuery2_Ids,
-      gptQuery3_Ids,
-    };
-    const mergedDictionary: ItemSimilarityDictionary = {
-      ...dictionaries.userQueryIds,
-    }; //유저의 검색 기록은 항상 적용됨
+    const sortedMergedDictionary: ItemSimilarityDictionary = {};
 
-    targetIndex.forEach((index, i) => {
-      if (index === 1) {
-        const dictionaryName = `gptQuery${i + 1}_Ids` as keyof Dictionaries;
-        Object.assign(mergedDictionary, dictionaries[dictionaryName]);
+    for (let i = 0; i < itemDataArray.length; i++) {
+      if (targetIndex[i] === 1) {
+        const currentDictionary = itemDataArray[i];
+        for (const key in currentDictionary) {
+          if (currentDictionary.hasOwnProperty(key)) {
+            if (sortedMergedDictionary.hasOwnProperty(key)) {
+              // If the key exists in sortedMergedDictionary, update the value
+              sortedMergedDictionary[key] = Math.min(
+                  sortedMergedDictionary[key],
+                  currentDictionary[key]
+              );
+            } else {
+              // If the key doesn't exist, add it to sortedMergedDictionary
+              sortedMergedDictionary[key] = currentDictionary[key];
+            }
+          }
+        }
       }
-    });
-
-    const mergedArray: [number, number][] = Object.entries(
-      mergedDictionary,
-    ).map(([key, value]) => [parseInt(key, 10), value]);
-    mergedArray.sort((a, b) => a[1] - b[1]);
-    const sortedMergedDictionary: ItemSimilarityDictionary =
-      Object.fromEntries(mergedArray);
-
-    // Use the mergedDictionary here
-    setMergedIds(mergedDictionary);
-  }
-
-  useEffect(() => {
-    if (gptUsable) {
-      setTargetIndex([1, 1, 1, 1]);
-    } else {
-      setTargetIndex([1, 0, 0, 0]);
     }
 
-    fetchItemIds().catch(error => {
-      console.log(error);
-    });
+    // Use the sortedMergedDictionary here
+    setMergedIds(sortedMergedDictionary);
+  }
 
-    fetchItemDetails().catch(error => {
-      console.log(error);
-    });
+
+  useEffect(() => {
+    console.log("------Catalog is rendered------");
+    const fetchData = async () => {
+      if (gptUsable) {
+        setTargetIndex([1, 1, 1, 1]);
+      } else {
+        setTargetIndex([1, 0, 0, 0]);
+      }
+
+      try {
+        await fetchItemIds();
+        mergeAndSortItemIds();
+        await fetchItemDetails();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
   }, [route.params.searchQuery, page]);
+
 
   const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
