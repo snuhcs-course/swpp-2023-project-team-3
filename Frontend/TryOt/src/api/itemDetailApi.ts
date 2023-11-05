@@ -12,7 +12,7 @@ export const fetchFashionItemDetails = async (
     const response = await axios.get(`${BASE_URL}/${itemId}`);
     const itemData = response.data;
     return {
-      id: itemData.id.toString(),
+      id: itemData.id,
       itemUrl: itemData.order_url,
       imageUrl: itemData.image_url,
       brand: itemData.brand.name,
@@ -23,6 +23,7 @@ export const fetchFashionItemDetails = async (
       price: parseFloat(itemData.price),
     };
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };

@@ -1,13 +1,22 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
-import {Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, TextInput, View,} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import {RootStackParamList} from './Home';
 import {searchItems} from '../api/searchItemsApi';
 import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import {FashionItem} from '../models/FashionItem';
 import CatalogItem from '../components/CatalogItem';
 import QueryRefineModal from '../components/QueryRefineModal';
-import {PaperProvider} from 'react-native-paper';
+import {ActivityIndicator, PaperProvider} from 'react-native-paper';
 import {vw} from '../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
@@ -29,25 +38,18 @@ function Catalog({
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20); // Number of items to load per page
 
-  const [itemDataArray, setItemDataArray] = useState<ItemSimilarityDictionary[]>([]);
-  const [sortedIds, setSortedIds] = useState< string[]>(['']);
+  const [itemDataArray, setItemDataArray] = useState<
+    ItemSimilarityDictionary[]
+  >([]);
+  const [sortedIds, setSortedIds] = useState<string[]>(['']);
 
   //refine modal
   const [refineModalVisible, setLogoutModalVisible] = useState(false);
   const showRefineModal = () => setLogoutModalVisible(true);
   const hideRefineModal = () => setLogoutModalVisible(false);
 
-  //refine search only changes the combination of gpt queries
-  const handleRefineSearch = () => {
-    setItems([]); //보일 아이템들은 초기화
-    mergeAndSortItemIds();
-    fetchItemDetails().catch(error => {
-      console.log(error);
-    });
-  };
-
   //for fetching entire data for one search
-  async function fetchItemIds() {
+  const fetchItemIds = useCallback(async () => {
     try {
       const response = await searchItems(id, query);
       setSearchQueries(response.text);
@@ -57,14 +59,16 @@ function Catalog({
       const gpt2Ids = response.items.gpt_query2;
       const gpt3Ids = response.items.gpt_query3;
 
-      setItemDataArray(() => {return [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids]});
+      setItemDataArray(() => {
+        return [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids];
+      });
     } catch (error) {
       console.error('Error fetching id data:', error);
     }
-  }
+  }, [id, query]);
 
   //for fetching the item details with pagination
-  async function fetchItemDetails() {
+  const fetchItemDetails = useCallback(async () => {
     setLoading(true);
     try {
       const startIndex = (page - 1) * pageSize;
@@ -74,15 +78,15 @@ function Catalog({
         slicedIds.map(itemId => fetchFashionItemDetails(itemId)),
       );
       setItems(prevItems => [...prevItems, ...itemDetails]);
-      setLoading(false);
     } catch (error) {
       console.error('Error fetching item detail data:', error);
+    } finally {
       setLoading(false);
     }
-  }
+  }, [page, pageSize, sortedIds]);
 
   //for merging each query dictionary
-  function mergeDictionaries() {
+  const mergeDictionaries = useCallback(() => {
     return itemDataArray.reduce((result, dictionary, index) => {
       if (targetIndex[index] === 1) {
         for (const key in dictionary) {
@@ -95,22 +99,25 @@ function Catalog({
       }
       return result;
     }, {});
-  }
+  }, [itemDataArray, targetIndex]);
 
   //for sorting the merged dictionary (return is array)
-  function sortDictionaryByValues(dictionary: ItemSimilarityDictionary) {
-    return Object.entries(dictionary).sort((a, b) => b[1] - a[1]);
-  }
+  const sortDictionaryByValues = useCallback(
+    (dictionary: ItemSimilarityDictionary) => {
+      return Object.entries(dictionary).sort((a, b) => b[1] - a[1]);
+    },
+    [],
+  );
 
   //for merging and sorting the fetched item ids and their similarities
-  function mergeAndSortItemIds() {
+  const mergeAndSortItemIds = useCallback(() => {
     const mergedDictionary: ItemSimilarityDictionary = mergeDictionaries();
     const sortedMergedDictionary = sortDictionaryByValues(mergedDictionary);
     const idArrays = sortedMergedDictionary.map(([id, _]) => id);
     setSortedIds(idArrays);
-  }
+  }, [mergeDictionaries, sortDictionaryByValues]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     //초기화
     setItems([]);
     setPage(1);
@@ -128,13 +135,21 @@ function Catalog({
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [fetchItemDetails, fetchItemIds, gptUsable, mergeAndSortItemIds]);
+
+  //refine search only changes the combination of gpt queries
+  const handleRefineSearch = useCallback(() => {
+    setItems([]); //보일 아이템들은 초기화
+    mergeAndSortItemIds();
+    fetchItemDetails().catch(error => {
+      console.log(error);
+    });
+  }, [fetchItemDetails, mergeAndSortItemIds]);
 
   useEffect(() => {
-    console.log("------Catalog is rendered------");
+    console.log('------Catalog is rendered------');
     fetchData();
   }, []);
-
 
   const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
@@ -152,7 +167,9 @@ function Catalog({
         <TextInput
           style={styles.searchQueryInput}
           value={query}
-          onChangeText={(text: string) => {setQuery(text)}}
+          onChangeText={(text: string) => {
+            setQuery(text);
+          }}
           importantForAutofill="yes"
           returnKeyType="next"
           clearButtonMode="while-editing"
@@ -174,20 +191,24 @@ function Catalog({
         </View>
         <View style={styles.grayBar} />
         <FlatList
-            data={items}
-            numColumns={2}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-                <CatalogItem
-                    fashionItem={item}
-                    onNavigateToDetail={navigateToItemDetail}
-                />
-            )}
-            contentContainerStyle={styles.catalogGrid}
-            onEndReached={() => {
-              setPage((prevPage) => prevPage + 1);
-            }}
-            onEndReachedThreshold={0.1}
+          style={styles.itemCatalog}
+          columnWrapperStyle={{justifyContent: 'space-around'}}
+          data={items}
+          numColumns={2}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <CatalogItem
+              fashionItem={item}
+              onNavigateToDetail={navigateToItemDetail}
+            />
+          )}
+          contentContainerStyle={styles.catalogGrid}
+          onEndReached={() => {
+            setPage(prevPage => prevPage + 1);
+            fetchItemDetails();
+          }}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={loading ? <ActivityIndicator /> : null}
         />
         <QueryRefineModal
           hideRefineModal={hideRefineModal}
@@ -224,6 +245,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  itemCatalog: {
+    alignSelf: 'center',
+    backgroundColor: 'white',
   },
   grayBar: {
     width: Dimensions.get('screen').width,
