@@ -147,6 +147,7 @@ export type RootStackParamList = {
   };
   Chat: {
     searchQuery: string;
+    chatroom?: number;
   };
   ItemDetail: {
     item: FashionItem;
@@ -180,7 +181,12 @@ export default function Home() {
       <Stack.Screen
         name="Chat"
         component={Chat as any}
-        options={{headerShown: false}}
+        options={{
+          headerShadowVisible: false,
+          headerTitle: '',
+          headerTransparent: true,
+          headerTintColor: 'black',
+        }}
       />
     </Stack.Navigator>
   );

@@ -68,13 +68,13 @@ function MyPageScreen({
         <View style={styles.TableRow}>
           <Text style={styles.text}>Change Password</Text>
           <TouchableOpacity onPress={handlePasswordChange}>
-            <Icon name="chevron-forward-outline"></Icon>
+            <Icon name="chevron-forward-outline" />
           </TouchableOpacity>
         </View>
         <View style={styles.TableRow}>
           <Text style={styles.text}>Logout</Text>
           <TouchableOpacity onPress={handleLogout}>
-            <Icon name="chevron-forward-outline"></Icon>
+            <Icon name="chevron-forward-outline" />
           </TouchableOpacity>
         </View>
         <View style={styles.dividerBar} />

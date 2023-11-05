@@ -6,7 +6,7 @@ import {
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {useState, useEffect} from 'react';
+import {useEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
@@ -61,7 +61,6 @@ function AppInner() {
     getTokenAndRefresh();
   }, [dispatch]);
 
-
   return (
     <NavigationContainer>
       {isLoggedIn ? (
@@ -108,7 +107,7 @@ function AppInner() {
               title: 'Home',
               tabBarStyle: (route => {
                 const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
-                if (routeName === 'ItemDetail') {
+                if (routeName === 'ItemDetail' || routeName === 'Chat') {
                   return {display: 'none'};
                 }
                 return;
