@@ -12,10 +12,16 @@ import {RootStackParamList} from '../screens/Home';
 type ChatBubbleProps = {
   who: string;
   msg: message;
+  isErrorMsg: boolean;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Chat', undefined>;
 };
 
-export default function ChatBubble({who, msg, navigation}: ChatBubbleProps) {
+export default function ChatBubble({
+  who,
+  msg,
+  isErrorMsg,
+  navigation,
+}: ChatBubbleProps) {
   const [fashionItems, setFashionItems] = useState<FashionItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
@@ -27,7 +33,7 @@ export default function ChatBubble({who, msg, navigation}: ChatBubbleProps) {
     [navigation],
   );
   const fetchData = useCallback(async () => {
-    if (!isUserMessage(msg)) {
+    if (!isUserMessage(msg) && !isErrorMsg) {
       const itemData = await Promise.all(
         Object.keys(msg.items).map(val => fetchFashionItemDetails(val)),
       );
@@ -35,7 +41,7 @@ export default function ChatBubble({who, msg, navigation}: ChatBubbleProps) {
     } else {
       return [];
     }
-  }, [msg]);
+  }, [isErrorMsg, msg]);
 
   useEffect(() => {
     fetchData()
@@ -50,7 +56,11 @@ export default function ChatBubble({who, msg, navigation}: ChatBubbleProps) {
     <View style={styles.container}>
       <Text style={styles.title}>{who}</Text>
       {isUserMessage(msg) ? (
-        <Text style={styles.content}>{msg.content}</Text>
+        isErrorMsg ? (
+          <Text style={styles.errormessage}>{msg.content}</Text>
+        ) : (
+          <Text style={styles.content}>{msg.content}</Text>
+        )
       ) : (
         <>
           <Text style={styles.content}>{msg.answer}</Text>

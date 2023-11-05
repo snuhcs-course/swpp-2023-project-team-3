@@ -147,6 +147,7 @@ export type RootStackParamList = {
   };
   Chat: {
     searchQuery: string;
+    chatroom?: number;
   };
   ItemDetail: {
     item: FashionItem;

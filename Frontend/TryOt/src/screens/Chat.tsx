@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -13,9 +13,10 @@ import {
 } from 'react-native';
 import {RootStackParamList} from './Home';
 import ChatBubble from '../components/ChatBubble';
-import {vh, vw} from '../constants/design';
+import {fontSize, vh, vw} from '../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
+import {gptChatApi} from '../api/gptChatApi';
 
 type userMessage = {
   id: number;
@@ -25,17 +26,23 @@ type userMessage = {
 type gptMessage = {
   id: number;
   who: string;
-  user_id: number;
-  chatroom_id: number;
+  user?: number;
+  chatroom: number;
+  summary?: string;
   answer: string;
   gpt_query1: string;
   gpt_query2: string;
   gpt_query3: string;
   items: {[key: number]: [number, number]};
-  summary: string;
+};
+type errorMessage = {
+  id: number;
+  who: string;
+  content: string;
+  isError: boolean;
 };
 
-export type message = userMessage | gptMessage;
+export type message = userMessage | gptMessage | errorMessage;
 
 export function isUserMessage(msg: any): msg is userMessage {
   return (
@@ -49,54 +56,63 @@ export function isUserMessage(msg: any): msg is userMessage {
   );
 }
 
-async function getGptQuery(): Promise<any> {
-  await new Promise(resolve => setTimeout(resolve, 5000));
-  return {
-    user_id: 123,
-    chatroom_id: 123,
-    answer: 'apsalamalaicum',
-    gpt_query1: 'gpt query1 dess',
-    gpt_query2: 'gpt query2 imnida',
-    gpt_query3: 'this is gpt query3',
-    items: {
-      21356917: [0.3, 1],
-      21268753: [0.1, 3],
-      20992177: [0.7, 0],
-      21026589: [0.3, 1],
-      21026514: [0.1, 3],
-      21119012: [0.7, 0],
-      13008132: [0.3, 1],
-      15304907: [0.1, 3],
-      15326529: [0.7, 0],
-    },
-  };
-}
-
 function Chat({
   navigation,
-}: // route,
-NativeStackScreenProps<RootStackParamList, 'Chat'>) {
-  const [messages, setMessages] = useState<message[]>([
-    {id: 1, who: 'Me', content: 'hihihi1'},
-    {id: 2, who: 'Trytri', content: 'hihihi2'},
-    {id: 3, who: 'Me', content: 'hihihi3'},
-    {id: 4, who: 'Trytri', content: 'hihihi4'},
-    {id: 5, who: 'Me', content: 'hihihi5'},
-    {id: 6, who: 'Trytri', content: 'hihihi6'},
-    {id: 7, who: 'Me', content: 'hihihi17'},
-  ]);
+  route,
+}: NativeStackScreenProps<RootStackParamList, 'Chat'>) {
+  const {searchQuery} = route.params;
+  // states
+  const [messages, setMessages] = useState<message[]>([]);
   const [query, setQuery] = useState<string>('');
+  const [chatroom, setChatroom] = useState<number | undefined>(
+    route.params.chatroom,
+  );
   const [disableButton, setDisableButton] = useState<boolean>(false);
-
+  // flatlist ref
   const flatlistRef = useRef<FlatList<message>>(null);
+  // get user info
+  const {id, nickname} = useSelector((state: RootState) => state.user);
 
-  const {nickname} = useSelector((state: RootState) => state.user);
-
+  //scroll down function
   const scrollDownChats = useCallback(() => {
     flatlistRef.current?.scrollToEnd();
   }, []);
 
+  // query gptChat
+  const queryGpt = useCallback(
+    async (currQuery: string) => {
+      try {
+        const gptResponse = await gptChatApi(currQuery, id, chatroom);
+        const gptMessage: gptMessage = {
+          ...gptResponse,
+          id: 0,
+          who: 'Trytri',
+        };
+        if (chatroom !== gptMessage.chatroom) {
+          setChatroom(gptMessage.chatroom);
+        }
+
+        setMessages(prevMsg => {
+          gptMessage.id = prevMsg[prevMsg.length - 1].id + 1;
+          return prevMsg.concat(gptMessage);
+        });
+      } catch {
+        setMessages(prevMsg =>
+          prevMsg.concat({
+            id: prevMsg[prevMsg.length - 1].id + 1,
+            who: 'Trytri',
+            content: 'Error occurred with GPT. Please try again',
+            isError: true,
+          }),
+        );
+      }
+    },
+    [chatroom, id],
+  );
+
+  // chat request function
   const onChatRequest = useCallback(async () => {
+    console.log(chatroom);
     setDisableButton(true);
 
     const currQuery = query;
@@ -105,22 +121,24 @@ NativeStackScreenProps<RootStackParamList, 'Chat'>) {
     // adding user chat to message list
     setMessages(prevMsg =>
       prevMsg.concat({
-        id: prevMsg[prevMsg.length - 1].id + 1,
+        id: prevMsg.length > 0 ? prevMsg[prevMsg.length - 1].id + 1 : 0,
         who: nickname,
         content: currQuery,
       }),
     );
+    await queryGpt(currQuery).then(() => setDisableButton(false));
+  }, [chatroom, query, queryGpt, nickname]);
 
-    const gptResponse = await getGptQuery();
-
-    setMessages(prevMsg => {
-      gptResponse.who = 'Trytri';
-      gptResponse.id = prevMsg[prevMsg.length - 1].id + 1;
-      return prevMsg.concat(gptResponse);
-    });
-
-    setDisableButton(false);
-  }, [query, nickname]);
+  useEffect(() => {
+    async function setChattingroom() {
+      if (chatroom === undefined) {
+        setDisableButton(true);
+        setMessages([{id: 0, who: nickname, content: searchQuery}]);
+        await queryGpt(searchQuery).then(() => setDisableButton(false));
+      }
+    }
+    setChattingroom();
+  }, [chatroom, nickname, queryGpt, searchQuery]);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -135,7 +153,12 @@ NativeStackScreenProps<RootStackParamList, 'Chat'>) {
           showsVerticalScrollIndicator={false}
           renderItem={({item}) => (
             <View onStartShouldSetResponder={() => true}>
-              <ChatBubble who={item.who} msg={item} navigation={navigation} />
+              <ChatBubble
+                who={item.who}
+                msg={item}
+                isErrorMsg={'isError' in item && item.isError}
+                navigation={navigation}
+              />
             </View>
           )}
         />
@@ -186,6 +209,10 @@ const styles = StyleSheet.create({
 
     marginTop: 40,
     width: '100%',
+  },
+  errorMessage: {
+    color: 'red',
+    size: fontSize.small,
   },
 
   inputTextContainer: {
