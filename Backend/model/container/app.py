@@ -7,24 +7,18 @@ from inference import ClipTextEmbedding
 from datetime import datetime
 from gpt import GPT
 import requests
+import asyncio
 
 app = Flask(__name__)
-# api = Api(app, version='1.0', title='API 문서', description='Swagger 문서', doc="/api-docs")
-# test_api = api.namespace('test', description='조회 API')
 
 fclip = ClipTextEmbedding()
 gpt = GPT()
 
-# @test_api.route('/')
-# class Test(Resource):
-#     def get(self):
-#         health = fclip._check_model()
-#         status = 200 if health else 404
-#         return Response(response="\n", status=status, mimetype="application/json")
+async def post_log(sendDict):
+    tmp = "http://10.142.167.255/history/search-record/"
+    response = requests.post("http://3.34.1.54/history/search-record/", data=sendDict)
+    return response
     
-#     def post(self):
-#         return Response(response=output, status=status, mimetype="application/json")
-
 @app.route("/ping", methods=["GET"])
 def ping():
     health = fclip._check_model()  # You can insert a health check here
@@ -68,19 +62,17 @@ async def predict():
                 queryList.append(query.strip())
         finalDict, sendDict = fclip.ret_queries(queryList)
         sendDict["user"] = user_id
-        sendDict["timestamp"] = timestamp
-        async def post_log(sendDict):
-            testing ="http://127.0.0.1:5000/tests"
-            response = requests.post("http://43.201.105.74/history/search-record/", json=sendDict)
-            return response
+        sendDict = json.dumps(sendDict)
+        print(sendDict)
         
         response = await post_log(sendDict)
-        # response = json.load(response.decode("utf-8"))
-
+        print(response.json())
+        # print(json.loads(response.decode("utf-8")))
+        # response = json.loads(response.decode("utf-8"))
     else :
         return Response(response={"Your query is not related to Fashion."}, status=400, mimetype="application/json")
     
-    if response.status_code == 200:
+    if response.status_code == 201:
         response = response.json()
         log_id = response.get("log_id")
         output = {"user_id": user_id,
