@@ -1,6 +1,6 @@
 import json
-# import openai
 import os 
+
 cwd = os.getcwd()
 print(cwd)
 api_dir = "openai-api.json"

@@ -15,7 +15,6 @@ fclip = ClipTextEmbedding()
 gpt = GPT()
 
 async def post_log(sendDict):
-    tmp = "http://10.142.167.255/history/search-record/"
     response = requests.post("http://3.34.1.54/history/search-record/", data=sendDict)
     return response
     
@@ -67,8 +66,7 @@ async def predict():
         
         response = await post_log(sendDict)
         print(response.json())
-        # print(json.loads(response.decode("utf-8")))
-        # response = json.loads(response.decode("utf-8"))
+        
     else :
         return Response(response={"Your query is not related to Fashion."}, status=400, mimetype="application/json")
     
