@@ -60,6 +60,7 @@ function AppInner() {
     };
     getTokenAndRefresh();
   }, [dispatch]);
+
   return (
     <NavigationContainer>
       {isLoggedIn ? (

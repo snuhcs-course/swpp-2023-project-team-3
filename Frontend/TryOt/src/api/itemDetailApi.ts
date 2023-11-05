@@ -9,23 +9,21 @@ export const fetchFashionItemDetails = async (
   itemId: string,
 ): Promise<FashionItem> => {
   try {
-    //console.log(`Calling ${BASE_URL}/${itemId}`);
     const response = await axios.get(`${BASE_URL}/${itemId}`);
-
     const itemData = response.data;
-
     return {
-      id: itemData.id.toString(),
+      id: itemData.id,
       itemUrl: itemData.order_url,
       imageUrl: itemData.image_url,
       brand: itemData.brand.name,
       shortDescription: itemData.name,
       description: itemData.description,
-      category: itemData.category.map((cat: {name: any}) => cat.name), //fix category type
+      category: itemData.category.map((cat: {name: any}) => cat.name),
       gender: itemData.gender,
       price: parseFloat(itemData.price),
     };
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };

@@ -1,85 +1,88 @@
+# from flask_restx import Api, Resource, reqparse
+from typing import List
 import os
 import json
 from flask import Flask, jsonify, request, Response
 from inference import ClipTextEmbedding
 from datetime import datetime
+from gpt import GPT
+import requests
+import asyncio
 
 app = Flask(__name__)
+
 fclip = ClipTextEmbedding()
+gpt = GPT()
 
-
-# django_api_url = "http://your-django-api-url.com"  # Replace with the actual URL
-
+async def post_log(sendDict):
+    response = requests.post("http://3.34.1.54/history/search-record/", data=sendDict)
+    return response
+    
 @app.route("/ping", methods=["GET"])
 def ping():
     health = fclip._check_model()  # You can insert a health check here
-
     status = 200 if health else 404
     return Response(response="\n", status=status, mimetype="application/json")
 
 @app.route("/invocations", methods=["POST"])
 def predict():
     data = None
+    queryList = [] # query를 담을 list
     if request.content_type == "application/json":
         """
         request body should be :
         {
             "user_id" : 1203,
-            "text" : "A-Line Dresses and Skirts"
+            "text" : "A-Line Dresses and Skirts", String
         }
         """
         data = request.data.decode("utf-8")
         inputs = json.loads(data)
-        inputText = inputs['text']
+        queryList.append(inputs['text'])
         user_id = inputs['user_id']
         timestamp = int(datetime.now().timestamp())
-
-        print(timestamp)
-        # text 전처리
-        print(inputText)
     else :
         return Response(
             response="This predictor only supports for plain-text in English", status=415, mimetype="text/plain"
         )
-
-    itemIDList = fclip.get_similarity(inputText)
-    output = {"response":"Sucess", "user_id" : user_id, "item_ids":itemIDList, "timestamp" : timestamp}
     
-    # async def send_data_to_django():
-    #     async with httpx.AsyncClient() as client:
-    #         payload = {
-    #             "user_id": user_id,
-    #             "query": inputText,
-    #             "is_deleted" : False,
-    #             "timestamp" : timestamp
-    #         }
-    #         response = await client.post("django", json=payload)
+    gptResponse = gpt.get_response(queryList[0])
+    gptResponse = gptResponse["choices"][0]["text"].strip()
+    try : 
+        gptResponses = gptResponse.split(",")
+    except :
+        return Response({"GPT is not available, please turn it off."}, status=424, mimetype="application/json")
+    
+    gptInputs = gptResponses[1:]
 
-    #         if response.status == 200:
-    #             pass
-    #         else:
-    #             pass
+    if gptResponses[0] == "1":
+        for cnt, query in enumerate(gptInputs):
+            if cnt < 3:
+                queryList.append(query.strip())
+        finalDict, sendDict = fclip.ret_queries(queryList)
+        sendDict["user"] = user_id
+        sendDict = json.dumps(sendDict)
+        print(sendDict)
+        loop = asyncio.get_event_loop()
+        response = loop.run_until_complete(post_log(sendDict))
 
-    #         output = {
-    #             "response": "Success",
-    #             "user_id": user_id,
-    #             "item_ids": itemIDList,
-    #             "timestamp": timestamp,
-    #         }
-    #         return output
 
-    # send_data_to_django()
-
-    """
-    Response body
-    {
-        "response" : Sucess,
-        "user_id" : 123
-        "item_ids" : list[]
-        "timestamp" : 160943 unix timestamp
-    }
-    """
-
-    return Response(response=json.dumps(output), status=200, mimetype="application/json")
+        print(response.json())
+        
+    else :
+        return Response(response={"Your query is not related to Fashion."}, status=400, mimetype="application/json")
+    
+    if response.status_code == 201:
+        response = response.json()
+        log_id = response.get("log_id")
+        output = {"user_id": user_id,
+                  "log_id" : log_id,
+                "text" : queryList,
+                "items":finalDict,
+                "timestamp":timestamp}
+        
+        return Response(response=json.dumps(output), status=200, mimetype="application/json")
+    else:
+        return Response(response={"Internal Server is not working."}, status=500, mimetype="application/json")
 
 
