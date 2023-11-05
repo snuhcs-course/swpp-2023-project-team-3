@@ -1,13 +1,16 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Dimensions,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-import DismissKeyboardView from '../components/DismissKeyboardView';
+
+import {queryPlaceholders} from '../constants/queryPlaceholders';
+
 import {
   NativeStackScreenProps,
   createNativeStackNavigator,
@@ -29,11 +32,19 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
       searchQuery: inputText,
     });
   };
+
+  const [placeholderText, setPlaceholderText] = useState('');
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * queryPlaceholders.length);
+    const placeholderText = queryPlaceholders[randomIndex];
+    setPlaceholderText(placeholderText);
+  }, []);
+
   return (
-    <DismissKeyboardView>
+    <View>
       <View style={styles.inputWrapper}>
         <View>
-          <Text style={styles.titleText}>FInD YOUR STYLE</Text>
+          <Text style={styles.titleText}>find your style</Text>
         </View>
         <View style={styles.optionWrapper}>
           <Text
@@ -54,7 +65,7 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
           />
           <TextInput
             style={styles.inputText}
-            placeholder="찾고 싶은 스타일을 입력해주세요"
+            placeholder={placeholderText}
             placeholderTextColor="#666"
             importantForAutofill="yes"
             returnKeyType="next"
@@ -67,7 +78,7 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
           />
         </View>
       </View>
-    </DismissKeyboardView>
+    </View>
   );
 }
 
@@ -112,7 +123,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderWidth: 1,
     borderColor: color.border,
-    borderRadius: 8,
+    borderRadius: 10,
     width: 90 * vw,
     paddingLeft: 10,
     justifyContent: 'center',
@@ -161,7 +172,6 @@ export default function Home() {
           headerTintColor: 'black',
         }}
       />
-
       <Stack.Screen
         name="Catalog"
         component={Catalog as any}
