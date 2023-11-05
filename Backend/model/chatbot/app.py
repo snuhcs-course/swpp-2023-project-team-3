@@ -55,8 +55,7 @@ def predict():
                 history_response = history_response.json()
             else :
                 return Response(response=json.dumps({"error":"history is not retrieved."}), status=500, mimetype="application/json")
-            print(history_response)
-            # history_response
+            
             gpt_response = gpt.get_response(user_text, history_response)
             # gpt_response = gpt.get_response(user_text, chat_history=None)
             # gpt_response["gpt_query1"], gpt_response["gpt_query2"], gpt_response["gpt_query3"]
@@ -66,12 +65,12 @@ def predict():
             sendDict["summary"] = gpt_response["summary"]
             sendDict["query"] = user_text
             sendDict["chatroom"] = chat_id
+            print(sendDict)
 
         # a new chat session
         # needs to send user_id
         else :
             gpt_response = gpt.get_response(user_text, chat_history=None)
-            gpt_response["gpt_query1"], gpt_response["gpt_query2"], gpt_response["gpt_query3"]
             ret_dict, sendDict = fclip.ret_queries([gpt_response["gpt_query1"], gpt_response["gpt_query2"], gpt_response["gpt_query3"]])
             sendDict["user"] = user_id
             sendDict["items"] = ret_dict
@@ -79,13 +78,9 @@ def predict():
             sendDict["summary"] = gpt_response["summary"]
             sendDict["query"] = user_text
 
-        
-        print(sendDict)
-        
         chatPost_response = loop.run_until_complete(post_log(json.dumps(sendDict)))
         print(chatPost_response)
-        print(chatPost_response.json())
-        print(type(sendDict))
+        
         # chatPost_response = await chat_log(json.dumps(sendDict)) # data 는 보낼 내용 {}
         if chatPost_response.status_code == 201:
             chatPost_response = chatPost_response.json()
@@ -96,8 +91,11 @@ def predict():
             if (chat_id):
                 print(sendDict)
                 sendDict["chatroom"] = chat_id
-                print(type(sendDict))
-                
                 return Response(response=json.dumps(sendDict), status=200, mimetype="application/json")
-        
+            
+            # shouldn't include chat_id 
+            else:
+                sendDict.pop('chatroom', None)
+                return Response(response=json.dumps(sendDict), status=200, mimetype="application/json")
+
     return Response(response={"internal error"}, status=400, mimetype="application/json")

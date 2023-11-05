@@ -85,7 +85,6 @@ class ClipTextEmbedding(object):
             tmpdf['sim'] = tmpdf[f'query_{i}'].tolist()
             tmpdf['query_index'] = i
             tmpdf = tmpdf[["id", "sim", "query_index"]]
-            print(tmpdf)
             finaldf = pd.concat([finaldf, tmpdf], ignore_index=True)
             sendDict[dict_key[i]] = queryList[i]
         
