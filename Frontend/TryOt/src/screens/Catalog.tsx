@@ -1,28 +1,13 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  Button,
-  Dimensions,
-  Image,
-  LayoutChangeEvent,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, View,} from 'react-native';
 import {RootStackParamList} from './Home';
-import SlidingUpPanel from 'rn-sliding-up-panel';
-import RefinedQuery from '../components/RefinedQuery';
 import {searchItems} from '../api/searchItemsApi';
 import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import {FashionItem} from '../models/FashionItem';
 import CatalogItem from '../components/CatalogItem';
 import QueryRefineModal from '../components/QueryRefineModal';
 import {PaperProvider} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {vw} from '../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
@@ -47,7 +32,7 @@ function Catalog({
 
 
   const [itemDataArray, setItemDataArray] = useState<ItemSimilarityDictionary[]>([]);
-  const [mergedIds, setMergedIds] = useState<ItemSimilarityDictionary>({});
+  const [mergedIds, setMergedIds] = useState< [string, number][]>([]);
 
   //refine modal
   const [refineModalVisible, setLogoutModalVisible] = useState(false);
@@ -86,23 +71,18 @@ function Catalog({
       // Calculate the range of item indexes to fetch for the current page
       const startIndex = (page - 1) * pageSize;
       const endIndex = startIndex + pageSize;
-
-      /// Convert the mergedIds dictionary into an array of key-value pairs
-      const mergedArray = Object.entries(mergedIds);
-
-      const slicedItems = mergedArray.slice(startIndex, endIndex);
-
+      const slicedItems = mergedIds.slice(startIndex, endIndex);
       const slicedMergedIds = Object.fromEntries(slicedItems);
       const itemIdsToFetch = Object.keys(slicedMergedIds);
       const itemDetails = await Promise.all(
         itemIdsToFetch.map(itemId => fetchFashionItemDetails(itemId)),
       );
-      //console.log(itemDetails);
+
       setItems(prevItems => [...prevItems, ...itemDetails]);
       setLoading(false);
 
       // If there are more items to fetch, increment the current page
-      if (endIndex < mergedArray.length) {
+      if (endIndex < mergedIds.length) {
         setPage(page + 1);
       }
     } catch (error) {
@@ -111,34 +91,32 @@ function Catalog({
     }
   }
 
-  //for merging and sorting the fetched item ids and their similarities
-  function mergeAndSortItemIds() {
-    const sortedMergedDictionary: ItemSimilarityDictionary = {};
-
-    for (let i = 0; i < itemDataArray.length; i++) {
-      if (targetIndex[i] === 1) {
-        const currentDictionary = itemDataArray[i];
-        for (const key in currentDictionary) {
-          if (currentDictionary.hasOwnProperty(key)) {
-            if (sortedMergedDictionary.hasOwnProperty(key)) {
-              // If the key exists in sortedMergedDictionary, update the value
-              sortedMergedDictionary[key] = Math.min(
-                  sortedMergedDictionary[key],
-                  currentDictionary[key]
-              );
-            } else {
-              // If the key doesn't exist, add it to sortedMergedDictionary
-              sortedMergedDictionary[key] = currentDictionary[key];
-            }
+  //for merging each query dictionary
+  function mergeDictionaries(dictionaries: ItemSimilarityDictionary[]) {
+    return dictionaries.reduce((result, dictionary) => {
+      for (const key in dictionary) {
+        if (dictionary.hasOwnProperty(key)) {
+          if (result[key] === undefined || dictionary[key] > result[key]) {
+            result[key] = dictionary[key];
           }
         }
       }
-    }
-
-    // Use the sortedMergedDictionary here
-    setMergedIds(sortedMergedDictionary);
+      return result;
+    }, {});
   }
 
+  //for sorting the merged dictionary (return is array)
+  function sortDictionaryByValues(dictionary: ItemSimilarityDictionary) {
+    return Object.entries(dictionary).sort((a, b) => b[1] - a[1]);
+  }
+
+  //for merging and sorting the fetched item ids and their similarities
+  function mergeAndSortItemIds() {
+    const mergedDictionary: ItemSimilarityDictionary = mergeDictionaries(itemDataArray);
+    console.log(mergedDictionary);
+    const sortedMergedDictionary = sortDictionaryByValues(mergedDictionary);
+    setMergedIds(() => sortedMergedDictionary);
+  }
 
   useEffect(() => {
     console.log("------Catalog is rendered------");
