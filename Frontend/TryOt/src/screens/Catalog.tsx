@@ -79,6 +79,7 @@ function Catalog({navigation, route,}: NativeStackScreenProps<RootStackParamList
 
             mergeAndSortItemIds();
         } catch (error) {
+            console.log("Here!!");
             console.error('Error fetching data:', error);
         }
     }
