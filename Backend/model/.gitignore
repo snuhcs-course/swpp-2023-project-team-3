@@ -1,0 +1,4 @@
+container/.venv/*
+container/__pycache__/*
+container/model_config/*
+container/openai-api.json

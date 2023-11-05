@@ -1,10 +1,8 @@
-import torch
 from transformers import CLIPModel, CLIPProcessor
 import os
 import json
 import numpy as np
 import pandas as pd
-import openai
 from typing import List
 
 cwd = os.getcwd()
