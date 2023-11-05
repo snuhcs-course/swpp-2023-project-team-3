@@ -76,19 +76,22 @@ class ClipTextEmbedding(object):
     @classmethod
     def ret_queries(cls, queryList:List[str]):
         itemdf = cls.get_similarity(queryList)
-        finaldf = pd.DataFrame(columns=["id", "sim", "query_index"])
+        finaldf = pd.DataFrame()
         dict_key = ["gpt_query1", "gpt_query2", "gpt_query3"]
         ret_dict = {}
         sendDict = {}
         for i in range(len(queryList)):
             tmpdf = itemdf[["id", f'query_{i}']]
-            tmpdf['sim'] = itemdf[f'query_{i}']
+            tmpdf['sim'] = tmpdf[f'query_{i}'].tolist()
             tmpdf['query_index'] = i
+            tmpdf = tmpdf[["id", "sim", "query_index"]]
+            print(tmpdf)
             finaldf = pd.concat([finaldf, tmpdf], ignore_index=True)
             sendDict[dict_key[i]] = queryList[i]
-        finaldf = finaldf.drop_duplicates(subset=["id"], keep="first")
+        
         finaldf = finaldf.sort_values(by="sim", ascending=False)
+        finaldf = finaldf.drop_duplicates(subset=["id"], keep="first")
         finaldf = finaldf.head(9)
         for i in range(len(finaldf)):
-            ret_dict[finaldf.iloc[i]["id"]] = [finaldf.iloc[i]["sim"], finaldf.iloc[i]["query_index"]]
+            ret_dict[int(finaldf.iloc[i]["id"])] = [finaldf.iloc[i]["sim"], finaldf.iloc[i]["query_index"]]
         return ret_dict, sendDict

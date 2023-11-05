@@ -6,10 +6,15 @@ from inference import ClipTextEmbedding
 from datetime import datetime
 from gpt import GPT
 import requests
+import asyncio
 
 app = Flask(__name__)
 fclip = ClipTextEmbedding()
 gpt = GPT()
+
+async def post_log(sendDict):
+    response = requests.post("http://3.34.1.54/history/chat-record/", data=sendDict)
+    return response
 
 @app.route("/ping", methods=["GET"])
 def ping():
@@ -18,67 +23,81 @@ def ping():
     return Response(response="\n", status=status, mimetype="application/json")
 
 @app.route("/invocations", methods=["POST"])
-async def predict():
+def predict():
     data = None
+    sendDict = {}
     if request.content_type == "application/json":
         """
         request body should be :
         {
-            "user_id" : 1203,
-            "chatroom_id" : 12, 있을 수도 없을 수도
+            "user" : 1203,
+            "chatroom" : 12, 있을 수도 없을 수도
             "query" : "아무말", 유저 아무말 
         }
         """
         data = request.data.decode("utf-8")
         inputs = json.loads(data)
-        userQuery = inputs["query"]
-        queries = []
-        answer = ""
-        summary = ""
-        """
-        get gpt 3 query and put it into queries[]
-        """
-        
-        if "chatroom_id" in inputs.keys():
-            chatroom_id = inputs["chatroom_id"]
-            async def get_chatHistory(chatroom_id):
+        user_text = inputs["query"]
+        user_id= inputs['user']
+        loop = asyncio.get_event_loop()
+        # is existing chat session
+        # receives chat history
+        if "chatroom" in inputs.keys():
+            chat_id = inputs["chatroom"]
+            async def get_chatHistory(chatroom):
                 testing ="http://127.0.0.1:5000/tests"
-                response = requests.post(f"http://43.201.105.74/history/chat/{chatroom_id}/")
+                response = requests.get(f"http://3.34.1.54/history/chat/{chatroom}")
                 return response
-            response = await get_chatHistory(chatroom_id)
-            response = response.json()
-        
-            """do something"""
-            """
-            api call (chat history)
-            promt -> queries =[] 3개
-            """
-        else :
-            """do something"""
-            """
-            prompt -> queries[]  3개
-            summary 도 받아야함
-            """
-            """initiate"""
+            
+            # history_response = await get_chatHistory(chatroom)
+            history_response = loop.run_until_complete(get_chatHistory(chat_id))
+            if history_response.status_code == 200:
+                history_response = history_response.json()
+            else :
+                return Response(response=json.dumps({"error":"history is not retrieved."}), status=500, mimetype="application/json")
+            print(history_response)
+            # history_response
+            gpt_response = gpt.get_response(user_text, history_response)
+            # gpt_response = gpt.get_response(user_text, chat_history=None)
+            # gpt_response["gpt_query1"], gpt_response["gpt_query2"], gpt_response["gpt_query3"]
+            ret_dict, sendDict = fclip.ret_queries([gpt_response["gpt_query1"], gpt_response["gpt_query2"], gpt_response["gpt_query3"]])
+            sendDict["items"] = ret_dict
+            sendDict["answer"] = gpt_response["answer"]
+            sendDict["summary"] = gpt_response["summary"]
+            sendDict["query"] = user_text
+            sendDict["chatroom"] = chat_id
 
-        user_id = inputs['user_id']
-        
-        ret_dict, sendDict = fclip.ret_queries(queries)
-        """
-        ret_dict
-        {
-         10239 : [sim, index],
-         22391 : [],
-         9개
-        }
-        """
-        sendDict["user_id"] = user_id
-        sendDict["answer"] = answer
-        sendDict["items"] = ret_dict
-        if chatroom_id : 
-            sendDict["chatroom_id"] = chatroom_id
+        # a new chat session
+        # needs to send user_id
         else :
-            sendDict["summary"] = summary
-    
-    return Response(response=json.dumps(sendDict) status=200, mimetype="application/json")
+            gpt_response = gpt.get_response(user_text, chat_history=None)
+            gpt_response["gpt_query1"], gpt_response["gpt_query2"], gpt_response["gpt_query3"]
+            ret_dict, sendDict = fclip.ret_queries([gpt_response["gpt_query1"], gpt_response["gpt_query2"], gpt_response["gpt_query3"]])
+            sendDict["user"] = user_id
+            sendDict["items"] = ret_dict
+            sendDict["answer"] = gpt_response["answer"]
+            sendDict["summary"] = gpt_response["summary"]
+            sendDict["query"] = user_text
 
+        
+        print(sendDict)
+        
+        chatPost_response = loop.run_until_complete(post_log(json.dumps(sendDict)))
+        print(chatPost_response)
+        print(chatPost_response.json())
+        print(type(sendDict))
+        # chatPost_response = await chat_log(json.dumps(sendDict)) # data 는 보낼 내용 {}
+        if chatPost_response.status_code == 201:
+            chatPost_response = chatPost_response.json()
+            chat_id = chatPost_response.get("chatroom_id")
+            print(chat_id)
+
+            # needs to send chat_id to the app
+            if (chat_id):
+                print(sendDict)
+                sendDict["chatroom"] = chat_id
+                print(type(sendDict))
+                
+                return Response(response=json.dumps(sendDict), status=200, mimetype="application/json")
+        
+    return Response(response={"internal error"}, status=400, mimetype="application/json")

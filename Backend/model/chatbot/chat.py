@@ -6,8 +6,7 @@ from langchain.prompts import (
     ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, AIMessagePromptTemplate, MessagesPlaceholder
     )
 from langchain.memory import ConversationBufferMemory
-from langchain.output_parsers import ResponseSchema
-from langchain.output_parsers import StructuredOutputParser
+from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 
 # Authenticate with OpenAI API key
 openai.api_key = os.environ['OPENAI_API_KEY']
@@ -17,8 +16,7 @@ llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo-0301")
 response_schemas = [
     ResponseSchema(name="answer", description="Answer to the human's question. This is the only part that will be visible to the human."),
     ResponseSchema(name="human_query", description="A short phrase that can encapsulate what the human wants"),
-    ResponseSchema(name="fashion_items", description="list of fashion items generated"),
-    ResponseSchema(name="new_fashion_items_flag", description="A binary flag that indicates whether the output for fashion_items has been updated or not")
+    ResponseSchema(name="fashion_items", description="list of fashion items generated")
 ]
 
 output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
@@ -29,24 +27,22 @@ system_template = """
 You are a helpful and friendly chatbot designed to help humans with shopping the fashion items they want.
 The human will talk to you to in the hope that you will suggest detailed and concrete fashion items that suits his/her needs.
 Your output should be of a json format. More infomation will follow later about how to format your output.
-
 First, you should interact with the human and answer his/her questions as this helpful chatbot assistant you are. 
 Your response for this first part should go into the "answer" part of the final json output format.
-Second, you need to summarize into a short phrase what the user wants.
+You should give some fashion item suggestions when the human tells you want he/she wants.
+Limit your suggested fashion item types within coats, denims, dresses, jackets, knitwear, skirt, tops and trousers.
+Your suggested fashion items should be detailed and concrete, at least three words each.
+No shoes, bags or scarves for example.
+Second, you need to summarize into a short phrase what the user wants. Keep it concise, less than 5 words.
 Your response for this second part should go into the "human_query" part of the final json output format.
-Third, once you have collected enough information about what the user needs, you should give a list of fashion items that suits the human's needs.
+Third, if you have included any fashion item suggestions in the "answer" section, make a list out of them, separated by commas.
+If you haven't given any fashion items to the human, you put the null value here.
 Put this into the "fashion_items" part of the final json output format.
-Fourth, if you have generated a new list of fashion items because what the user wants has changed, set the binary flag to 1. The default value if 0.
-This binary value goes into the "new_fashion_items_flag" part of the final json output format.
+Your output should always be of a json format with the three keys "answer", "human_query" and "fashion_items" as specified below, no matter the human input.
 """
 
-human_template = """
-{question}
-"""
-
-ai_template = """
-"""
-
+human_template = """{question}"""
+ai_template = """"""
 format_template = """{format_instructions}"""
 
 # Construct prompt from templates
@@ -64,8 +60,13 @@ prompt = ChatPromptTemplate(
 
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 chain = LLMChain(llm=llm, prompt=prompt, verbose=True, memory=memory)
-output_dict = output_parser.parse(chain.predict(question="what should i wear for high school reunion"))
+chain.predict(question="hi")
+chain.predict(question="high school reunion")
+last_response = chain.predict(question="Give me suggestions on what to wear for halloween to look like Christine Daae")
+print(last_response)
+output_dict = output_parser.parse(last_response)
 print(f"answer: {output_dict.get('answer')}")
 print(f"human_query: {output_dict.get('human_query')}")
 print(f"fashion_items: {output_dict.get('fashion_items')}")
-print(f"flag: {output_dict.get('new_fashion_items_flag')}")
+
+
