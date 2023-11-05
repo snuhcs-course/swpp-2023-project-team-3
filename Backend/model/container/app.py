@@ -25,7 +25,7 @@ def ping():
     return Response(response="\n", status=status, mimetype="application/json")
 
 @app.route("/invocations", methods=["POST"])
-async def predict():
+def predict():
     data = None
     queryList = [] # query를 담을 list
     if request.content_type == "application/json":
@@ -63,8 +63,10 @@ async def predict():
         sendDict["user"] = user_id
         sendDict = json.dumps(sendDict)
         print(sendDict)
-        
-        response = await post_log(sendDict)
+        loop = asyncio.get_event_loop()
+        response = loop.run_until_complete(post_log(sendDict))
+
+
         print(response.json())
         
     else :
