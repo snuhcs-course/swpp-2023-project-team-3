@@ -26,4 +26,3 @@ export const fetchFashionItemDetails = async (
     throw error;
   }
 };
-

@@ -1,14 +1,15 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   Dimensions,
-  Image, ScrollView,
+  Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
 
-import {queryPlaceholders} from "../constants/queryPlaceholders";
+import {queryPlaceholders} from '../constants/queryPlaceholders';
 
 import {
   NativeStackScreenProps,
@@ -40,44 +41,44 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   }, []);
 
   return (
+    <View>
+      <View style={styles.inputWrapper}>
         <View>
-          <View style={styles.inputWrapper}>
-            <View>
-              <Text style={styles.titleText}>find your style</Text>
-            </View>
-            <View style={styles.optionWrapper}>
-              <Text
-                  style={[styles.optionText, isCatalog ? styles.choosenText : {}]}
-                  onPress={onPressHandler}>
-                Catalog
-              </Text>
-              <Text
-                  onPress={onPressHandler}
-                  style={[styles.optionText, isCatalog ? {} : styles.choosenText]}>
-                Chat
-              </Text>
-            </View>
-            <View style={styles.inputTextWrapper}>
-              <Image
-                  style={styles.textInnerImage}
-                  source={require('../assets/Icon/Logo_Black.png')}
-              />
-              <TextInput
-                  style={styles.inputText}
-                  placeholder={placeholderText}
-                  placeholderTextColor="#666"
-                  importantForAutofill="yes"
-                  returnKeyType="next"
-                  clearButtonMode="while-editing"
-                  blurOnSubmit={false}
-                  onSubmitEditing={onSubmitEditingHandler}
-                  onChangeText={text => {
-                    setInputText(text);
-                  }}
-              />
-            </View>
-          </View>
+          <Text style={styles.titleText}>find your style</Text>
         </View>
+        <View style={styles.optionWrapper}>
+          <Text
+            style={[styles.optionText, isCatalog ? styles.choosenText : {}]}
+            onPress={onPressHandler}>
+            Catalog
+          </Text>
+          <Text
+            onPress={onPressHandler}
+            style={[styles.optionText, isCatalog ? {} : styles.choosenText]}>
+            Chat
+          </Text>
+        </View>
+        <View style={styles.inputTextWrapper}>
+          <Image
+            style={styles.textInnerImage}
+            source={require('../assets/Icon/Logo_Black.png')}
+          />
+          <TextInput
+            style={styles.inputText}
+            placeholder={placeholderText}
+            placeholderTextColor="#666"
+            importantForAutofill="yes"
+            returnKeyType="next"
+            clearButtonMode="while-editing"
+            blurOnSubmit={false}
+            onSubmitEditing={onSubmitEditingHandler}
+            onChangeText={text => {
+              setInputText(text);
+            }}
+          />
+        </View>
+      </View>
+    </View>
   );
 }
 

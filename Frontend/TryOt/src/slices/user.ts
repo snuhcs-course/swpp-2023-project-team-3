@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { Token, UserInfo } from '../types/server';
+import {createSlice} from '@reduxjs/toolkit';
+import {Token, UserInfo} from '../types/server';
 
 export interface LocalVariables {
   gptUsable: boolean;
@@ -17,13 +17,13 @@ const initialState: UserInfo & Token & LocalVariables = {
 };
 
 const testUser: UserInfo & Token & LocalVariables = {
-  id : 2,
-  username : "admin2",
-  age : 0,
-  gender : "M",
-  email : "admin2@admin.com",
-  token : "710201114a0c4ff56bcf82452b0f9c79e1fa1399",
-  nickname : "admin2",
+  id: 2,
+  username: 'admin2',
+  age: 0,
+  gender: 'M',
+  email: 'admin2@admin.com',
+  token: '710201114a0c4ff56bcf82452b0f9c79e1fa1399',
+  nickname: 'admin2',
   gptUsable: true,
 };
 
@@ -43,8 +43,7 @@ const userSlice = createSlice({
       state.gptUsable = action.payload;
     },
   },
-  extraReducers: (builder) => {},
+  extraReducers: builder => {},
 });
 
 export default userSlice;
-

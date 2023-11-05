@@ -1,3 +1,1 @@
-export interface RefinedQuery {
-
-}
+export interface RefinedQuery {}
