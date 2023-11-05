@@ -2,7 +2,8 @@
 import axios from 'axios';
 
 const BASE_URL =
-  'https://dxw12un6m8.execute-api.ap-northeast-2.amazonaws.com/test/invocations';
+  'http://10.140.156.31:8000/invocations'
+    //'//s://dxw12un6m8.execute-api.ap-northeast-2.amazonaws.com/test/invocations';
 
 interface SearchItemsResponse {
   user_id: number;
@@ -31,6 +32,7 @@ export const searchItems = async (
       requestBody,
     );
     if (response.status === 200) {
+      //console.log(response.data);
       return response.data;
     } else {
       const errorMessage =

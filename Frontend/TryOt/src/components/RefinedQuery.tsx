@@ -4,19 +4,19 @@ import {useState} from 'react';
 
 interface RefinedQueryProps {
   query: string;
+  isSwitchOn: boolean;
   handleToggleSwitch: (index: number) => void;
-  index: number;
+  gptIndex: number;
 }
 
 export default function RefinedQuery({
-  query,
+  query, isSwitchOn,
   handleToggleSwitch,
-  index,
+  gptIndex,
 }: RefinedQueryProps) {
-  const [isSwitchOn, setIsSwitchOn] = useState(true);
   const onToggleSwitch = () => {
-    setIsSwitchOn(!isSwitchOn);
-    handleToggleSwitch(index);
+    console.log("Toggled switch for gpt index " + gptIndex + " from " + isSwitchOn + " to " + !isSwitchOn);
+    handleToggleSwitch(gptIndex);
   };
 
   return (

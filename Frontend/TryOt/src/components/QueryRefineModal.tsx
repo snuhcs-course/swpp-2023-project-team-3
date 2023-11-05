@@ -38,7 +38,6 @@ function QueryRefineModal({
   setTargetIndex,
   refinedQueries,
 }: QueryRefineModalProps) {
-  const {gptUsable} = useSelector((state: RootState) => state.user);
 
   const handleToggleSwitch = (index: number) => {
     const updatedTargetIndex = [...targetIndex];
@@ -73,8 +72,9 @@ function QueryRefineModal({
               <RefinedQuery
                 key={index}
                 query={query}
+                isSwitchOn={targetIndex[index + 1] === 1}
                 handleToggleSwitch={handleToggleSwitch}
-                index={index}
+                gptIndex={index}
               />
             ))}
           </View>
