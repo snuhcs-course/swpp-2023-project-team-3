@@ -1,5 +1,13 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 
 import {queryPlaceholders} from '../constants/queryPlaceholders';
 
@@ -34,46 +42,44 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   }, []);
 
   return (
-    <DismissKeyboardView contentContainerStyle={{flex: 1}}>
-      <View>
-        <View style={styles.inputWrapper}>
-          <View>
-            <Text style={styles.titleText}>find your style</Text>
-          </View>
-          <View style={styles.optionWrapper}>
-            <Text
-              style={[styles.optionText, isCatalog ? styles.choosenText : {}]}
-              onPress={onPressHandler}>
-              Catalog
-            </Text>
-            <Text
-              onPress={onPressHandler}
-              style={[styles.optionText, isCatalog ? {} : styles.choosenText]}>
-              Chat
-            </Text>
-          </View>
-          <View style={styles.inputTextWrapper}>
-            <Image
-              style={styles.textInnerImage}
-              source={require('../assets/Icon/Logo_Black.png')}
-            />
-            <TextInput
-              style={styles.inputText}
-              placeholder={placeholderText}
-              placeholderTextColor="#666"
-              importantForAutofill="yes"
-              returnKeyType="next"
-              clearButtonMode="while-editing"
-              blurOnSubmit={false}
-              onSubmitEditing={onSubmitEditingHandler}
-              onChangeText={text => {
-                setInputText(text);
-              }}
-            />
-          </View>
+    <View>
+      <View style={styles.inputWrapper}>
+        <View>
+          <Text style={styles.titleText}>find your style</Text>
+        </View>
+        <View style={styles.optionWrapper}>
+          <Text
+            style={[styles.optionText, isCatalog ? styles.choosenText : {}]}
+            onPress={onPressHandler}>
+            Catalog
+          </Text>
+          <Text
+            onPress={onPressHandler}
+            style={[styles.optionText, isCatalog ? {} : styles.choosenText]}>
+            Chat
+          </Text>
+        </View>
+        <View style={styles.inputTextWrapper}>
+          <Image
+            style={styles.textInnerImage}
+            source={require('../assets/Icon/Logo_Black.png')}
+          />
+          <TextInput
+            style={styles.inputText}
+            placeholder={placeholderText}
+            placeholderTextColor="#666"
+            importantForAutofill="yes"
+            returnKeyType="next"
+            clearButtonMode="while-editing"
+            blurOnSubmit={false}
+            onSubmitEditing={onSubmitEditingHandler}
+            onChangeText={text => {
+              setInputText(text);
+            }}
+          />
         </View>
       </View>
-    </DismissKeyboardView>
+    </View>
   );
 }
 
@@ -143,6 +149,7 @@ export type RootStackParamList = {
   };
   Chat: {
     searchQuery: string;
+    chatroom?: number;
   };
   ItemDetail: {
     item: FashionItem;
@@ -176,7 +183,12 @@ export default function Home() {
       <Stack.Screen
         name="Chat"
         component={Chat as any}
-        options={{headerShown: false}}
+        options={{
+          headerShadowVisible: false,
+          headerTitle: '',
+          headerTransparent: true,
+          headerTintColor: 'black',
+        }}
       />
     </Stack.Navigator>
   );

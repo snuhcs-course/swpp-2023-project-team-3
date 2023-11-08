@@ -12,6 +12,9 @@ class SearchLog(models.Model):
         on_delete=models.SET_NULL
     )
     query = models.TextField()
+    gpt_query1 = models.TextField()
+    gpt_query2 = models.TextField()
+    gpt_query3 = models.TextField()
     is_deleted = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default = timezone.now)
 
@@ -27,7 +30,7 @@ class ChatLog(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
-    first_query = models.TextField()
+    summary = models.TextField()
     is_deleted = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default = timezone.now)
 
@@ -54,6 +57,9 @@ class GptChat(models.Model):
         on_delete=models.CASCADE
     )
     answer = models.TextField()
+    gpt_query1 = models.TextField()
+    gpt_query2 = models.TextField()
+    gpt_query3 = models.TextField()   
     is_deleted = models.BooleanField(default=False) 
     timestamp = models.DateTimeField(default = timezone.now)
 
