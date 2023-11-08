@@ -1,14 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Dimensions,
-  Image, ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
 
-import {queryPlaceholders} from "../constants/queryPlaceholders";
+import {queryPlaceholders} from '../constants/queryPlaceholders';
 
 import {
   NativeStackScreenProps,
@@ -19,6 +12,7 @@ import Chat from './Chat';
 import {color, fontSize, vh, vw} from '../constants/design';
 import ItemDetailScreen from './ItemDetailScreen';
 import {FashionItem} from '../models/FashionItem';
+import DismissKeyboardView from '../components/DismissKeyboardView';
 
 function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   const [isCatalog, setIsCatalog] = useState(true);
@@ -40,49 +34,52 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   }, []);
 
   return (
-        <View>
-          <View style={styles.inputWrapper}>
-            <View>
-              <Text style={styles.titleText}>find your style</Text>
-            </View>
-            <View style={styles.optionWrapper}>
-              <Text
-                  style={[styles.optionText, isCatalog ? styles.choosenText : {}]}
-                  onPress={onPressHandler}>
-                Catalog
-              </Text>
-              <Text
-                  onPress={onPressHandler}
-                  style={[styles.optionText, isCatalog ? {} : styles.choosenText]}>
-                Chat
-              </Text>
-            </View>
-            <View style={styles.inputTextWrapper}>
-              <Image
-                  style={styles.textInnerImage}
-                  source={require('../assets/Icon/Logo_Black.png')}
-              />
-              <TextInput
-                  style={styles.inputText}
-                  placeholder={placeholderText}
-                  placeholderTextColor="#666"
-                  importantForAutofill="yes"
-                  returnKeyType="next"
-                  clearButtonMode="while-editing"
-                  blurOnSubmit={false}
-                  onSubmitEditing={onSubmitEditingHandler}
-                  onChangeText={text => {
-                    setInputText(text);
-                  }}
-              />
-            </View>
+    <DismissKeyboardView contentContainerStyle={{flex: 1}}>
+      <View>
+        <View style={styles.inputWrapper}>
+          <View>
+            <Text style={styles.titleText}>find your style</Text>
+          </View>
+          <View style={styles.optionWrapper}>
+            <Text
+              style={[styles.optionText, isCatalog ? styles.choosenText : {}]}
+              onPress={onPressHandler}>
+              Catalog
+            </Text>
+            <Text
+              onPress={onPressHandler}
+              style={[styles.optionText, isCatalog ? {} : styles.choosenText]}>
+              Chat
+            </Text>
+          </View>
+          <View style={styles.inputTextWrapper}>
+            <Image
+              style={styles.textInnerImage}
+              source={require('../assets/Icon/Logo_Black.png')}
+            />
+            <TextInput
+              style={styles.inputText}
+              placeholder={placeholderText}
+              placeholderTextColor="#666"
+              importantForAutofill="yes"
+              returnKeyType="next"
+              clearButtonMode="while-editing"
+              blurOnSubmit={false}
+              onSubmitEditing={onSubmitEditingHandler}
+              onChangeText={text => {
+                setInputText(text);
+              }}
+            />
           </View>
         </View>
+      </View>
+    </DismissKeyboardView>
   );
 }
 
 const styles = StyleSheet.create({
   inputWrapper: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: 100 * vh,
