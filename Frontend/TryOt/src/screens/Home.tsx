@@ -42,7 +42,8 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   }, []);
 
   return (
-    <View>
+    <DismissKeyboardView
+      style={{backgroundColor: color.background, height: 100 * vh}}>
       <View style={styles.inputWrapper}>
         <View>
           <Text style={styles.titleText}>find your style</Text>
@@ -79,7 +80,7 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
           />
         </View>
       </View>
-    </View>
+    </DismissKeyboardView>
   );
 }
 
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 100 * vh,
+    height: 89 * vh,
     overflowY: 'auto',
     touchAction: 'none',
     userSelect: 'none',
