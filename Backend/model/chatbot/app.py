@@ -65,7 +65,6 @@ def predict():
             sendDict["summary"] = gpt_response["summary"]
             sendDict["query"] = user_text
             sendDict["chatroom"] = chat_id
-            print(sendDict)
 
         # a new chat session
         # needs to send user_id
@@ -79,23 +78,19 @@ def predict():
             sendDict["query"] = user_text
 
         chatPost_response = loop.run_until_complete(post_log(json.dumps(sendDict)))
-        print(chatPost_response)
         
         # chatPost_response = await chat_log(json.dumps(sendDict)) # data 는 보낼 내용 {}
         if chatPost_response.status_code == 201:
             chatPost_response = chatPost_response.json()
             chat_id = chatPost_response.get("chatroom_id")
-            print(chat_id)
 
             # needs to send chat_id to the app
             if (chat_id):
-                print(sendDict)
                 sendDict["chatroom"] = chat_id
                 return Response(response=json.dumps(sendDict), status=200, mimetype="application/json")
             
             # shouldn't include chat_id 
             else:
-                sendDict.pop('chatroom', None)
                 return Response(response=json.dumps(sendDict), status=200, mimetype="application/json")
 
     return Response(response={"internal error"}, status=400, mimetype="application/json")
