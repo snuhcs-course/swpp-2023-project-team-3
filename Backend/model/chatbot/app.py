@@ -6,13 +6,17 @@ from inference import ClipTextEmbedding
 from datetime import datetime
 from gpt import GPT
 import requests
-import asyncio
 
 app = Flask(__name__)
 fclip = ClipTextEmbedding()
 gpt = GPT()
 
-async def post_log(sendDict):
+def get_chatHistory(chatroom):
+    testing ="http://127.0.0.1:5000/tests"
+    response = requests.get(f"http://3.34.1.54/history/chat/{chatroom}")
+    return response
+
+def post_log(sendDict):
     response = requests.post("http://3.34.1.54/history/chat-record/", data=sendDict)
     return response
 
@@ -39,18 +43,15 @@ def predict():
         inputs = json.loads(data)
         user_text = inputs["query"]
         user_id= inputs['user']
-        loop = asyncio.get_event_loop()
+        # loop = asyncio.get_event_loop()
         # is existing chat session
         # receives chat history
         if "chatroom" in inputs.keys():
             chat_id = inputs["chatroom"]
-            async def get_chatHistory(chatroom):
-                testing ="http://127.0.0.1:5000/tests"
-                response = requests.get(f"http://3.34.1.54/history/chat/{chatroom}")
-                return response
             
             # history_response = await get_chatHistory(chatroom)
-            history_response = loop.run_until_complete(get_chatHistory(chat_id))
+            # history_response = loop.run_until_complete(get_chatHistory(chat_id))
+            history_response = get_chatHistory(chat_id)
             if history_response.status_code == 200:
                 history_response = history_response.json()
             else :
@@ -78,7 +79,8 @@ def predict():
             sendDict["summary"] = gpt_response["summary"]
             sendDict["query"] = user_text
 
-        chatPost_response = loop.run_until_complete(post_log(json.dumps(sendDict)))
+        # chatPost_response = loop.run_until_complete(post_log(json.dumps(sendDict)))
+        chatPost_response = post_log(json.dumps(sendDict))
         print(chatPost_response)
         
         # chatPost_response = await chat_log(json.dumps(sendDict)) # data 는 보낼 내용 {}
@@ -95,7 +97,6 @@ def predict():
             
             # shouldn't include chat_id 
             else:
-                sendDict.pop('chatroom', None)
                 return Response(response=json.dumps(sendDict), status=200, mimetype="application/json")
 
     return Response(response={"internal error"}, status=400, mimetype="application/json")

@@ -7,13 +7,13 @@ from langchain.prompts import (
     )
 from langchain.memory import ConversationBufferMemory
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
-import ast
 
 class GPT(object):
     import openai
-
+        
     @classmethod
     def __init__(cls):
+        
         cls.openai.api_key = os.environ['OPENAI_API_KEY']
         cls.llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo-0301")
         cls.system_context_template = """
