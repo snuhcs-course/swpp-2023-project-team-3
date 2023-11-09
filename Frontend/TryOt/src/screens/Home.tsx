@@ -1,13 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
 
 import {queryPlaceholders} from '../constants/queryPlaceholders';
 
