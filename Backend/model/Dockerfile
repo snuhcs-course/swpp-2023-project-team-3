@@ -1,7 +1,7 @@
 FROM --platform=linux/x86-64 python:3.8
 
 WORKDIR /opt/ml
-COPY ./container/ /opt/ml/
+COPY ./chatbot/ /opt/ml/
 
 ENV PYTHONUNBUFFERED=TRUE
 ENV PYTHONDONTWRITEBYTECODE=TRUE
