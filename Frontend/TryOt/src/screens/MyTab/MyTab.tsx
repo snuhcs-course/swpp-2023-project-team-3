@@ -19,18 +19,17 @@ import {FashionItem} from '../../models/FashionItem';
 function MyPageScreen({
   navigation,
 }: NativeStackScreenProps<MyTabStackParamList>) {
-  const [isGPTRefineOn, setIsGPTRefineOn] = React.useState(false);
   const {email, nickname, gender, username, gptUsable} = useSelector(
     (state: RootState) => state.user,
   );
-  const dispatch = useDispatch();
+
+  const [isGPTRefineOn, setIsGPTRefineOn] = React.useState(gptUsable);
 
   const [logoutModalVisible, setLogoutModalVisible] = React.useState(false);
 
   const showLogoutModal = () => setLogoutModalVisible(true);
   const hideLogoutModal = () => setLogoutModalVisible(false);
 
-  useEffect(() => {}, []);
   const handleLogout = () => {
     showLogoutModal();
   };

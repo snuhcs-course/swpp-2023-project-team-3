@@ -2,8 +2,7 @@
 import axios from 'axios';
 
 const BASE_URL =
-  'http://10.140.156.31:8000/invocations'
-    //'//s://dxw12un6m8.execute-api.ap-northeast-2.amazonaws.com/test/invocations';
+  'https://dxw12un6m8.execute-api.ap-northeast-2.amazonaws.com/test/invocations';
 
 interface SearchItemsResponse {
   user_id: number;
