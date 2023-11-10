@@ -36,7 +36,7 @@ class UsersTestCase(TestCase):
             "password" : "test_user"
         }
         data_json = json.dumps(data)
-        response = client.post('/users/register/', data=data_json, content_type='application/json')
+        response = client.post('/user/register/', data=data_json, content_type='application/json')
         
         self.assertEqual(response.status_code, 201)
 
@@ -55,7 +55,7 @@ class UsersTestCase(TestCase):
             "password" : "test_user"
         }
         data_json = json.dumps(data)
-        response = client.post('/users/login/', data=data_json, content_type='application/json')
+        response = client.post('/user/login/', data=data_json, content_type='application/json')
         self.assertEqual(response.status_code, 200)
 
     def test_login_email(self):
@@ -73,7 +73,7 @@ class UsersTestCase(TestCase):
             "password" : "test_user"
         }
         data_json = json.dumps(data)
-        response = client.post('/users/login/', data=data_json, content_type='application/json')
+        response = client.post('/user/login/', data=data_json, content_type='application/json')
         
         self.assertEqual(response.status_code, 200)
         return response.json()
@@ -89,7 +89,7 @@ class UsersTestCase(TestCase):
         user.set_password("test_user")
         user.save()
         pk = user.id 
-        response = client.get(f'/users/user-info/{pk}')
+        response = client.get(f'/user/user-info/{pk}')
         self.assertEqual(response.status_code, 200)
 
     def test_logout(self):
@@ -99,7 +99,7 @@ class UsersTestCase(TestCase):
         header = {
             "HTTP_AUTHORIZATION": f"Token {token}"
         }
-        response = client.post('/users/logout/', data=json.dumps(dict), content_type='application/json',**header)
+        response = client.post('/user/logout/', data=json.dumps(dict), content_type='application/json',**header)
         self.assertEqual(response.status_code, 200)
 
         
