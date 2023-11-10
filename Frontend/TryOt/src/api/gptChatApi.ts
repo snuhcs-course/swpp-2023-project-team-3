@@ -1,7 +1,7 @@
 // searchItemsApi.ts
 import axios from 'axios';
 
-const BASE_URL = 'http://10.141.160.9:8000/invocations';
+const BASE_URL = 'http://10.144.172.121:8080/chatbot/invocations';
 
 interface GptChatResponse {
   user?: number;

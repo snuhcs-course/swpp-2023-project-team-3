@@ -19,18 +19,17 @@ import {FashionItem} from '../../models/FashionItem';
 function MyPageScreen({
   navigation,
 }: NativeStackScreenProps<MyTabStackParamList>) {
-  const [isGPTRefineOn, setIsGPTRefineOn] = React.useState(false);
   const {email, nickname, gender, username, gptUsable} = useSelector(
     (state: RootState) => state.user,
   );
-  const dispatch = useDispatch();
+
+  const [isGPTRefineOn, setIsGPTRefineOn] = React.useState(gptUsable);
 
   const [logoutModalVisible, setLogoutModalVisible] = React.useState(false);
 
   const showLogoutModal = () => setLogoutModalVisible(true);
   const hideLogoutModal = () => setLogoutModalVisible(false);
 
-  useEffect(() => {}, []);
   const handleLogout = () => {
     showLogoutModal();
   };
@@ -65,18 +64,18 @@ function MyPageScreen({
           <Text style={styles.text}>Turn on/off GPT refinement</Text>
           <Switch value={isGPTRefineOn} onValueChange={handleGPTRefineOn} />
         </View>
-        <View style={styles.TableRow}>
-          <Text style={styles.text}>Change Password</Text>
-          <TouchableOpacity onPress={handlePasswordChange}>
+        <TouchableOpacity onPress={handlePasswordChange}>
+          <View style={styles.TableRow}>
+            <Text style={styles.text}>Change Password</Text>
             <Icon name="chevron-forward-outline" />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.TableRow}>
-          <Text style={styles.text}>Logout</Text>
-          <TouchableOpacity onPress={handleLogout}>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleLogout}>
+          <View style={styles.TableRow}>
+            <Text style={styles.text}>Logout</Text>
             <Icon name="chevron-forward-outline" />
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
         <View style={styles.dividerBar} />
         <View style={styles.viewedItemsContainer}>
           <Text style={styles.viewedItemsHeader}>Recently Viewed Items</Text>
@@ -161,7 +160,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    padding: 13,
     borderWidth: 1,
     borderColor: color.backgroundGray,
   },
