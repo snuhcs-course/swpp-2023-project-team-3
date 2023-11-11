@@ -92,11 +92,11 @@ class GPT(object):
             response["gpt_query1"] = response_dict.get('fashion_items')[0]
             response["gpt_query2"] = response_dict.get('fashion_items')[1]
             response["gpt_query3"] = response_dict.get('fashion_items')[2]
-            response["gpt_query_flag"] = 0 # gpt returned specified json format
+            response["gpt_query_flag"] = 1 # gpt returned specified json format
         except Exception as e:
             if isinstance(llm_response, str): 
                 response["answer"] = llm_response
-                response["gpt_query_flag"] = 1 # gpt returned a string answer only, parser error occured
+                response["gpt_query_flag"] = 0 # gpt returned a string answer only, parser error occured
             else:
                 print(e)
         return response
