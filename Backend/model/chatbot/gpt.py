@@ -83,17 +83,20 @@ class GPT(object):
         )
 
         chain = LLMChain(llm=cls.llm, prompt=prompt, verbose=True, memory=memory)
-        _response = chain.predict(question=user_text)
-        print(_response)
-
-        response_dict = cls.output_parser.parse(_response)
-
-        response = {
-            "answer": response_dict.get('answer'),
-            "summary": response_dict.get('summary'),
-            "gpt_query1": response_dict.get('fashion_items')[0],
-            "gpt_query2": response_dict.get('fashion_items')[1],
-            "gpt_query3": response_dict.get('fashion_items')[2]
-        }
-
+        llm_response = chain.predict(question=user_text)
+        response = dict.fromkeys(["answer", "summary", "gpt_query1", "gpt_query2", "gpt_query3", "gpt_query_flag"])
+        try:
+            response_dict = cls.output_parser.parse(llm_response)
+            response["answer"] = response_dict.get('answer')
+            response["summary"] = response_dict.get('summary')
+            response["gpt_query1"] = response_dict.get('fashion_items')[0]
+            response["gpt_query2"] = response_dict.get('fashion_items')[1]
+            response["gpt_query3"] = response_dict.get('fashion_items')[2]
+            response["gpt_query_flag"] = 0 # gpt returned specified json format
+        except Exception as e:
+            if isinstance(llm_response, str): 
+                response["answer"] = llm_response
+                response["gpt_query_flag"] = 1 # gpt returned a string answer only, parser error occured
+            else:
+                print(e)
         return response
