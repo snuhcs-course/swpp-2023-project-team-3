@@ -33,7 +33,6 @@ function Catalog({
   const [loading, setLoading] = useState(false);
   const [searchQueries, setSearchQueries] = useState<string[]>([query]);
   const [targetIndex, setTargetIndex] = useState<number[]>([]);
-  const [isFirstPage, setIsFirstPage] = useState<boolean>(true);
 
   //search results (+pagination)
   const [page, setPage] = useState(1);
@@ -163,7 +162,7 @@ function Catalog({
 
   useEffect(() => {
     if (sortedIds.length !== 0) {
-      fetchItemDetails().then(() => setIsFirstPage(false));
+      fetchItemDetails();
     }
   }, [sortedIds]);
 
