@@ -1,0 +1,11 @@
+[run]
+source=users/
+omit=
+    venv
+    */migrations/*
+    */tests/*
+    ./items/*
+    ./search/*
+    ./tryot/*
+    */__init__.py
+
