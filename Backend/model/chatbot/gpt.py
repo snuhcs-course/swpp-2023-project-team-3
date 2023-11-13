@@ -5,7 +5,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import (
     ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, AIMessagePromptTemplate, MessagesPlaceholder
     )
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationTokenBufferMemory
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 import ast
 
@@ -56,7 +56,7 @@ class GPT(object):
     
     @classmethod
     def get_response(cls, user_text, chat_history):
-        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        memory = ConversationTokenBufferMemory(llm=cls.llm, memory_key="chat_history", return_messages=True, max_token_limit=3000)
         if chat_history is not None:
             for user_chat in chat_history["user_chat"]:
                 memory.chat_memory.add_user_message(user_chat["query"])
