@@ -89,14 +89,23 @@ class GPT(object):
             response_dict = cls.output_parser.parse(llm_response)
             response["answer"] = response_dict.get('answer')
             response["summary"] = response_dict.get('summary')
-            response["gpt_query1"] = response_dict.get('fashion_items')[0]
-            response["gpt_query2"] = response_dict.get('fashion_items')[1]
-            response["gpt_query3"] = response_dict.get('fashion_items')[2]
-            response["gpt_query_flag"] = 1 # gpt returned specified json format
-        except Exception as e:
+            fashion_items = response_dict.get('fashion_items')
+            if fashion_items[0] is not None and fashion_items[1] is not None and fashion_items[2] is not None:
+                response["gpt_query1"] = fashion_items[0]
+                response["gpt_query2"] = fashion_items[1]
+                response["gpt_query3"] = fashion_items[2]
+                response["gpt_query_flag"] = 1 # gpt returned specified json format
+            else:
+                raise NullItemException()     
+        except NullItemException:
+            response["gpt_query_flag"] = 0
+        except Exception as e: # parsing into json error
+            response["gpt_query_flag"] = 0
             if isinstance(llm_response, str): 
                 response["answer"] = llm_response
-                response["gpt_query_flag"] = 0 # gpt returned a string answer only, parser error occured
             else:
                 print(e)
         return response
+    
+class NullItemException(Exception):
+    pass
