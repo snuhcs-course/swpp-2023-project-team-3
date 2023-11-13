@@ -5,7 +5,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import (
     ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, AIMessagePromptTemplate, MessagesPlaceholder
     )
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationTokenBufferMemory
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 
 class GPT(object):
@@ -56,14 +56,14 @@ class GPT(object):
     
     @classmethod
     def get_response(cls, user_text, chat_history):
-        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        memory = ConversationTokenBufferMemory(llm=cls.llm, memory_key="chat_history", return_messages=True, max_token_limit=3000)
         if chat_history is not None:
             for user_chat in chat_history["user_chat"]:
                 memory.chat_memory.add_user_message(user_chat["query"])
                 gpt_chat = user_chat["gpt_chat"][0]
                 gpt_response = dict.fromkeys(["answer", "summary", "fashion_items"])
                 gpt_response["answer"] = gpt_chat["answer"]
-                gpt_response["summary"] = "this is summary" # TODO: gpt_chat["summary"]
+                # gpt_response["summary"] = "this is summary" # TODO: gpt_chat["summary"]
                 fashion_items = [gpt_chat["gpt_query1"], gpt_chat["gpt_query2"], gpt_chat["gpt_query3"]]
                 gpt_response["fashion_items"] = fashion_items
                 memory.chat_memory.add_ai_message(json.dumps(gpt_response))

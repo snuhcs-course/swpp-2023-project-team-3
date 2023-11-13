@@ -66,7 +66,7 @@ def predict():
             sendDict["summary"] = gpt_response["summary"]
             sendDict["query"] = user_text
             sendDict["chatroom"] = chat_id
-            print(sendDict)
+            sendDict["gpt_query_flag"] = gpt_response["gpt_query_flag"]
 
         # a new chat session
         # needs to send user_id
@@ -78,6 +78,7 @@ def predict():
             sendDict["answer"] = gpt_response["answer"]
             sendDict["summary"] = gpt_response["summary"]
             sendDict["query"] = user_text
+            sendDict["gpt_query_flag"] = gpt_response["gpt_query_flag"]
 
         # chatPost_response = loop.run_until_complete(post_log(json.dumps(sendDict)))
         chatPost_response = post_log(json.dumps(sendDict))
