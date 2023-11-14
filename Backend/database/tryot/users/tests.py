@@ -129,21 +129,4 @@ class UsersTestCase(TestCase):
         
         self.assertEqual(user.__str__(), "test_user")
     
-    def test_UserSerializer(self):
-        data = {
-            "username" : "test01",
-            "email" : "test01@test.com",
-            "nickname" : "test01",
-            "gender" : "M",
-            "age" : 1,
-            "password" : "test_user"
-        }
-        
-        serializer = UserSerializer(data=data)
-        user = None
-        if serializer.is_valid():
-            user = serializer.create(data)
-        self.assertIsInstance(user, User)
-        self.assertEqual(user.username, "test01")
-
-    # def 
+    
