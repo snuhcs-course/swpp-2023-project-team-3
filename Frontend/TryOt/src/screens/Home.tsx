@@ -1,13 +1,8 @@
-import React, {useCallback, useState} from 'react';
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import DismissKeyboardView from '../components/DismissKeyboardView';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
+
+import {queryPlaceholders} from '../constants/queryPlaceholders';
+
 import {
   NativeStackScreenProps,
   createNativeStackNavigator,
@@ -17,6 +12,7 @@ import Chat from './Chat';
 import {color, fontSize, vh, vw} from '../constants/design';
 import ItemDetailScreen from './ItemDetailScreen';
 import {FashionItem} from '../models/FashionItem';
+import DismissKeyboardView from '../components/DismissKeyboardView';
 
 function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   const [isCatalog, setIsCatalog] = useState(true);
@@ -29,11 +25,20 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
       searchQuery: inputText,
     });
   };
+
+  const [placeholderText, setPlaceholderText] = useState('');
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * queryPlaceholders.length);
+    const placeholderText = queryPlaceholders[randomIndex];
+    setPlaceholderText(placeholderText);
+  }, []);
+
   return (
-    <DismissKeyboardView>
+    <DismissKeyboardView
+      style={{backgroundColor: color.background, height: 100 * vh}}>
       <View style={styles.inputWrapper}>
         <View>
-          <Text style={styles.titleText}>FInD YOUR STYLE</Text>
+          <Text style={styles.titleText}>find your style</Text>
         </View>
         <View style={styles.optionWrapper}>
           <Text
@@ -54,7 +59,7 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
           />
           <TextInput
             style={styles.inputText}
-            placeholder="찾고 싶은 스타일을 입력해주세요"
+            placeholder={placeholderText}
             placeholderTextColor="#666"
             importantForAutofill="yes"
             returnKeyType="next"
@@ -73,9 +78,10 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
 
 const styles = StyleSheet.create({
   inputWrapper: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 100 * vh,
+    height: 89 * vh,
     overflowY: 'auto',
     touchAction: 'none',
     userSelect: 'none',
@@ -112,7 +118,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderWidth: 1,
     borderColor: color.border,
-    borderRadius: 8,
+    borderRadius: 10,
     width: 90 * vw,
     paddingLeft: 10,
     justifyContent: 'center',
@@ -136,6 +142,7 @@ export type RootStackParamList = {
   };
   Chat: {
     searchQuery: string;
+    chatroom?: number;
   };
   ItemDetail: {
     item: FashionItem;
@@ -161,7 +168,6 @@ export default function Home() {
           headerTintColor: 'black',
         }}
       />
-
       <Stack.Screen
         name="Catalog"
         component={Catalog as any}
@@ -170,7 +176,12 @@ export default function Home() {
       <Stack.Screen
         name="Chat"
         component={Chat as any}
-        options={{headerShown: false}}
+        options={{
+          headerShadowVisible: false,
+          headerTitle: '',
+          headerTransparent: true,
+          headerTintColor: 'black',
+        }}
       />
     </Stack.Navigator>
   );

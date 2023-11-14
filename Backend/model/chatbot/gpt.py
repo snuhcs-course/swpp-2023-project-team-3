@@ -7,13 +7,13 @@ from langchain.prompts import (
     )
 from langchain.memory import ConversationTokenBufferMemory
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
-import ast
 
 class GPT(object):
     import openai
-
+        
     @classmethod
     def __init__(cls):
+        
         cls.openai.api_key = os.environ['OPENAI_API_KEY']
         cls.llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo-0301")
         cls.system_context_template = """
@@ -63,7 +63,7 @@ class GPT(object):
                 gpt_chat = user_chat["gpt_chat"][0]
                 gpt_response = dict.fromkeys(["answer", "summary", "fashion_items"])
                 gpt_response["answer"] = gpt_chat["answer"]
-                gpt_response["summary"] = "this is summary" # TODO: gpt_chat["summary"]
+                # gpt_response["summary"] = "this is summary" # TODO: gpt_chat["summary"]
                 fashion_items = [gpt_chat["gpt_query1"], gpt_chat["gpt_query2"], gpt_chat["gpt_query3"]]
                 gpt_response["fashion_items"] = fashion_items
                 memory.chat_memory.add_ai_message(json.dumps(gpt_response))

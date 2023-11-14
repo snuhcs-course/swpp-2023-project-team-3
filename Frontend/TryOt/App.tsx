@@ -6,13 +6,13 @@ import {
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {useState, useEffect} from 'react';
+import {useEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import LoginScreen from './src/pages/LoginScreen';
-import SignUpScreen from './src/pages/SignUpScreen';
-import Home from './src/pages/Home';
-import SearchHistory from './src/pages/SearchHistory';
-import MyTab from './src/pages/MyTab';
+import LoginScreen from './src/screens/LoginScreen';
+import SignUpScreen from './src/screens/SignUpScreen';
+import Home from './src/screens/Home';
+import SearchHistory from './src/screens/SearchHistory';
+import MyTab from './src/screens/MyTab/MyTab';
 import Toast from 'react-native-toast-message';
 import {Provider, useSelector} from 'react-redux';
 import store, {useAppDispatch} from './src/store';
@@ -26,6 +26,7 @@ export type LoggedInParamList = {
   MyTab: undefined;
   Home: undefined;
   SearchHistory: undefined;
+  ChangePassword: undefined;
 };
 
 export type RootStackParamList = {
@@ -59,13 +60,18 @@ function AppInner() {
     };
     getTokenAndRefresh();
   }, [dispatch]);
+
   return (
     <NavigationContainer>
       {isLoggedIn ? (
         <Tab.Navigator
           screenOptions={({route}) => ({
+            tabBarActiveBackgroundColor: 'black',
+            tabBarInactiveBackgroundColor: 'black',
+            tabBarActiveTintColor: 'white',
+            tabBarHideOnKeyboard: true,
             tabBarIcon: ({focused, color, size}) => {
-              let iconName: string;
+              let iconName = '';
 
               if (route.name === 'Home') {
                 iconName = focused ? 'home' : 'home-outline';
@@ -86,7 +92,7 @@ function AppInner() {
             },
           })}>
           <Tab.Screen
-            name={'SearchHistory'}
+            name="SearchHistory"
             component={SearchHistory}
             options={{
               headerShown: false,
@@ -101,7 +107,7 @@ function AppInner() {
               title: 'Home',
               tabBarStyle: (route => {
                 const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
-                if (routeName === 'ItemDetail') {
+                if (routeName === 'ItemDetail' || routeName === 'Chat') {
                   return {display: 'none'};
                 }
                 return;
@@ -111,7 +117,17 @@ function AppInner() {
           <Tab.Screen
             name="MyTab"
             component={MyTab}
-            options={{title: 'my tab'}}
+            options={({route}) => ({
+              title: 'my tab',
+              headerShown: false,
+              tabBarStyle: (route => {
+                const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
+                if (routeName === 'ChangePasswordScreen') {
+                  return {display: 'none'};
+                }
+                return;
+              })(route),
+            })}
           />
         </Tab.Navigator>
       ) : (

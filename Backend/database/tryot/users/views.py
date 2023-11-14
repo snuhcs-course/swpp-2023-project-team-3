@@ -5,6 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -74,3 +75,55 @@ def user_logout(request):
             
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    if request.method =='PUT':
+        
+        uid = request.data.get("user_id")
+        oldPassword = request.data.get("old_password")
+        newPassword = request.data.get("new_password")
+        
+        try:
+            user = User.objects.get(id=uid)
+        except ObjectDoesNotExist as e:
+            return Response({"error":str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = ChangePasswordSerializer(data={'old_password': oldPassword, 'password': newPassword}, context={'request': request})
+        
+        if serializer.is_valid():
+            try:
+                serializer.validate_old_password(oldPassword)
+            except Exception as e:
+                return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer.update(user, serializer.validated_data)
+            token, _ = Token.objects.get_or_create(user=user)
+            userSerializer = UserSerializer(user)
+            return Response({**userSerializer.data, 'token': token.key}, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_account(request):
+    if request.method =="POST":
+        uid = request.data.get("user_id")
+        try:
+            user = User.objects.get(id=uid)
+        except Exception as e:
+            return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if user:
+            user.delete()
+            return Response(status=status.HTTP_200_OK)
+    return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+# @api_view(['GET'])
+# def reset_password(request):
+#     if request.method == "POST":
+#         return Response()
+#     return Response()

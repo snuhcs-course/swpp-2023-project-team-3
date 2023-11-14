@@ -23,4 +23,5 @@ export const color = {
     active: '#000000',
     inactive: '#D3D3D5',
   },
+  backgroundGray: '#F4F4F4',
 };

@@ -1,14 +1,30 @@
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {Switch} from 'react-native-paper';
+import {useState} from 'react';
 
-export default function RefinedQuery({query}: {query: string}) {
+interface RefinedQueryProps {
+  query: string;
+  isSwitchOn: boolean;
+  handleToggleSwitch: (index: number) => void;
+  gptIndex: number;
+}
+
+export default function RefinedQuery({
+  query, isSwitchOn,
+  handleToggleSwitch,
+  gptIndex,
+}: RefinedQueryProps) {
+  const onToggleSwitch = () => {
+    console.log("Toggled switch for gpt index " + gptIndex + " from " + isSwitchOn + " to " + !isSwitchOn);
+    handleToggleSwitch(gptIndex);
+  };
+
   return (
     <View style={styles.queryWrapper}>
       <Text style={[styles.refinedQuery, {fontSize: 15, fontWeight: 'normal'}]}>
-        blah blah blah
+        {query}
       </Text>
-      <Text style={[styles.refinedQuery, {fontSize: 15, color: 'gray'}]}>
-        X
-      </Text>
+      <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
     </View>
   );
 }
@@ -16,16 +32,14 @@ export default function RefinedQuery({query}: {query: string}) {
 const styles = StyleSheet.create({
   queryWrapper: {
     padding: 10,
-    width: Dimensions.get('window').width * 0.9,
-    marginBottom: 5,
     backgroundColor: 'white',
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 5,
     marginTop: 10,
+    width: '100%',
   },
   refinedQuery: {
     color: 'black',
