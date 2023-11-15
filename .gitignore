@@ -327,8 +327,4 @@ fabric.properties
 .DS_Store
 */*/.DS_Store
 
-# chat
-Backend/model/chatbot/chat_history_example.json
-Backend/model/chatbot/chat_history_test.py
-Backend/model/chatbot/model_config
 model_config

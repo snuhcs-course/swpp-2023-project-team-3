@@ -82,7 +82,6 @@ def predict():
 
         # chatPost_response = loop.run_until_complete(post_log(json.dumps(sendDict)))
         chatPost_response = post_log(json.dumps(sendDict))
-        print(chatPost_response)
         
         # chatPost_response = await chat_log(json.dumps(sendDict)) # data 는 보낼 내용 {}
         if chatPost_response.status_code == 201:

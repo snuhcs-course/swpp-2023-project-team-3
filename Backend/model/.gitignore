@@ -2,3 +2,10 @@ container/.venv/*
 container/__pycache__/*
 container/model_config/*
 container/openai-api.json
+
+# local teseting
+chatbot/test.py
+chatbot/chat_history_test.py
+chatbot/chat_history_example.json
+chatbot/.chatenv/*
+chatbot/model_config
