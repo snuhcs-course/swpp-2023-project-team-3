@@ -85,4 +85,30 @@ def predict():
     else:
         return Response(response={"Internal Server is not working."}, status=500, mimetype="application/json")
 
-
+@app.route("/research", methods=["POST"])
+def research():
+    data = None
+    queryList = []
+    if request.content_type == "application/json":
+        data = request.data.decode("utf-8")
+        inputs = json.loads(data)
+        timestamp = int(datetime.now().timestamp())
+        try :
+            user_id =inputs['user_id']
+            query =inputs['query']
+            gpt_query1 =inputs['gpt_query1']
+            gpt_query2 =inputs['gpt_query2']
+            gpt_query3 =inputs['gpt_query3']
+            queryList = [query, gpt_query1, gpt_query2, gpt_query3]
+        except :
+            return Response(response=json.dumps({"message" : "request is missing some value"}), status=402, mimetype="application/json")
+        finalDict, sendDict = fclip.ret_queries(queryList)
+        output = {
+            "user_id" : user_id,
+            "text" : queryList,
+            "items" : finalDict,
+            "timestamp" : timestamp,
+        }
+        return Response(response=json.dumps(output), status=200, mimetype="application/json")
+    else:
+        return Response(response=json.dumps({"message" : "Request Data type is not json."}), status=400, mimetype="application/json")
