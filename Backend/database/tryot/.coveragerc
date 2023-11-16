@@ -1,7 +1,8 @@
 [run]
-source=users/, items/
+source=users/, items/, search/
 omit=
     venv
     */tests/*
     */migrations/*
     */__init__.py
+    */scripts/*
