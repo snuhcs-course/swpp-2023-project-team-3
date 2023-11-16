@@ -35,80 +35,81 @@ def predict():
             "user_id" : 1203,
             "text" : "A-Line Dresses and Skirts", String
         }
+        or if request is for research
+        {
+            "user_id" : 1,
+            "query" : String,
+            "gpt_query1" : String,
+            "gpt_query2" : String,
+            "gpt_query3" : String
+        }
         """
+
         data = request.data.decode("utf-8")
         inputs = json.loads(data)
-        queryList.append(inputs['text'])
-        user_id = inputs['user_id']
-        timestamp = int(datetime.now().timestamp())
+        if "query" in inputs.keys():
+            timestamp = int(datetime.now().timestamp())
+            try :
+                user_id =inputs['user_id']
+                query =inputs['query']
+                gpt_query1 =inputs['gpt_query1']
+                gpt_query2 =inputs['gpt_query2']
+                gpt_query3 =inputs['gpt_query3']
+                queryList = [query, gpt_query1, gpt_query2, gpt_query3]
+            except :
+                keyset = set(inputs.keys())
+                originalKeySet = {'user_id', 'query', 'gpt_query1', 'gpt_query2', 'gpt_query3'}
+                missingKeyset = originalKeySet.difference(keyset)
+                return Response(response=json.dumps({"message" : f"Research request should have 'user_id', 'query', 'gpt_query1', 'gpt_query2', 'gpt_query3', but now it misses {missingKeyset} keys."}), status=402, mimetype="application/json")
+            finalDict, sendDict = fclip.ret_queries(queryList)
+            output = {
+                "user_id" : user_id,
+                "text" : queryList,
+                "items" : finalDict,
+                "timestamp" : timestamp,
+            }
+            return Response(response=json.dumps(output), status=200, mimetype="application/json")
+        else:
+            # for the first time search request
+            queryList.append(inputs['text'])
+            user_id = inputs['user_id']
+            timestamp = int(datetime.now().timestamp())
+
+            gptResponse = gpt.get_response(queryList[0])
+            gptResponse = gptResponse["choices"][0]["text"].strip()
+            try : 
+                gptResponses = gptResponse.split(",")
+            except :
+                return Response(response=json.dumps({"messgage" : "GPT is not available, please turn it off."}), status=424, mimetype="application/json")
+    
+            gptInputs = gptResponses[1:]
+
+            if gptResponses[0] == "1":  # gpt checks whether the query is relevant to Fashion Domain
+                for cnt, query in enumerate(gptInputs):
+                    if cnt < 3:
+                        queryList.append(query.strip())
+                finalDict, sendDict = fclip.ret_queries(queryList)
+                sendDict["user"] = user_id
+                sendDict = json.dumps(sendDict)
+                loop = asyncio.get_event_loop()
+                response = loop.run_until_complete(post_log(sendDict))
+                print(response.json())
+            else :
+                return Response(response=json.dumps({"message" : "Your query is not related to Fashion."}), status=400, mimetype="application/json")
+    
+            if response.status_code == 201:
+                response = response.json()
+                log_id = response.get("log_id")
+                output = {"user_id": user_id,
+                        "log_id" : log_id,
+                        "text" : queryList,
+                        "items":finalDict,
+                        "timestamp":timestamp}
+                
+                return Response(response=json.dumps(output), status=200, mimetype="application/json")
+            else:
+                return Response(response=json.dumps({"message" : "Search History Log Server is not working."}), status=500, mimetype="application/json")
     else :
         return Response(
-            response="This predictor only supports for plain-text in English", status=415, mimetype="text/plain"
+            response=json.dumps({"message" : "request content-type should be application/json."}), status=415, mimetype="text/plain"
         )
-    
-    gptResponse = gpt.get_response(queryList[0])
-    gptResponse = gptResponse["choices"][0]["text"].strip()
-    try : 
-        gptResponses = gptResponse.split(",")
-    except :
-        return Response({"GPT is not available, please turn it off."}, status=424, mimetype="application/json")
-    
-    gptInputs = gptResponses[1:]
-
-    if gptResponses[0] == "1":
-        for cnt, query in enumerate(gptInputs):
-            if cnt < 3:
-                queryList.append(query.strip())
-        finalDict, sendDict = fclip.ret_queries(queryList)
-        sendDict["user"] = user_id
-        sendDict = json.dumps(sendDict)
-        print(sendDict)
-        loop = asyncio.get_event_loop()
-        response = loop.run_until_complete(post_log(sendDict))
-
-
-        print(response.json())
-        
-    else :
-        return Response(response={"Your query is not related to Fashion."}, status=400, mimetype="application/json")
-    
-    if response.status_code == 201:
-        response = response.json()
-        log_id = response.get("log_id")
-        output = {"user_id": user_id,
-                  "log_id" : log_id,
-                "text" : queryList,
-                "items":finalDict,
-                "timestamp":timestamp}
-        
-        return Response(response=json.dumps(output), status=200, mimetype="application/json")
-    else:
-        return Response(response={"Internal Server is not working."}, status=500, mimetype="application/json")
-
-@app.route("/research", methods=["POST"])
-def research():
-    data = None
-    queryList = []
-    if request.content_type == "application/json":
-        data = request.data.decode("utf-8")
-        inputs = json.loads(data)
-        timestamp = int(datetime.now().timestamp())
-        try :
-            user_id =inputs['user_id']
-            query =inputs['query']
-            gpt_query1 =inputs['gpt_query1']
-            gpt_query2 =inputs['gpt_query2']
-            gpt_query3 =inputs['gpt_query3']
-            queryList = [query, gpt_query1, gpt_query2, gpt_query3]
-        except :
-            return Response(response=json.dumps({"message" : "request is missing some value"}), status=402, mimetype="application/json")
-        finalDict, sendDict = fclip.ret_queries(queryList)
-        output = {
-            "user_id" : user_id,
-            "text" : queryList,
-            "items" : finalDict,
-            "timestamp" : timestamp,
-        }
-        return Response(response=json.dumps(output), status=200, mimetype="application/json")
-    else:
-        return Response(response=json.dumps({"message" : "Request Data type is not json."}), status=400, mimetype="application/json")
