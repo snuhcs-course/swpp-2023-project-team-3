@@ -11,6 +11,7 @@ from .private_constants import (
     CHATBOT_API
 )
 
+<<<<<<< HEAD
 client = Client()
 
 
@@ -22,6 +23,13 @@ class SearchTestCase(TestCase):
         response = client.get(f'/history/detail/{user_id}')
         self.assertEquals(response.status_code, 200)
 
+=======
+# Create your tests here.
+class SearchTestCase(TestCase):
+    def test_queryHistoryAPI(self):
+        """woojin"""
+        return True
+>>>>>>> ad06735374a31b00f3eec03ba8ee8dd98ce8a967
     def test_chatHistoryAPI(self):
 
         return True
@@ -29,6 +37,7 @@ class SearchTestCase(TestCase):
 
         return True
     def test_saveSearch(self):
+<<<<<<< HEAD
         user = User.objects.create(
             username = "test_user",
             email = "test_user@test.com",
@@ -92,3 +101,10 @@ class SearchTestCase(TestCase):
         if searchItemsSerializer.is_valid():
             response = client.post("/history/search-item-record/", data=json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, 201)
+=======
+        """woojin"""
+        return True
+    def test_saveSearchItem(self):
+        """woojin"""
+        return True
+>>>>>>> ad06735374a31b00f3eec03ba8ee8dd98ce8a967
