@@ -16,7 +16,6 @@ client = Client()
 
 class SearchTestCase(TestCase):
     
-    
     def test_queryHistoryAPI(self):
         outputs = self.test_saveSearch()
         user_id = outputs['user_id']
