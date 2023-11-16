@@ -1,10 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   Dimensions,
   FlatList,
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -33,6 +33,7 @@ function Catalog({
   const [loading, setLoading] = useState(false);
   const [searchQueries, setSearchQueries] = useState<string[]>([query]);
   const [targetIndex, setTargetIndex] = useState<number[]>([]);
+  const [isFirstPage, setIsFirstPage] = useState<boolean>(true);
 
   //search results (+pagination)
   const [page, setPage] = useState(1);
@@ -41,7 +42,7 @@ function Catalog({
   const [itemDataArray, setItemDataArray] = useState<
     ItemSimilarityDictionary[]
   >([]);
-  const [sortedIds, setSortedIds] = useState<string[]>(['']);
+  const [sortedIds, setSortedIds] = useState<string[]>([]);
 
   //refine modal
   const [refineModalVisible, setLogoutModalVisible] = useState(false);
@@ -59,9 +60,8 @@ function Catalog({
       const gpt2Ids = response.items.gpt_query2;
       const gpt3Ids = response.items.gpt_query3;
 
-      setItemDataArray(() => {
-        return [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids];
-      });
+      const results = [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids];
+      setItemDataArray(results);
     } catch (error) {
       console.error('Error fetching id data:', error);
     }
@@ -78,6 +78,7 @@ function Catalog({
         slicedIds.map(itemId => fetchFashionItemDetails(itemId)),
       );
       setItems(prevItems => [...prevItems, ...itemDetails]);
+      setPage(prevPage => prevPage + 1);
     } catch (error) {
       console.error('Error fetching item detail data:', error);
     } finally {
@@ -130,12 +131,10 @@ function Catalog({
 
     try {
       await fetchItemIds();
-      mergeAndSortItemIds();
-      await fetchItemDetails();
     } catch (error) {
       console.log(error);
     }
-  }, [fetchItemDetails, fetchItemIds, gptUsable, mergeAndSortItemIds]);
+  }, [fetchItemIds, gptUsable]);
 
   //refine search only changes the combination of gpt queries
   const handleRefineSearch = useCallback(() => {
@@ -155,6 +154,18 @@ function Catalog({
     // @ts-ignore
     navigation.navigate('ItemDetail', {item});
   };
+
+  useEffect(() => {
+    if (itemDataArray.length !== 0) {
+      mergeAndSortItemIds();
+    }
+  }, [itemDataArray]);
+
+  useEffect(() => {
+    if (sortedIds.length !== 0) {
+      fetchItemDetails().then(() => setIsFirstPage(false));
+    }
+  }, [sortedIds]);
 
   // @ts-ignore
   return (
@@ -204,8 +215,10 @@ function Catalog({
           )}
           contentContainerStyle={styles.catalogGrid}
           onEndReached={() => {
-            setPage(prevPage => prevPage + 1);
-            fetchItemDetails();
+            setPage(page + 1);
+            if (items.length !== 0) {
+              fetchItemDetails();
+            }
           }}
           onEndReachedThreshold={0.1}
           ListFooterComponent={loading ? <ActivityIndicator /> : null}

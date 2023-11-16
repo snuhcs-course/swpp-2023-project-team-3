@@ -1,13 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
 
 import {queryPlaceholders} from '../constants/queryPlaceholders';
 
@@ -20,6 +12,7 @@ import Chat from './Chat';
 import {color, fontSize, vh, vw} from '../constants/design';
 import ItemDetailScreen from './ItemDetailScreen';
 import {FashionItem} from '../models/FashionItem';
+import DismissKeyboardView from '../components/DismissKeyboardView';
 
 function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   const [isCatalog, setIsCatalog] = useState(true);
@@ -41,7 +34,8 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
   }, []);
 
   return (
-    <View>
+    <DismissKeyboardView
+      style={{backgroundColor: color.background, height: 100 * vh}}>
       <View style={styles.inputWrapper}>
         <View>
           <Text style={styles.titleText}>find your style</Text>
@@ -78,15 +72,16 @@ function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
           />
         </View>
       </View>
-    </View>
+    </DismissKeyboardView>
   );
 }
 
 const styles = StyleSheet.create({
   inputWrapper: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 100 * vh,
+    height: 89 * vh,
     overflowY: 'auto',
     touchAction: 'none',
     userSelect: 'none',
