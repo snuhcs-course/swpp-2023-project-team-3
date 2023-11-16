@@ -1,11 +1,7 @@
 [run]
-source=users/
+source=users/, items/
 omit=
     venv
-    */migrations/*
     */tests/*
-    ./items/*
-    ./search/*
-    ./tryot/*
+    */migrations/*
     */__init__.py
-
