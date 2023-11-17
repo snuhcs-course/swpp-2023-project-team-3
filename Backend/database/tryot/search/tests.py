@@ -1,19 +1,12 @@
 from django.test import TestCase, Client
-import requests
 import json
 from .models import *
 from .views import *
 from .serializers import *
 from users.models import User 
 from items.models import *
-from .private_constants import (
-    SEARCH_API,
-    CHATBOT_API
-)
 
-<<<<<<< HEAD
 client = Client()
-
 
 class SearchTestCase(TestCase):
     
@@ -23,21 +16,66 @@ class SearchTestCase(TestCase):
         response = client.get(f'/history/detail/{user_id}')
         self.assertEquals(response.status_code, 200)
 
-=======
-# Create your tests here.
-class SearchTestCase(TestCase):
-    def test_queryHistoryAPI(self):
-        """woojin"""
-        return True
->>>>>>> ad06735374a31b00f3eec03ba8ee8dd98ce8a967
-    def test_chatHistoryAPI(self):
-
-        return True
     def test_saveChat(self):
+        user = User.objects.create(
+            username = "test_user",
+            email = "test_user@test.com",
+            nickname = "test01",
+            gender = "M",
+            age = 1
+        )
+        user.set_password("test_user")
+        user.save()
 
-        return True
+        item = Item.objects.create(
+            id = 1,
+            name = "TEST_CLOTHES",
+            description = "TEST_DESCRIPTION",
+            price = 10000,
+            image_url = ["TEST_URL"],
+            order_url = "TEST_URL",
+        )
+        item.save()
+
+        data = {
+            "user" : user.id,
+            "chatroom" : "TEST_CHATROOM_ID",
+            "summary" : "TEST_SUMMARY" ,
+            "query" : "TEST_QUERY",
+            "log" : "TEST_LOG",
+            "items" : {
+                item.id : [0.5]
+            },
+            "answer" : "TEST_ANSWER",
+            "gpt_query1" : "text1",
+            "gpt_query2" : "text2",
+            "gpt_query3" : "text3",
+        }
+        
+        response = client.post("/history/chat-record/", data=json.dumps(data), content_type='application/json')
+        # print(response)
+        self.assertEqual(response.status_code, 201)
+        return response.json()
+    
+    def test_chatHistoryAPI(self):
+        outputs = self.test_saveSearch()
+        user = User.objects.create(
+            username = "test_user2",
+            email = "test_user2@test.com",
+            nickname = "test02",
+            gender = "M",
+            age = 1
+        )
+        user.set_password("test_user2")
+        user.save()
+        chatLog = ChatLog.objects.create(
+            user = user,
+            summary = "TEST_SUMMARY"
+        )
+        response = client.get(f'/history/chat/{chatLog.pk}')
+        self.assertEquals(response.status_code, 200)
+    
     def test_saveSearch(self):
-<<<<<<< HEAD
         user = User.objects.create(
             username = "test_user",
             email = "test_user@test.com",
@@ -75,7 +113,7 @@ class SearchTestCase(TestCase):
         searchLogSerializer = SearchLogSerializer(data = data)
         if searchLogSerializer.is_valid():
             response = client.post("/history/search-record/", data=json.dumps(data), content_type='application/json')
-            print(response)
+            # print(response)
             self.assertEqual(response.status_code, 201)
         return response.json()
         
@@ -101,10 +139,3 @@ class SearchTestCase(TestCase):
         if searchItemsSerializer.is_valid():
             response = client.post("/history/search-item-record/", data=json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, 201)
-=======
-        """woojin"""
-        return True
-    def test_saveSearchItem(self):
-        """woojin"""
-        return True
->>>>>>> ad06735374a31b00f3eec03ba8ee8dd98ce8a967
