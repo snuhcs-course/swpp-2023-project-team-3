@@ -1,4 +1,7 @@
-container/.venv/*
-container/__pycache__/*
-container/model_config/*
-container/openai-api.json
+search/.venv/*
+search/__pycache__/*
+search/model_config/*
+search/openai-api.json
+chatbot/openai-api.json
+chatbot/model_config/*
+*/.venv/*
