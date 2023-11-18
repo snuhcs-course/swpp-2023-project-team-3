@@ -24,8 +24,8 @@ class ClipTextEmbedding(object):
 
     @classmethod
     def __init__(cls):
-        if cls.model == None:
-            print("It's None")
+        # if cls.model == None:
+        #     print("It's None")
         cls.model, cls.processor = cls._get_model()
 
     @classmethod
@@ -80,14 +80,25 @@ class ClipTextEmbedding(object):
         dict_key = ["gpt_query1", "gpt_query2", "gpt_query3"]
         ret_dict = {}
         sendDict = {}
+        finaldfs = []
+
         for i in range(len(queryList)):
-            tmpdf = itemdf[["id", f'query_{i}']]
-            tmpdf['sim'] = tmpdf[f'query_{i}'].tolist()
-            tmpdf['query_index'] = i
-            tmpdf = tmpdf[["id", "sim", "query_index"]]
-            finaldf = pd.concat([finaldf, tmpdf], ignore_index=True)
-            sendDict[dict_key[i]] = queryList[i]
-        
+            if (i<3):
+                tmpdf = itemdf[["id", f'query_{i}']].copy()  # Make a copy to avoid SettingWithCopyWarning
+                tmpdf['sim'] = tmpdf[f'query_{i}'].tolist()
+                tmpdf['query_index'] = i
+                tmpdf = tmpdf[["id", "sim", "query_index"]]
+                finaldfs.append(tmpdf)
+                sendDict[dict_key[i]] = queryList[i]
+            else:
+                break
+
+        if len(sendDict.keys()) != 3 :
+            nonKeys = set(dict_key).difference(set(sendDict.keys()))
+            for key in nonKeys:
+                sendDict[key] = None
+        # Concatenate all DataFrames outside the loop
+        finaldf = pd.concat(finaldfs, ignore_index=True)
         finaldf = finaldf.sort_values(by="sim", ascending=False)
         finaldf = finaldf.drop_duplicates(subset=["id"], keep="first")
         finaldf = finaldf.head(9)

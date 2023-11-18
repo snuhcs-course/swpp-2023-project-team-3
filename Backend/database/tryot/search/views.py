@@ -58,12 +58,13 @@ def saveChat(request):
                 return Response(userChatSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
             userChatId = userChatSerializer.data["id"]
             
-            for item, info in data["items"].items():
-                chatItemsSerializer = ChatItemsSerializer(data={"chat": userChatId, "item": item, "similarity": info[0]})
-                if chatItemsSerializer.is_valid(raise_exception=True):
-                    chatItemsSerializer.save()
-                else:
-                    return Response(chatItemsSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if len(data['items'].keys()) > 0:
+                for item, info in data["items"].items():
+                    chatItemsSerializer = ChatItemsSerializer(data={"chat": userChatId, "item": item, "similarity": info[0]})
+                    if chatItemsSerializer.is_valid(raise_exception=True):
+                        chatItemsSerializer.save()
+                    else:
+                        return Response(chatItemsSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             # saving gpt chat
             gptChatSerializer = GptChatSerializer(data = {

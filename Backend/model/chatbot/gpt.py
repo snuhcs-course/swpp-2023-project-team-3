@@ -5,8 +5,10 @@ from langchain.chains import LLMChain
 from langchain.prompts import (
     ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, AIMessagePromptTemplate, MessagesPlaceholder
     )
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationTokenBufferMemory
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
+from dotenv import load_dotenv
+load_dotenv()
 
 class GPT(object):
     import openai
@@ -14,7 +16,7 @@ class GPT(object):
     @classmethod
     def __init__(cls):
         
-        cls.openai.api_key = os.environ['OPENAI_API_KEY']
+        cls.openai.api_key = os.getenv('OPENAI_API_KEY')
         cls.llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo-0301")
         cls.system_context_template = """
             You are a helpful and friendly chatbot designed to help humans with shopping the fashion items they want.
@@ -56,14 +58,14 @@ class GPT(object):
     
     @classmethod
     def get_response(cls, user_text, chat_history):
-        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        memory = ConversationTokenBufferMemory(llm=cls.llm, memory_key="chat_history", return_messages=True, max_token_limit=3000)
         if chat_history is not None:
             for user_chat in chat_history["user_chat"]:
                 memory.chat_memory.add_user_message(user_chat["query"])
                 gpt_chat = user_chat["gpt_chat"][0]
                 gpt_response = dict.fromkeys(["answer", "summary", "fashion_items"])
                 gpt_response["answer"] = gpt_chat["answer"]
-                gpt_response["summary"] = "this is summary" # TODO: gpt_chat["summary"]
+                # gpt_response["summary"] = "this is summary" # TODO: gpt_chat["summary"]
                 fashion_items = [gpt_chat["gpt_query1"], gpt_chat["gpt_query2"], gpt_chat["gpt_query3"]]
                 gpt_response["fashion_items"] = fashion_items
                 memory.chat_memory.add_ai_message(json.dumps(gpt_response))
@@ -83,17 +85,13 @@ class GPT(object):
         )
 
         chain = LLMChain(llm=cls.llm, prompt=prompt, verbose=True, memory=memory)
-        _response = chain.predict(question=user_text)
-        print(_response)
-
-        response_dict = cls.output_parser.parse(_response)
-
+        llm_response = chain.predict(question=user_text)
+        response_dict = cls.output_parser.parse(llm_response)
+        print(response_dict)
         response = {
-            "answer": response_dict.get('answer'),
-            "summary": response_dict.get('summary'),
-            "gpt_query1": response_dict.get('fashion_items')[0],
-            "gpt_query2": response_dict.get('fashion_items')[1],
-            "gpt_query3": response_dict.get('fashion_items')[2]
+            "answer" : response_dict.get('answer'),
+            "summary" : response_dict.get('summary'),
+            "gpt_queries" : response_dict.get('fashion_items')
         }
-
+        
         return response

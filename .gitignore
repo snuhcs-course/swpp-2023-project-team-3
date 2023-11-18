@@ -326,3 +326,5 @@ fabric.properties
 # for macos
 .DS_Store
 */*/.DS_Store
+
+model_config
