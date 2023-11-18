@@ -57,9 +57,9 @@ class GptChat(models.Model):
         on_delete=models.CASCADE
     )
     answer = models.TextField()
-    gpt_query1 = models.TextField()
-    gpt_query2 = models.TextField()
-    gpt_query3 = models.TextField()   
+    gpt_query1 = models.TextField(null=True)
+    gpt_query2 = models.TextField(null=True)
+    gpt_query3 = models.TextField(null=True)   
     is_deleted = models.BooleanField(default=False) 
     timestamp = models.DateTimeField(default = timezone.now)
 
