@@ -2,12 +2,14 @@ import React from 'react';
 import type {catalogHistory, chatHistory} from '../../../api/historyDetailApi';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {HistoryScreenProps} from '../HistoryScreen';
 
 type HistoryCellProps = {
+  navigation: HistoryScreenProps['navigation'];
   history: catalogHistory | chatHistory;
 };
 
-function HistoryCell({history}: HistoryCellProps) {
+function HistoryCell({navigation, history}: HistoryCellProps) {
   const isChat = 'summary' in history;
   return (
     <View style={styles.container}>
@@ -33,7 +35,26 @@ function HistoryCell({history}: HistoryCellProps) {
           />
           <Text>{isChat ? 'Chat Search' : 'Catalog Search'}</Text>
         </View>
-        <Pressable style={styles.button}>
+        <Pressable
+          style={styles.button}
+          onPress={() => {
+            if (isChat) {
+              navigation.navigate('Home', {
+                screen: 'Chat',
+                params: {searchQuery: '', chatroom: history.id},
+              });
+            } else {
+              navigation.navigate('Home', {
+                screen: 'Catalog',
+                params: {
+                  searchQuery: history.query,
+                  gpt_query1: history.gpt_query1,
+                  gpt_query2: history.gpt_query2,
+                  gpt_query3: history.gpt_query3,
+                },
+              });
+            }
+          }}>
           <Text style={styles.buttonText}>Resume Search</Text>
         </Pressable>
       </View>

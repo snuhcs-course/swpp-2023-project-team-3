@@ -11,12 +11,13 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {RootStackParamList} from './Home';
+import {HomeStackParamList} from './Home';
 import ChatBubble from '../components/ChatBubble';
 import {fontSize, vh, vw} from '../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
 import {gptChatApi} from '../api/gptChatApi';
+import {chatHistoryApi} from '../api/chatHistoryApi';
 
 type userMessage = {
   id: number;
@@ -33,7 +34,7 @@ type gptMessage = {
   gpt_query1: string;
   gpt_query2: string;
   gpt_query3: string;
-  items: {[key: number]: [number, number]};
+  items: number[];
 };
 type errorMessage = {
   id: number;
@@ -59,7 +60,7 @@ export function isUserMessage(msg: any): msg is userMessage {
 function Chat({
   navigation,
   route,
-}: NativeStackScreenProps<RootStackParamList, 'Chat'>) {
+}: NativeStackScreenProps<HomeStackParamList, 'Chat'>) {
   const {searchQuery} = route.params;
   // states
   const [messages, setMessages] = useState<message[]>([]);
@@ -83,11 +84,12 @@ function Chat({
     async (currQuery: string) => {
       try {
         const gptResponse = await gptChatApi(currQuery, id, chatroom);
-        const gptMessage: gptMessage = {
+        let gptMessage: gptMessage = {
           ...gptResponse,
           id: 0,
           who: 'Trytri',
         };
+        gptMessage.items = Object.keys(gptMessage.items).map(parseInt);
         if (chatroom !== gptMessage.chatroom) {
           setChatroom(gptMessage.chatroom);
         }
@@ -112,7 +114,6 @@ function Chat({
 
   // chat request function
   const onChatRequest = useCallback(async () => {
-    console.log(chatroom);
     setDisableButton(true);
 
     const currQuery = query;
@@ -127,7 +128,7 @@ function Chat({
       }),
     );
     await queryGpt(currQuery).then(() => setDisableButton(false));
-  }, [chatroom, query, queryGpt, nickname]);
+  }, [query, queryGpt, nickname]);
 
   useEffect(() => {
     async function setChattingroom() {
@@ -135,10 +136,33 @@ function Chat({
         setDisableButton(true);
         setMessages([{id: 0, who: nickname, content: searchQuery}]);
         await queryGpt(searchQuery).then(() => setDisableButton(false));
+      } else {
+        await chatHistoryApi(chatroom).then(chatHistory => {
+          let messageId = 0;
+          let historyMessages: message[] = [];
+          for (const history of chatHistory.user_chat) {
+            historyMessages = [
+              ...historyMessages,
+              {id: messageId, who: nickname, content: history.query},
+              {
+                id: messageId + 1,
+                who: 'Trytri',
+                chatroom: chatroom,
+                answer: history.gpt_chat[0].answer,
+                gpt_query1: history.gpt_chat[0].gpt_query1,
+                gpt_query2: history.gpt_chat[0].gpt_query2,
+                gpt_query3: history.gpt_chat[0].gpt_query3,
+                items: history.items,
+              },
+            ];
+            messageId += 2;
+          }
+          setMessages(historyMessages);
+        });
       }
     }
     setChattingroom();
-  }, [chatroom, nickname, queryGpt, searchQuery]);
+  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

@@ -10,7 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {RootStackParamList} from './Home';
+import {HomeStackParamList} from './Home';
 import {searchItems} from '../api/searchItemsApi';
 import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import {FashionItem} from '../models/FashionItem';
@@ -26,7 +26,7 @@ type ItemSimilarityDictionary = {[key: string]: number};
 function Catalog({
   navigation,
   route,
-}: NativeStackScreenProps<RootStackParamList, 'Catalog'>) {
+}: NativeStackScreenProps<HomeStackParamList, 'Catalog'>) {
   const {gptUsable, id} = useSelector((state: RootState) => state.user);
   const [query, setQuery] = useState<string>(route.params.searchQuery);
   const [items, setItems] = useState<FashionItem[]>([]);
@@ -51,7 +51,14 @@ function Catalog({
   //for fetching entire data for one search
   const fetchItemIds = useCallback(async () => {
     try {
-      const response = await searchItems(id, query);
+      let apiBody: typeof route.params;
+      if (searchQueries.length === 1) {
+        apiBody = route.params;
+      } else {
+        apiBody = {searchQuery: query};
+      }
+      const response = await searchItems(id, apiBody);
+      console.log(response);
       setSearchQueries(response.text);
 
       const userQueryIds = response.items.query;

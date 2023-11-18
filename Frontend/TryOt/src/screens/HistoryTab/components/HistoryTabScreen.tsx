@@ -5,6 +5,8 @@ import {StyleSheet, Text, View} from 'react-native';
 import {LoadingAndError} from '../../../components/LoadingAndError';
 import {ActivityIndicator} from 'react-native-paper';
 import HistoryCell from './HistoryCell';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HistoryTabStackParamList} from '../HistoryTab';
 
 const LoadingView = () => {
   return (
@@ -18,17 +20,22 @@ const LoadingView = () => {
 const separatorItem = () => <View style={styles.separator} />;
 
 type HistoryTabScreenProps = {
+  navigation: NativeStackNavigationProp<
+    HistoryTabStackParamList,
+    'HistoryScreen',
+    undefined
+  >;
   histories: historyDetailResponse;
   isLoading: boolean;
   isError: boolean;
 };
 
 function HistoryTabScreen({
+  navigation,
   histories,
   isLoading,
   isError,
 }: HistoryTabScreenProps) {
-  console.log(histories.length);
   return (
     <LoadingAndError
       isLoading={isLoading}
@@ -41,7 +48,9 @@ function HistoryTabScreen({
           data={histories}
           ListEmptyComponent={<></>}
           showsVerticalScrollIndicator={false}
-          renderItem={({item}) => <HistoryCell history={item} />}
+          renderItem={({item}) => (
+            <HistoryCell navigation={navigation} history={item} />
+          )}
           ItemSeparatorComponent={separatorItem}
           keyExtractor={item => `${item.id}${item.timestamp.getTime()}`}
         />

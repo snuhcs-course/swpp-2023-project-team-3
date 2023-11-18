@@ -19,12 +19,32 @@ interface SearchItemsResponse {
 
 export const searchItems = async (
   userId: number,
-  text: string,
+  query: Readonly<{
+    searchQuery: string;
+    gpt_query1?: string;
+    gpt_query2?: string;
+    gpt_query3?: string;
+  }>,
 ): Promise<SearchItemsResponse> => {
+  const requestFormat: {
+    query?: string;
+    text?: string;
+    gpt_query1?: string;
+    gpt_query2?: string;
+    gpt_query3?: string;
+  } = {};
+  if ('gpt_query1' in query) {
+    requestFormat.query = query.searchQuery;
+    requestFormat.gpt_query1 = query.gpt_query1;
+    requestFormat.gpt_query2 = query.gpt_query2;
+    requestFormat.gpt_query3 = query.gpt_query3;
+  } else {
+    requestFormat.text = query.searchQuery;
+  }
   try {
     const requestBody = {
-      user_id: userId, //테스트라서 10으로 고정
-      text: text,
+      user_id: userId,
+      ...requestFormat,
     };
     const response = await axios.post<SearchItemsResponse>(
       BASE_URL,

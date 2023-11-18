@@ -13,7 +13,7 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {RootStackParamList} from '../Home';
+import {HomeStackParamList} from '../Home';
 import {FashionItem} from '../../models/FashionItem';
 
 function MyPageScreen({

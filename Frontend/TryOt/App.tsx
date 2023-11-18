@@ -4,6 +4,7 @@ import {
   getFocusedRouteNameFromRoute,
   NavigationContainer,
   NavigationProp,
+  NavigatorScreenParams,
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -11,7 +12,7 @@ import {useEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
-import Home from './src/screens/Home';
+import Home, {HomeStackParamList} from './src/screens/Home';
 import MyTab from './src/screens/MyTab/MyTab';
 import Toast from 'react-native-toast-message';
 import {Provider, useSelector} from 'react-redux';
@@ -26,8 +27,8 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 export type LoggedInParamList = {
   MyTab: undefined;
-  Home: undefined;
-  SearchHistory: undefined;
+  Home: NavigatorScreenParams<HomeStackParamList>;
+  HistoryTab: undefined;
   ChangePassword: undefined;
 };
 
@@ -38,7 +39,7 @@ export type RootStackParamList = {
 
 export type RootStackNavigation = NavigationProp<RootStackParamList>;
 
-export const Tab = createBottomTabNavigator();
+export const Tab = createBottomTabNavigator<LoggedInParamList>();
 export const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppInner() {
@@ -67,6 +68,7 @@ function AppInner() {
     <NavigationContainer>
       {isLoggedIn ? (
         <Tab.Navigator
+          initialRouteName="Home"
           screenOptions={({route}) => ({
             tabBarActiveBackgroundColor: 'black',
             tabBarInactiveBackgroundColor: 'black',

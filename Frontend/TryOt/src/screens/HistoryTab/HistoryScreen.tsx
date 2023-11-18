@@ -11,8 +11,23 @@ import {
 import {useSelector} from 'react-redux';
 import {RootState} from '../../store/reducer';
 import HistoryTabScreen from './components/HistoryTabScreen';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HistoryTabStackParamList} from './HistoryTab';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {LoggedInParamList} from '../../../App';
+import {CompositeNavigationProp} from '@react-navigation/native';
 
-function HistoryScreen() {
+type PrimaryNavigator = NativeStackNavigationProp<
+  HistoryTabStackParamList,
+  'HistoryScreen'
+>;
+type PrimaryNavigatorParent = BottomTabNavigationProp<LoggedInParamList>;
+
+export type HistoryScreenProps = {
+  navigation: CompositeNavigationProp<PrimaryNavigator, PrimaryNavigatorParent>;
+};
+
+function HistoryScreen({navigation}: HistoryScreenProps) {
   // about tab bar
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -36,9 +51,7 @@ function HistoryScreen() {
       const sortedHistory = allHistory.sort(
         (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
       );
-      console.log('loaded');
       setHistory(sortedHistory);
-      console.log('setted');
       let cataloges: catalogHistory[] = [];
       let chats: chatHistory[] = [];
       for (const hist of sortedHistory) {
@@ -50,7 +63,6 @@ function HistoryScreen() {
       }
       setCatalogHistory(cataloges);
       setChatHistory(chats);
-      console.log('setted every');
     } catch {
       setIsError(true);
     } finally {
@@ -69,6 +81,7 @@ function HistoryScreen() {
         case 'first':
           return (
             <HistoryTabScreen
+              navigation={navigation}
               histories={history}
               isLoading={isLoading}
               isError={isError}
@@ -77,6 +90,7 @@ function HistoryScreen() {
         case 'second':
           return (
             <HistoryTabScreen
+              navigation={navigation}
               histories={chatHistory}
               isLoading={isLoading}
               isError={isError}
@@ -85,6 +99,7 @@ function HistoryScreen() {
         case 'third':
           return (
             <HistoryTabScreen
+              navigation={navigation}
               histories={catalogHistory}
               isLoading={isLoading}
               isError={isError}
@@ -94,7 +109,7 @@ function HistoryScreen() {
           return null;
       }
     },
-    [catalogHistory, chatHistory, history, isError, isLoading],
+    [catalogHistory, chatHistory, history, isError, isLoading, navigation],
   );
 
   return (
