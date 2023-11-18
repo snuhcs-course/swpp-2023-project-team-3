@@ -87,9 +87,9 @@ def saveChat(request):
 @transaction.atomic()
 def saveSearch(request):
     if request.method == 'POST':
-        print(request.body)
+        # print(request.body)
         data = json.loads(request.body.decode('utf-8'))
-        print(data)
+        # print(data)
         searchLogSerializer = SearchLogSerializer(data = data)
         if searchLogSerializer.is_valid():
             searchLogSerializer.save()

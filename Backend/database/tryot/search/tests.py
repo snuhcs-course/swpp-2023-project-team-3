@@ -9,34 +9,49 @@ from items.models import *
 client = Client()
 
 class SearchTestCase(TestCase):
-    
+    def test_create_user(self):
+        user = User.objects.filter(username="test_user")
+        if len(user)>0:
+            return user[0]
+        else:
+            user = User.objects.create(
+                username = "test_user",
+                email = "test_user@test.com",
+                nickname = "test01",
+                gender = "M",
+                age = 1
+            )
+            user.set_password("test_user")
+            user.save()
+            return user
+        
+    def test_create_item(self):
+        item = Item.objects.filter(id=1)
+        if len(item)>0:
+            return item[0]
+        else:
+            item = Item.objects.create(
+                id = 1,
+                name = "TEST_CLOTHES",
+                description = "TEST_DESCRIPTION",
+                price = 10000,
+                image_url = ["TEST_URL"],
+                order_url = "TEST_URL",
+            )
+            item.save()
+            return item
+
     def test_queryHistoryAPI(self):
         outputs = self.test_saveSearch()
+        outputs2 = self.test_saveFirstChat()
         user_id = outputs['user_id']
         response = client.get(f'/history/detail/{user_id}')
+        print(response.json())
         self.assertEquals(response.status_code, 200)
 
-    def test_saveChat(self):
-        user = User.objects.create(
-            username = "test_user",
-            email = "test_user@test.com",
-            nickname = "test01",
-            gender = "M",
-            age = 1
-        )
-        user.set_password("test_user")
-        user.save()
-
-        item = Item.objects.create(
-            id = 1,
-            name = "TEST_CLOTHES",
-            description = "TEST_DESCRIPTION",
-            price = 10000,
-            image_url = ["TEST_URL"],
-            order_url = "TEST_URL",
-        )
-        item.save()
-
+    def test_saveFirstChat(self):
+        user = self.test_create_user()
+        item = self.test_create_item()
         data = {
             "user" : user.id,
             "chatroom" : "TEST_CHATROOM_ID",
@@ -53,55 +68,29 @@ class SearchTestCase(TestCase):
         }
         
         response = client.post("/history/chat-record/", data=json.dumps(data), content_type='application/json')
-        # print(response)
         self.assertEqual(response.status_code, 201)
         return response.json()
     
+    # def test_saveSecondChat(self):
+        
+    
     def test_chatHistoryAPI(self):
-        outputs = self.test_saveSearch()
-        user = User.objects.create(
-            username = "test_user2",
-            email = "test_user2@test.com",
-            nickname = "test02",
-            gender = "M",
-            age = 1
-        )
-        user.set_password("test_user2")
-        user.save()
+        user = self.test_create_user()
         chatLog = ChatLog.objects.create(
             user = user,
             summary = "TEST_SUMMARY"
         )
-        response = client.get(f'/history/chat/{chatLog.pk}')
+        response = client.get(f'/history/chat/{chatLog.id}')
         self.assertEquals(response.status_code, 200)
     
     def test_saveSearch(self):
-        user = User.objects.create(
-            username = "test_user",
-            email = "test_user@test.com",
-            nickname = "test01",
-            gender = "M",
-            age = 1
-        )
-        user.set_password("test_user")
-        user.save()
+        user = self.test_create_user()
         inputs = {
             "user_id" : user.id,
             "text" : "fashionable jeans"
         }
         inputs = json.dumps(inputs)
         
-        # headers = {'Content-Type': 'application/json'}
-        # data = requests.post(SEARCH_API, data=inputs, headers=headers)
-        # data = data.json()
-        # request = {
-        #     "user" : user.id,
-        #     "query" : data['text'][0],
-        #     "gpt_query1" : data['text'][1],
-        #     "gpt_query2" : data['text'][2],
-        #     "gpt_query3" : data['text'][3]
-        # }
-        # tmp
         data = {
             "user" : user.id,
             "query" : "text1", 
@@ -121,15 +110,7 @@ class SearchTestCase(TestCase):
         output = self.test_saveSearch()
         searchLog_id = output['log_id']
         search = SearchLog.objects.get(id=searchLog_id)
-        item = Item.objects.create(
-            id = 1,
-            name = "TEST_CLOTHES",
-            description = "TEST_DESCRIPTION",
-            price = 10000,
-            image_url = ["TEST_URL"],
-            order_url = "TEST_URL",
-        )
-        item.save()
+        item = self.test_create_item()
         data = {
             "search" : search.id,
             "item" : item.id,

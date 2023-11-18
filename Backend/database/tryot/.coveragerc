@@ -6,3 +6,4 @@ omit=
     */migrations/*
     */__init__.py
     */scripts/*
+    */private_constants.py 

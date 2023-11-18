@@ -63,7 +63,7 @@ def user_login_continue(request, token):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def user_logout(request):
-    print(request)
+    # print(request)
     if request.method == 'POST':
         try:
             # set Headers key : Authorization value : Token YOUR_TOKEN_VALUE
