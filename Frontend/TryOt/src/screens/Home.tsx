@@ -14,7 +14,7 @@ import ItemDetailScreen from './ItemDetailScreen';
 import {FashionItem} from '../models/FashionItem';
 import DismissKeyboardView from '../components/DismissKeyboardView';
 
-function Search({navigation}: NativeStackScreenProps<RootStackParamList>) {
+function Search({navigation}: NativeStackScreenProps<HomeStackParamList>) {
   const [isCatalog, setIsCatalog] = useState(true);
   const [inputText, setInputText] = useState('');
   const onPressHandler = useCallback(() => {
@@ -135,10 +135,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export type RootStackParamList = {
+export type HomeStackParamList = {
   Search: undefined;
   Catalog: {
     searchQuery: string;
+    gpt_query1?: string;
+    gpt_query2?: string;
+    gpt_query3?: string;
   };
   Chat: {
     searchQuery: string;
@@ -148,7 +151,7 @@ export type RootStackParamList = {
     item: FashionItem;
   };
 };
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<HomeStackParamList>();
 
 export default function Home() {
   return (

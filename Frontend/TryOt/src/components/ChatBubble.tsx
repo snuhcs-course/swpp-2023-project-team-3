@@ -7,13 +7,13 @@ import {FashionItem} from '../models/FashionItem';
 import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import ImageGridItem from './ImageGridItem';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../screens/Home';
+import {HomeStackParamList} from '../screens/Home';
 
 type ChatBubbleProps = {
   who: string;
   msg: message;
   isErrorMsg: boolean;
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Chat', undefined>;
+  navigation: NativeStackNavigationProp<HomeStackParamList, 'Chat', undefined>;
 };
 
 export default function ChatBubble({
@@ -35,7 +35,7 @@ export default function ChatBubble({
   const fetchData = useCallback(async () => {
     if (!isUserMessage(msg) && !isErrorMsg) {
       const itemData = await Promise.all(
-        Object.keys(msg.items).map(val => fetchFashionItemDetails(val)),
+        msg.items.map(val => fetchFashionItemDetails(`${val}`)),
       );
       return itemData;
     } else {
