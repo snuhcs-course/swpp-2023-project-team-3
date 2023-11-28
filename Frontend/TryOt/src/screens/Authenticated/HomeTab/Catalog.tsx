@@ -11,15 +11,15 @@ import {
   View,
 } from 'react-native';
 import {HomeStackParamList} from './Home';
-import {searchItems} from '../api/searchItemsApi';
-import {fetchFashionItemDetails} from '../api/itemDetailApi';
-import {FashionItem} from '../models/FashionItem';
-import CatalogItem from '../components/CatalogItem';
-import QueryRefineModal from '../components/QueryRefineModal';
+import {searchItems} from '../../../api/searchItemsApi';
+import {fetchFashionItemDetails} from '../../../api/itemDetailApi';
+import {FashionItem} from '../../../models/FashionItem';
+import CatalogItem from '../../../components/CatalogItem';
+import QueryRefineModal from '../../../components/QueryRefineModal';
 import {ActivityIndicator, PaperProvider} from 'react-native-paper';
-import {vw} from '../constants/design';
+import {vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
-import {RootState} from '../store/reducer';
+import {RootState} from '../../../store/reducer';
 
 type ItemSimilarityDictionary = {[key: string]: number};
 
@@ -200,7 +200,7 @@ function Catalog({
           }}>
           <Image
             style={{resizeMode: 'contain', width: '5%', height: '100%'}}
-            source={require('../assets/Icon/Vector.png')}
+            source={require('../../../assets/Icon/Vector.png')}
           />
           <Text style={{color: 'black', paddingRight: 5 * vw}}>
             GPT has refined your query into new queries

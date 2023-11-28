@@ -1,8 +1,8 @@
 // ItemDetailScreen.tsx
-import {FashionItem} from '../models/FashionItem';
+import {FashionItem} from '../../../models/FashionItem';
 import {View, ScrollView, Text, StyleSheet, Image, Linking} from 'react-native';
-import BlackBasicButton from '../components/BlackBasicButton';
-import {fontSize, vw} from '../constants/design';
+import BlackBasicButton from '../../../components/BlackBasicButton';
+import {fontSize, vw} from '../../../constants/design';
 
 import {useEffect, useState} from 'react';
 import {HomeStackParamList} from './Home';

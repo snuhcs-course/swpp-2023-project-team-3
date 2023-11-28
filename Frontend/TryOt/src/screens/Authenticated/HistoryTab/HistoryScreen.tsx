@@ -1,27 +1,27 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
-import {vw} from '../../constants/design';
+import {vw} from '../../../constants/design';
 import {
   historyDetailApi,
   type catalogHistory,
   type chatHistory,
   type historyDetailResponse,
-} from '../../api/historyDetailApi';
+} from '../../../api/historyDetailApi';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../store/reducer';
+import {RootState} from '../../../store/reducer';
 import HistoryTabScreen from './components/HistoryTabScreen';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HistoryTabStackParamList} from './HistoryTab';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {LoggedInParamList} from '../../../App';
+import {AuthenticatedParamList} from '../../../../App';
 import {CompositeNavigationProp} from '@react-navigation/native';
 
 type PrimaryNavigator = NativeStackNavigationProp<
   HistoryTabStackParamList,
   'HistoryScreen'
 >;
-type PrimaryNavigatorParent = BottomTabNavigationProp<LoggedInParamList>;
+type PrimaryNavigatorParent = BottomTabNavigationProp<AuthenticatedParamList>;
 
 export type HistoryScreenProps = {
   navigation: CompositeNavigationProp<PrimaryNavigator, PrimaryNavigatorParent>;

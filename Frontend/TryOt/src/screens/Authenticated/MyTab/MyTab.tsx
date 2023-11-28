@@ -2,19 +2,19 @@ import React, {useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Switch, Modal, Portal, PaperProvider} from 'react-native-paper';
-import CatalogItem from '../../components/CatalogItem';
-import userSlice from '../../slices/user';
+import CatalogItem from '../../../components/CatalogItem';
+import userSlice from '../../../slices/user';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
-import {RootState} from '../../store/reducer';
-import {color, fontSize, vh, vw} from '../../constants/design';
+import {RootState} from '../../../store/reducer';
+import {color, fontSize, vh, vw} from '../../../constants/design';
 import ChangePasswordScreen from './ChangePasswordScreen';
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {HomeStackParamList} from '../Home';
-import {FashionItem} from '../../models/FashionItem';
+import {HomeStackParamList} from '../HomeTab/Home';
+import {FashionItem} from '../../../models/FashionItem';
 
 function MyPageScreen({
   navigation,

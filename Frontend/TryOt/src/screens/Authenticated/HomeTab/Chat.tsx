@@ -12,12 +12,12 @@ import {
   View,
 } from 'react-native';
 import {HomeStackParamList} from './Home';
-import ChatBubble from '../components/ChatBubble';
-import {fontSize, vh, vw} from '../constants/design';
+import ChatBubble from '../../../components/ChatBubble';
+import {fontSize, vh, vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
-import {RootState} from '../store/reducer';
-import {gptChatApi} from '../api/gptChatApi';
-import {chatHistoryApi} from '../api/chatHistoryApi';
+import {RootState} from '../../../store/reducer';
+import {gptChatApi} from '../../../api/gptChatApi';
+import {chatHistoryApi} from '../../../api/chatHistoryApi';
 
 type userMessage = {
   id: number;
@@ -207,7 +207,7 @@ function Chat({
             style={styles.inputTextButton}>
             <Image
               style={styles.inputTextButtonImage}
-              source={require('../assets/Icon/Send.png')}
+              source={require('../../../assets/Icon/Send.png')}
             />
           </Pressable>
         </View>

@@ -10,10 +10,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import LoginScreen from './src/screens/LoginScreen';
-import SignUpScreen from './src/screens/SignUpScreen';
-import Home, {HomeStackParamList} from './src/screens/Home';
-import MyTab from './src/screens/MyTab/MyTab';
+import LoginScreen from './src/screens/Unauthenticated/LoginScreen';
+import SignUpScreen from './src/screens/Unauthenticated/SignUpScreen';
+import Home, {HomeStackParamList} from './src/screens/Authenticated/HomeTab/Home';
+import MyTab from './src/screens/Authenticated/MyTab/MyTab';
 import Toast from 'react-native-toast-message';
 import {Provider, useSelector} from 'react-redux';
 import store, {useAppDispatch} from './src/store';
@@ -22,25 +22,25 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import userSlice from './src/slices/user';
 import {Alert} from 'react-native';
 import tryAxios from './src/util/tryAxios';
-import HistoryTab from './src/screens/HistoryTab/HistoryTab';
+import HistoryTab from './src/screens/Authenticated/HistoryTab/HistoryTab';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
-export type LoggedInParamList = {
+export type AuthenticatedParamList = {
   MyTab: undefined;
   Home: NavigatorScreenParams<HomeStackParamList>;
   HistoryTab: undefined;
   ChangePassword: undefined;
 };
 
-export type RootStackParamList = {
+export type UnAuthenticatedParamList = {
   SignIn: undefined;
   SignUp: undefined;
 };
 
-export type RootStackNavigation = NavigationProp<RootStackParamList>;
+export type RootStackNavigation = NavigationProp<UnAuthenticatedParamList>;
 
-export const Tab = createBottomTabNavigator<LoggedInParamList>();
-export const Stack = createNativeStackNavigator<RootStackParamList>();
+export const Tab = createBottomTabNavigator<AuthenticatedParamList>();
+export const Stack = createNativeStackNavigator<UnAuthenticatedParamList>();
 
 function AppInner() {
   const isLoggedIn = useSelector((state: RootState) => !!state.user.username);
@@ -53,7 +53,6 @@ function AppInner() {
         if (!token) {
           return;
         }
-        //TODO - token parameter
         const response = await tryAxios('get', 'user/token-check/', {token});
         dispatch(userSlice.actions.setUser(response));
         await EncryptedStorage.setItem('accessToken', response.token);

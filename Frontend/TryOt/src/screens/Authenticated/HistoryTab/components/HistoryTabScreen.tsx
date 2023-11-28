@@ -1,8 +1,8 @@
 import React from 'react';
-import {historyDetailResponse} from '../../../api/historyDetailApi';
+import {historyDetailResponse} from '../../../../api/historyDetailApi';
 import {FlatList} from 'react-native-gesture-handler';
 import {StyleSheet, Text, View} from 'react-native';
-import {LoadingAndError} from '../../../components/LoadingAndError';
+import {LoadingAndError} from '../../../../components/LoadingAndError';
 import {ActivityIndicator} from 'react-native-paper';
 import HistoryCell from './HistoryCell';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';

@@ -1,5 +1,5 @@
 import React from 'react';
-import type {catalogHistory, chatHistory} from '../../../api/historyDetailApi';
+import type {catalogHistory, chatHistory} from '../../../../api/historyDetailApi';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {HistoryScreenProps} from '../HistoryScreen';

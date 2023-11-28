@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
 
-import {queryPlaceholders} from '../constants/queryPlaceholders';
+import {queryPlaceholders} from '../../../constants/queryPlaceholders';
 
 import {
   NativeStackScreenProps,
@@ -9,10 +9,10 @@ import {
 } from '@react-navigation/native-stack';
 import Catalog from './Catalog';
 import Chat from './Chat';
-import {color, fontSize, vh, vw} from '../constants/design';
+import {color, fontSize, vh, vw} from '../../../constants/design';
 import ItemDetailScreen from './ItemDetailScreen';
-import {FashionItem} from '../models/FashionItem';
-import DismissKeyboardView from '../components/DismissKeyboardView';
+import {FashionItem} from '../../../models/FashionItem';
+import DismissKeyboardView from '../../../components/DismissKeyboardView';
 
 function Search({navigation}: NativeStackScreenProps<HomeStackParamList>) {
   const [isCatalog, setIsCatalog] = useState(true);
@@ -55,7 +55,7 @@ function Search({navigation}: NativeStackScreenProps<HomeStackParamList>) {
         <View style={styles.inputTextWrapper}>
           <Image
             style={styles.textInnerImage}
-            source={require('../assets/Icon/Logo_Black.png')}
+            source={require('../../../assets/Icon/Logo_Black.png')}
           />
           <TextInput
             style={styles.inputText}
