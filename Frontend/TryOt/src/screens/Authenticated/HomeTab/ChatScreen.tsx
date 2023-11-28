@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {HomeStackParamList} from './Home';
+import {HomeStackParamList} from "./HomeTab";
 import ChatBubble from '../../../components/ChatBubble';
 import {fontSize, vh, vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
@@ -57,7 +57,14 @@ export function isUserMessage(msg: any): msg is userMessage {
   );
 }
 
-function Chat({
+export type ChatScreenParamList = {
+  Chat: {
+    searchQuery: string;
+    chatroom?: number;
+  };
+}
+
+function ChatScreen({
   navigation,
   route,
 }: NativeStackScreenProps<HomeStackParamList, 'Chat'>) {
@@ -84,11 +91,24 @@ function Chat({
     async (currQuery: string) => {
       try {
         const gptResponse = await gptChatApi(currQuery, id, chatroom);
-        let gptMessage: gptMessage = {
+        let gptMessage: {
+          summary?: string;
+          answer: string;
+          gpt_query1: string;
+          gpt_query3: string;
+          query: string;
+          gpt_query2: string;
+          chatroom: number;
+          id: number;
+          user?: number;
+          items: { [p: number]: [number, number] };
+          who: string
+        } = {
           ...gptResponse,
           id: 0,
           who: 'Trytri',
         };
+        // @ts-ignore
         gptMessage.items = Object.keys(gptMessage.items).map(parseInt);
         if (chatroom !== gptMessage.chatroom) {
           setChatroom(gptMessage.chatroom);
@@ -96,6 +116,7 @@ function Chat({
 
         setMessages(prevMsg => {
           gptMessage.id = prevMsg[prevMsg.length - 1].id + 1;
+          // @ts-ignore
           return prevMsg.concat(gptMessage);
         });
       } catch {
@@ -269,4 +290,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Chat;
+export default ChatScreen;

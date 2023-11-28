@@ -10,23 +10,23 @@ import { Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 import tryAxios from '../util/tryAxios';
 import userSlice from '../slices/user';
-import Home, { HomeStackParamList } from '../screens/Authenticated/HomeTab/Home';
-import MyTab from '../screens/Authenticated/MyTab/MyTab';
+import HomeTab from '../screens/Authenticated/HomeTab/HomeTab';
+import MyPageTab from '../screens/Authenticated/MyPageTab/MyPageTab';
 import HistoryTab from '../screens/Authenticated/HistoryTab/HistoryTab';
-import { RootState } from '../store/reducer';
 import store, { useAppDispatch } from '../store';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {HomeStackParamList} from "../screens/Authenticated/HomeTab/HomeTab";
+import {MyPageTabStackParamList} from "../screens/Authenticated/MyPageTab/MyPageTab";
+import {HistoryTabStackParamList} from "../screens/Authenticated/HistoryTab/HistoryTab";
 
 export type AuthenticatedParamList = {
-    MyTab: undefined;
-    Home: HomeStackParamList;
-    HistoryTab: undefined;
-    ChangePassword: undefined;
+    MyPageTab: MyPageTabStackParamList;
+    HomeTab: HomeStackParamList;
+    HistoryTab: HistoryTabStackParamList;
 };
 
 export const Tab = createBottomTabNavigator<AuthenticatedParamList>();
-const Stack = createNativeStackNavigator<AuthenticatedParamList>();
 
+createNativeStackNavigator<AuthenticatedParamList>();
 const AuthenticatedStack: React.FC = () => {
     const dispatch = useAppDispatch();
 
@@ -48,9 +48,8 @@ const AuthenticatedStack: React.FC = () => {
     }, [dispatch]);
 
     return (
-        <NavigationContainer>
             <Tab.Navigator
-                initialRouteName="Home"
+                initialRouteName="HomeTab"
                 screenOptions={({ route }) => ({
                     tabBarActiveBackgroundColor: 'black',
                     tabBarInactiveBackgroundColor: 'black',
@@ -59,11 +58,11 @@ const AuthenticatedStack: React.FC = () => {
                     tabBarIcon: ({ focused, color, size }) => {
                         let iconName = '';
 
-                        if (route.name === 'Home') {
+                        if (route.name === 'HomeTab') {
                             iconName = focused ? 'home' : 'home-outline';
                         } else if (route.name === 'HistoryTab') {
                             iconName = focused ? 'podium' : 'podium-outline';
-                        } else if (route.name === 'MyTab') {
+                        } else if (route.name === 'MyPageTab') {
                             iconName = focused ? 'person' : 'person-outline';
                         }
 
@@ -86,8 +85,8 @@ const AuthenticatedStack: React.FC = () => {
                     }}
                 />
                 <Tab.Screen
-                    name="Home"
-                    component={Home}
+                    name="HomeTab"
+                    component={HomeTab}
                     options={({ route }) => ({
                         headerShown: false,
                         title: 'Home',
@@ -101,10 +100,10 @@ const AuthenticatedStack: React.FC = () => {
                     })}
                 />
                 <Tab.Screen
-                    name="MyTab"
-                    component={MyTab}
+                    name="MyPageTab"
+                    component={MyPageTab}
                     options={({ route }) => ({
-                        title: 'my tab',
+                        title: 'my page',
                         headerShown: false,
                         tabBarStyle: (route => {
                             const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
@@ -116,8 +115,6 @@ const AuthenticatedStack: React.FC = () => {
                     })}
                 />
             </Tab.Navigator>
-            <Toast />
-        </NavigationContainer>
     );
 };
 

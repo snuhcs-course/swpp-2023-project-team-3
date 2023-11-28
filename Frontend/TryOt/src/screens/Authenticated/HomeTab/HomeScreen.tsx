@@ -7,14 +7,19 @@ import {
   NativeStackScreenProps,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import Catalog from './Catalog';
-import Chat from './Chat';
+import CatalogScreen from './CatalogScreen';
+import ChatScreen from './ChatScreen';
 import {color, fontSize, vh, vw} from '../../../constants/design';
 import ItemDetailScreen from './ItemDetailScreen';
 import {FashionItem} from '../../../models/FashionItem';
 import DismissKeyboardView from '../../../components/DismissKeyboardView';
+import {HomeStackParamList} from "./HomeTab";
 
-function Search({navigation}: NativeStackScreenProps<HomeStackParamList>) {
+export type HomeScreenParamList = {
+  Home: undefined;
+}
+
+function HomeScreen({navigation}: NativeStackScreenProps<HomeStackParamList>) {
   const [isCatalog, setIsCatalog] = useState(true);
   const [inputText, setInputText] = useState('');
   const onPressHandler = useCallback(() => {
@@ -135,57 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export type HomeStackParamList = {
-  Search: undefined;
-  Catalog: {
-    searchQuery: string;
-    gpt_query1?: string;
-    gpt_query2?: string;
-    gpt_query3?: string;
-  };
-  Chat: {
-    searchQuery: string;
-    chatroom?: number;
-  };
-  ItemDetail: {
-    item: FashionItem;
-  };
-};
-const Stack = createNativeStackNavigator<HomeStackParamList>();
-
-export default function Home() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Search"
-        component={Search}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="ItemDetail"
-        component={ItemDetailScreen}
-        options={{
-          headerShadowVisible: false,
-          headerTitle: '',
-          headerTransparent: true,
-          headerTintColor: 'black',
-        }}
-      />
-      <Stack.Screen
-        name="Catalog"
-        component={Catalog as any}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="Chat"
-        component={Chat as any}
-        options={{
-          headerShadowVisible: false,
-          headerTitle: '',
-          headerTransparent: true,
-          headerTintColor: 'black',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
+export default HomeScreen;

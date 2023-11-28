@@ -8,17 +8,15 @@ import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {RootState} from '../../../store/reducer';
 import {color, fontSize, vh, vw} from '../../../constants/design';
-import ChangePasswordScreen from './ChangePasswordScreen';
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {HomeStackParamList} from '../HomeTab/Home';
-import {FashionItem} from '../../../models/FashionItem';
+import {MyPageTabStackParamList} from "./MyPageTab";
 
 function MyPageScreen({
   navigation,
-}: NativeStackScreenProps<MyTabStackParamList>) {
+}: NativeStackScreenProps<MyPageTabStackParamList>) {
   const {email, nickname, gender, username, gptUsable} = useSelector(
     (state: RootState) => state.user,
   );
@@ -200,30 +198,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export type MyTabStackParamList = {
-  MyPageScreen: undefined;
-  ChangePasswordScreen: undefined;
-};
-
-const Stack = createNativeStackNavigator<MyTabStackParamList>();
-export default function MyTab() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="MyPageScreen"
-        component={MyPageScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="ChangePasswordScreen"
-        component={ChangePasswordScreen}
-        options={{
-          headerShadowVisible: false,
-          headerTitle: '',
-          headerTransparent: true,
-          headerTintColor: 'black',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
+export default MyPageScreen;

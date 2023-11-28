@@ -36,6 +36,8 @@ function HistoryTabScreen({
   isLoading,
   isError,
 }: HistoryTabScreenProps) {
+  // @ts-ignore
+  // @ts-ignore
   return (
     <LoadingAndError
       isLoading={isLoading}

@@ -14,7 +14,7 @@ import HistoryTabScreen from './components/HistoryTabScreen';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HistoryTabStackParamList} from './HistoryTab';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {AuthenticatedParamList} from '../../../../App';
+import {AuthenticatedParamList} from "../../../navigation/AuthenticatedStack";
 import {CompositeNavigationProp} from '@react-navigation/native';
 
 type PrimaryNavigator = NativeStackNavigationProp<

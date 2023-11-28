@@ -10,7 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {HomeStackParamList} from './Home';
+import {HomeStackParamList} from "./HomeTab";
 import {searchItems} from '../../../api/searchItemsApi';
 import {fetchFashionItemDetails} from '../../../api/itemDetailApi';
 import {FashionItem} from '../../../models/FashionItem';
@@ -23,7 +23,16 @@ import {RootState} from '../../../store/reducer';
 
 type ItemSimilarityDictionary = {[key: string]: number};
 
-function Catalog({
+export type CatalogScreenParamList = {
+  Catalog: {
+    searchQuery: string;
+    gpt_query1?: string;
+    gpt_query2?: string;
+    gpt_query3?: string;
+  };
+}
+
+function CatalogScreen({
   navigation,
   route,
 }: NativeStackScreenProps<HomeStackParamList, 'Catalog'>) {
@@ -302,4 +311,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Catalog;
+export default CatalogScreen;

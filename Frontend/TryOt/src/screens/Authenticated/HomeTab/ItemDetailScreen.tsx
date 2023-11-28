@@ -5,8 +5,14 @@ import BlackBasicButton from '../../../components/BlackBasicButton';
 import {fontSize, vw} from '../../../constants/design';
 
 import {useEffect, useState} from 'react';
-import {HomeStackParamList} from './Home';
+import {HomeStackParamList} from './HomeTab';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+
+export type ItemDetailScreenParamList = {
+  ItemDetail: {
+    item: FashionItem;
+  };
+}
 
 function ItemDetailScreen({
   route,
