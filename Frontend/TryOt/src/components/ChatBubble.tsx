@@ -7,7 +7,7 @@ import {FashionItem} from '../models/FashionItem';
 import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import ImageGridItem from './ImageGridItem';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeStackParamList} from '../screens/Authenticated/HomeTab/HomeScreen';
+import {HomeStackProps} from '../screens/Authenticated/HomeTab/HomeScreen';
 
 type ChatBubbleProps = {
   who: string;

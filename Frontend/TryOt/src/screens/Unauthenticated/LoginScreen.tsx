@@ -4,7 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import BasicTextInput from '../../components/BasicTextInput';
 import TextLikeButton from '../../components/TextLikeButton';
 import BlackBasicButton from '../../components/BlackBasicButton';
-import {type RootStackNavigation} from '../../../App';
+import {UnauthenticatedStackNavigation} from "../../navigation/UnauthenticatedStack";
 import {color, vw} from '../../constants/design';
 import userSlice from '../../slices/user';
 import Toast from 'react-native-toast-message';
@@ -21,7 +21,7 @@ function LoginScreen() {
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
-  const {navigate} = useNavigation<RootStackNavigation>();
+  const {navigate} = useNavigation<UnauthenticatedStackNavigation>();
   const handleSignUpClick = () => {
     navigate('SignUp');
   };

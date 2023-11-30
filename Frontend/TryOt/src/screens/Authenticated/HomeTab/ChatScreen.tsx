@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {HomeStackParamList} from "./HomeTab";
+import {HomeStackProps} from "./HomeTab";
 import ChatBubble from '../../../components/ChatBubble';
 import {fontSize, vh, vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
@@ -57,7 +57,7 @@ export function isUserMessage(msg: any): msg is userMessage {
   );
 }
 
-export type ChatScreenParamList = {
+export type ChatScreenProps = {
   Chat: {
     searchQuery: string;
     chatroom?: number;
@@ -67,7 +67,7 @@ export type ChatScreenParamList = {
 function ChatScreen({
   navigation,
   route,
-}: NativeStackScreenProps<HomeStackParamList, 'Chat'>) {
+}: NativeStackScreenProps<HomeStackProps, 'Chat'>) {
   const {searchQuery} = route.params;
   // states
   const [messages, setMessages] = useState<message[]>([]);

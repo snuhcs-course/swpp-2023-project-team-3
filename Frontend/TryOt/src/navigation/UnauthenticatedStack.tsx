@@ -3,13 +3,16 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/Unauthenticated/LoginScreen';
 import SignUpScreen from '../screens/Unauthenticated/SignUpScreen';
+import {NavigationProp} from "@react-navigation/native";
 
-export type UnAuthenticatedParamList = {
+export type UnauthenticatedStackProps = {
     SignIn: undefined;
     SignUp: undefined;
 };
 
-const Stack = createNativeStackNavigator<UnAuthenticatedParamList>();
+export type UnauthenticatedStackNavigation = NavigationProp<UnauthenticatedStackProps>;
+
+const Stack = createNativeStackNavigator<UnauthenticatedStackProps>();
 
 const UnauthenticatedStack: React.FC = () => {
     return (

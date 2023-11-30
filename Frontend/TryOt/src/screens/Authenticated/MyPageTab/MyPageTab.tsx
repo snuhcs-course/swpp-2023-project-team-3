@@ -3,12 +3,12 @@ import ChangePasswordScreen from "./ChangePasswordScreen";
 import React from "react";
 import MyPageScreen from "./MyPageScreen";
 
-export type MyPageTabStackParamList = {
+export type MyPageTabStackProps = {
     MyPageScreen: undefined;
     ChangePasswordScreen: undefined;
 };
 
-const Stack = createNativeStackNavigator<MyPageTabStackParamList>();
+const Stack = createNativeStackNavigator<MyPageTabStackProps>();
 export default function MyPageTab() {
     return (
         <Stack.Navigator>

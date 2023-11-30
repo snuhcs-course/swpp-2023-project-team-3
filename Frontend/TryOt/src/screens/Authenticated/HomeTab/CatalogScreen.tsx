@@ -10,7 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {HomeStackParamList} from "./HomeTab";
+import {HomeStackProps} from "./HomeTab";
 import {searchItems} from '../../../api/searchItemsApi';
 import {fetchFashionItemDetails} from '../../../api/itemDetailApi';
 import {FashionItem} from '../../../models/FashionItem';
@@ -23,7 +23,7 @@ import {RootState} from '../../../store/reducer';
 
 type ItemSimilarityDictionary = {[key: string]: number};
 
-export type CatalogScreenParamList = {
+export type CatalogScreenProps = {
   Catalog: {
     searchQuery: string;
     gpt_query1?: string;
@@ -35,7 +35,7 @@ export type CatalogScreenParamList = {
 function CatalogScreen({
   navigation,
   route,
-}: NativeStackScreenProps<HomeStackParamList, 'Catalog'>) {
+}: NativeStackScreenProps<HomeStackProps, 'Catalog'>) {
   const {gptUsable, id} = useSelector((state: RootState) => state.user);
   const [query, setQuery] = useState<string>(route.params.searchQuery);
   const [items, setItems] = useState<FashionItem[]>([]);

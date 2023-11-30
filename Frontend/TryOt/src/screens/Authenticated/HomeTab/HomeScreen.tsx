@@ -13,13 +13,13 @@ import {color, fontSize, vh, vw} from '../../../constants/design';
 import ItemDetailScreen from './ItemDetailScreen';
 import {FashionItem} from '../../../models/FashionItem';
 import DismissKeyboardView from '../../../components/DismissKeyboardView';
-import {HomeStackParamList} from "./HomeTab";
+import {HomeStackProps} from "./HomeTab";
 
-export type HomeScreenParamList = {
+export type HomeScreenProps = {
   Home: undefined;
 }
 
-function HomeScreen({navigation}: NativeStackScreenProps<HomeStackParamList>) {
+function HomeScreen({navigation}: NativeStackScreenProps<HomeStackProps>) {
   const [isCatalog, setIsCatalog] = useState(true);
   const [inputText, setInputText] = useState('');
   const onPressHandler = useCallback(() => {

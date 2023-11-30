@@ -15,7 +15,7 @@ import {color, fontSize, vw} from '../../constants/design';
 import axios from 'axios';
 import {serverName} from '../../constants/dev';
 import {useNavigation} from '@react-navigation/native';
-import {RootStackNavigation} from '../../../App';
+import {UnauthenticatedStackNavigation} from "../../navigation/UnauthenticatedStack";
 import Toast from 'react-native-toast-message';
 import tryAxios from '../../util/tryAxios';
 
@@ -34,7 +34,7 @@ function SignUpScreen() {
     React.useState(true);
 
   //navigation for page transition
-  const {navigate} = useNavigation<RootStackNavigation>();
+  const {navigate} = useNavigation<UnauthenticatedStackNavigation>();
 
   //button disablied
   const isFormValid = () => {

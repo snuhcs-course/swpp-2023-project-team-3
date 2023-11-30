@@ -14,19 +14,19 @@ import HomeTab from '../screens/Authenticated/HomeTab/HomeTab';
 import MyPageTab from '../screens/Authenticated/MyPageTab/MyPageTab';
 import HistoryTab from '../screens/Authenticated/HistoryTab/HistoryTab';
 import store, { useAppDispatch } from '../store';
-import {HomeStackParamList} from "../screens/Authenticated/HomeTab/HomeTab";
-import {MyPageTabStackParamList} from "../screens/Authenticated/MyPageTab/MyPageTab";
-import {HistoryTabStackParamList} from "../screens/Authenticated/HistoryTab/HistoryTab";
+import {HomeStackProps} from "../screens/Authenticated/HomeTab/HomeTab";
+import {MyPageTabStackProps} from "../screens/Authenticated/MyPageTab/MyPageTab";
+import {HistoryTabStackProps} from "../screens/Authenticated/HistoryTab/HistoryTab";
 
-export type AuthenticatedParamList = {
-    MyPageTab: MyPageTabStackParamList;
-    HomeTab: HomeStackParamList;
-    HistoryTab: HistoryTabStackParamList;
+export type AuthenticatedStackProps = {
+    MyPageTab: MyPageTabStackProps;
+    HomeTab: HomeStackProps;
+    HistoryTab: HistoryTabStackProps;
 };
 
-export const Tab = createBottomTabNavigator<AuthenticatedParamList>();
+export const Tab = createBottomTabNavigator<AuthenticatedStackProps>();
 
-createNativeStackNavigator<AuthenticatedParamList>();
+createNativeStackNavigator<AuthenticatedStackProps>();
 const AuthenticatedStack: React.FC = () => {
     const dispatch = useAppDispatch();
 

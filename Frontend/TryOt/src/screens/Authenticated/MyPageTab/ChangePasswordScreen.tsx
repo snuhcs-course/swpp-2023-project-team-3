@@ -8,11 +8,11 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
 import {ChangeUserPassword} from '../../../api/userApi';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {MyPageTabStackParamList} from './MyPageTab';
+import {MyPageTabStackProps} from './MyPageTab';
 
 function ChangePasswordScreen({
   navigation,
-}: NativeStackScreenProps<MyPageTabStackParamList>) {
+}: NativeStackScreenProps<MyPageTabStackProps>) {
   //user info
   const {token, id} = useSelector((state: RootState) => state.user);
 

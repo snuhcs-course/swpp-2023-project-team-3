@@ -6,7 +6,7 @@ import {LoadingAndError} from '../../../../components/LoadingAndError';
 import {ActivityIndicator} from 'react-native-paper';
 import HistoryCell from './HistoryCell';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HistoryTabStackParamList} from '../HistoryTab';
+import {HistoryTabStackProps} from '../HistoryTab';
 
 const LoadingView = () => {
   return (
@@ -21,7 +21,7 @@ const separatorItem = () => <View style={styles.separator} />;
 
 type HistoryTabScreenProps = {
   navigation: NativeStackNavigationProp<
-    HistoryTabStackParamList,
+    HistoryTabStackProps,
     'HistoryScreen',
     undefined
   >;

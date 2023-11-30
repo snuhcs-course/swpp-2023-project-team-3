@@ -5,15 +5,15 @@ import React from "react";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import HomeScreen from "./HomeScreen";
 
-import {CatalogScreenParamList} from "./CatalogScreen";
-import {ChatScreenParamList} from "./ChatScreen";
-import {ItemDetailScreenParamList} from "./ItemDetailScreen";
-import {HomeScreenParamList} from "./HomeScreen";
+import {CatalogScreenProps} from "./CatalogScreen";
+import {ChatScreenProps} from "./ChatScreen";
+import {ItemDetailScreenProps} from "./ItemDetailScreen";
+import {HomeScreenProps} from "./HomeScreen";
 
-export type HomeStackParamList = HomeScreenParamList & CatalogScreenParamList & ChatScreenParamList & ItemDetailScreenParamList;
+export type HomeStackProps = HomeScreenProps & CatalogScreenProps & ChatScreenProps & ItemDetailScreenProps;
 
 export default function HomeTab(){
-    const Stack = createNativeStackNavigator<HomeStackParamList>();
+    const Stack = createNativeStackNavigator<HomeStackProps>();
     return (
         <Stack.Navigator>
             <Stack.Screen

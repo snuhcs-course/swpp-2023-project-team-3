@@ -9,14 +9,13 @@ import {useDispatch} from 'react-redux';
 import {RootState} from '../../../store/reducer';
 import {color, fontSize, vh, vw} from '../../../constants/design';
 import {
-  createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {MyPageTabStackParamList} from "./MyPageTab";
+import {MyPageTabStackProps} from "./MyPageTab";
 
 function MyPageScreen({
   navigation,
-}: NativeStackScreenProps<MyPageTabStackParamList>) {
+}: NativeStackScreenProps<MyPageTabStackProps>) {
   const {email, nickname, gender, username, gptUsable} = useSelector(
     (state: RootState) => state.user,
   );
