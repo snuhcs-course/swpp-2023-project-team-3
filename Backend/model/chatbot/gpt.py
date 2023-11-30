@@ -86,12 +86,25 @@ class GPT(object):
 
         chain = LLMChain(llm=cls.llm, prompt=prompt, verbose=True, memory=memory)
         llm_response = chain.predict(question=user_text)
-        response_dict = cls.output_parser.parse(llm_response)
-        print(response_dict)
-        response = {
-            "answer" : response_dict.get('answer'),
-            "summary" : response_dict.get('summary'),
-            "gpt_queries" : response_dict.get('fashion_items')
-        }
+        print(llm_response)
+        try : 
+            
+            response_dict = cls.output_parser.parse(llm_response)
+            print(response_dict)
+            queries = [i for i in response_dict.get('fashion_items') if i is not None]
+            
+            response = {
+                "answer" : response_dict.get('answer'),
+                "summary" : response_dict.get('summary'),
+                "gpt_queries" : queries
+            }
         
-        return response
+            return response
+        except:
+
+            response = {
+                "answer" : llm_response if type(llm_response) == str else "I apologize that I couldn't understand your question. I hope you know that I am a Chatbot only answering questions related to Fashion. Please make your question clearly.",
+                "summary" : user_text,
+                "gpt_queries" : []
+            }
+            return response

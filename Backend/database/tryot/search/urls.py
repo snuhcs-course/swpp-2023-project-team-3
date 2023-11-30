@@ -6,5 +6,6 @@ urlpatterns = [
     path("chat/<str:pk>", views.chatHistoryAPI),
     path("chat-record/", views.saveChat),
     path("search-record/", views.saveSearch),
-    path("search-item-record/", views.saveSearchItem)
+    path("search-item-record/", views.saveSearchItem),
+    path("item-click-view/<str:user>", views.clickedItemsAPI)
 ]
