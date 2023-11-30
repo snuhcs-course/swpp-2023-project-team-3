@@ -16,3 +16,5 @@ chatbot/chat_history_test.py
 chatbot/chat_history_example.json
 chatbot/.chatenv/*
 chatbot/model_config
+
+*/.env

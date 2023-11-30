@@ -110,3 +110,10 @@ def saveSearchItem(request):
             return Response(status=status.HTTP_201_CREATED)
         else:
             return Response(searchItemsSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def clickedItemsAPI(request, user):
+    if request.method == 'GET':
+        clickedItems = SearchItems.objects.filter(search__user=user)
+        clickedItemsSerializer = SearchItemsSerializer(clickedItems, many=True)
+        return Response(clickedItemsSerializer.data, status=status.HTTP_200_OK)
