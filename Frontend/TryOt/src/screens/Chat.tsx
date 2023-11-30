@@ -89,11 +89,13 @@ function Chat({
           id: 0,
           who: 'Trytri',
         };
-        gptMessage.items = Object.keys(gptMessage.items).map(parseInt);
+        gptMessage.items = Object.keys(gptMessage.items).map(
+          (value: string) => +value,
+        );
         if (chatroom !== gptMessage.chatroom) {
           setChatroom(gptMessage.chatroom);
         }
-
+        console.log(gptMessage);
         setMessages(prevMsg => {
           gptMessage.id = prevMsg[prevMsg.length - 1].id + 1;
           return prevMsg.concat(gptMessage);

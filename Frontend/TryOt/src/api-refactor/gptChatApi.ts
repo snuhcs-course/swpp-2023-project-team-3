@@ -1,8 +1,6 @@
 // searchItemsApi.ts
 import axios from 'axios';
-
-const BASE_URL =
-  'https://w7jsadx3y1.execute-api.ap-northeast-2.amazonaws.com/chatbot/invocations';
+import {CHAT_URL} from './config/endpoint';
 
 interface GptChatResponse {
   user?: number;
@@ -36,10 +34,9 @@ export const gptChatApi = async (
       requestBody.chatroom = chatroom;
     }
 
-    const response = await axios.post<GptChatResponse>(BASE_URL, requestBody);
+    const response = await axios.post<GptChatResponse>(CHAT_URL, requestBody);
     console.log(response.data);
     if (response.status === 200) {
-      console.log(response.data);
       return response.data;
     } else {
       console.log(response.data);
