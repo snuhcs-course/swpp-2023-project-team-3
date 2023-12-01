@@ -9,6 +9,7 @@ export type MyPageTabStackProps = {
 };
 
 const Stack = createNativeStackNavigator<MyPageTabStackProps>();
+
 export default function MyPageTab() {
     return (
         <Stack.Navigator>

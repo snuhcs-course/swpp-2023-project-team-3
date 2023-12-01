@@ -3,9 +3,11 @@ import type {catalogHistory, chatHistory} from '../../../../api/historyDetailApi
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {HistoryScreenProps} from '../HistoryScreen';
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {HistoryTabStackProps} from "../HistoryTab";
 
 type HistoryCellProps = {
-  navigation: HistoryScreenProps['navigation'];
+  navigation: NativeStackNavigationProp<HistoryTabStackProps>
   history: catalogHistory | chatHistory;
 };
 
@@ -39,19 +41,16 @@ function HistoryCell({navigation, history}: HistoryCellProps) {
           style={styles.button}
           onPress={() => {
             if (isChat) {
-              navigation.navigate('Home', {
-                screen: 'Chat',
-                params: {searchQuery: '', chatroom: history.id},
+              navigation.navigate('Chat', {
+                searchQuery: '',
+                chatroom: history.id
               });
             } else {
-              navigation.navigate('Home', {
-                screen: 'Catalog',
-                params: {
-                  searchQuery: history.query,
-                  gpt_query1: history.gpt_query1,
-                  gpt_query2: history.gpt_query2,
-                  gpt_query3: history.gpt_query3,
-                },
+              navigation.navigate('Catalog', {
+                searchQuery: history.query,
+                gpt_query1: history.gpt_query1,
+                gpt_query2: history.gpt_query2,
+                gpt_query3: history.gpt_query3,
               });
             }
           }}>
