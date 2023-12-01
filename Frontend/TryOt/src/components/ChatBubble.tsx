@@ -2,12 +2,12 @@ import React, {StyleSheet, Text, View} from 'react-native';
 import {useCallback, useEffect, useState} from 'react';
 
 import {vw} from '../constants/design';
-import {isUserMessage, message} from '../screens/Chat';
+import {isUserMessage, message} from '../screens/Authenticated/HomeTab/ChatScreen';
 import {FashionItem} from '../models/FashionItem';
 import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import ImageGridItem from './ImageGridItem';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeStackParamList} from '../screens/Home';
+import {HomeStackProps} from '../screens/Authenticated/HomeTab/HomeScreen';
 
 type ChatBubbleProps = {
   who: string;

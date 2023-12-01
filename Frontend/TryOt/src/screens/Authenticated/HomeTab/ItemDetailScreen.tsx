@@ -1,16 +1,22 @@
 // ItemDetailScreen.tsx
-import {FashionItem} from '../models/FashionItem';
+import {FashionItem} from '../../../models/FashionItem';
 import {View, ScrollView, Text, StyleSheet, Image, Linking} from 'react-native';
-import BlackBasicButton from '../components/BlackBasicButton';
-import {fontSize, vw} from '../constants/design';
+import BlackBasicButton from '../../../components/BlackBasicButton';
+import {fontSize, vw} from '../../../constants/design';
 
 import {useEffect, useState} from 'react';
-import {HomeStackParamList} from './Home';
+import {HomeStackProps} from './HomeTab';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+
+export type ItemDetailScreenProps = {
+  ItemDetail: {
+    item: FashionItem;
+  };
+}
 
 function ItemDetailScreen({
   route,
-}: NativeStackScreenProps<HomeStackParamList, 'ItemDetail'>) {
+}: NativeStackScreenProps<HomeStackProps, 'ItemDetail'>) {
   const item: FashionItem | null = route.params.item; // Receive the entire item from route.params
   const [loading, setLoading] = useState(!item); // Set loading to true if item is null
 

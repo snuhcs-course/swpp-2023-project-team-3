@@ -1,18 +1,18 @@
 import {StyleSheet, Text, View} from 'react-native';
-import BasicTextInput from '../../components/BasicTextInput';
-import BlackBasicButton from '../../components/BlackBasicButton';
+import BasicTextInput from '../../../components/BasicTextInput';
+import BlackBasicButton from '../../../components/BlackBasicButton';
 import {ActivityIndicator} from 'react-native-paper';
 import React, {useState} from 'react';
-import {color, fontSize, vw} from '../../constants/design';
+import {color, fontSize, vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../store/reducer';
-import {ChangeUserPassword} from '../../api/userApi';
+import {RootState} from '../../../store/reducer';
+import {ChangeUserPassword} from '../../../api/userApi';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {MyTabStackParamList} from './MyTab';
+import {MyPageTabStackProps} from './MyPageTab';
 
 function ChangePasswordScreen({
   navigation,
-}: NativeStackScreenProps<MyTabStackParamList>) {
+}: NativeStackScreenProps<MyPageTabStackProps>) {
   //user info
   const {token, id} = useSelector((state: RootState) => state.user);
 

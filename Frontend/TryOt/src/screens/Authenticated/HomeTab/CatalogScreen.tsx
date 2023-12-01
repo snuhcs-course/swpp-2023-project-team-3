@@ -10,23 +10,32 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {HomeStackParamList} from './Home';
-import {searchItems} from '../api/searchItemsApi';
-import {fetchFashionItemDetails} from '../api/itemDetailApi';
-import {FashionItem} from '../models/FashionItem';
-import CatalogItem from '../components/CatalogItem';
-import QueryRefineModal from '../components/QueryRefineModal';
+import {HomeStackProps} from "./HomeTab";
+import {searchItems} from '../../../api/searchItemsApi';
+import {fetchFashionItemDetails} from '../../../api/itemDetailApi';
+import {FashionItem} from '../../../models/FashionItem';
+import CatalogItem from '../../../components/CatalogItem';
+import QueryRefineModal from '../../../components/QueryRefineModal';
 import {ActivityIndicator, PaperProvider} from 'react-native-paper';
-import {vw} from '../constants/design';
+import {vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
-import {RootState} from '../store/reducer';
+import {RootState} from '../../../store/reducer';
 
 type ItemSimilarityDictionary = {[key: string]: number};
 
-function Catalog({
+export type CatalogScreenProps = {
+  Catalog: {
+    searchQuery: string;
+    gpt_query1?: string;
+    gpt_query2?: string;
+    gpt_query3?: string;
+  };
+}
+
+function CatalogScreen({
   navigation,
   route,
-}: NativeStackScreenProps<HomeStackParamList, 'Catalog'>) {
+}: NativeStackScreenProps<HomeStackProps, 'Catalog'>) {
   const {gptUsable, id} = useSelector((state: RootState) => state.user);
   const [query, setQuery] = useState<string>(route.params.searchQuery);
   const [items, setItems] = useState<FashionItem[]>([]);
@@ -200,7 +209,7 @@ function Catalog({
           }}>
           <Image
             style={{resizeMode: 'contain', width: '5%', height: '100%'}}
-            source={require('../assets/Icon/Vector.png')}
+            source={require('../../../assets/Icon/Vector.png')}
           />
           <Text style={{color: 'black', paddingRight: 5 * vw}}>
             GPT has refined your query into new queries
@@ -302,4 +311,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Catalog;
+export default CatalogScreen;
