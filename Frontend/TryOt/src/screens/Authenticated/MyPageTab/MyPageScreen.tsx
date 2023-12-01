@@ -1,7 +1,7 @@
-import React, {useEffect} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Switch, Modal, Portal, PaperProvider} from 'react-native-paper';
+import {Switch, Modal, Portal, PaperProvider, ActivityIndicator} from 'react-native-paper';
 import CatalogItem from '../../../components/CatalogItem';
 import userSlice from '../../../slices/user';
 import {useSelector} from 'react-redux';
@@ -12,15 +12,24 @@ import {
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {MyPageTabStackProps} from "./MyPageTab";
+import {fetchClickLog} from "../../../api/userApi";
+import {fetchFashionItemDetails} from "../../../api/itemDetailApi";
+import {FashionItem} from "../../../models/FashionItem";
+import {clickLogApi} from "../../../api/clickLogApi";
+
 
 function MyPageScreen({
   navigation,
 }: NativeStackScreenProps<MyPageTabStackProps>) {
-  const {email, nickname, gender, username, gptUsable} = useSelector(
+  const {email, nickname, gender, username, gptUsable, id} = useSelector(
     (state: RootState) => state.user,
   );
 
   const [isGPTRefineOn, setIsGPTRefineOn] = React.useState(gptUsable);
+
+  //holds only the item ids for the click log of the user
+  const [clickLog, setClickLog] = React.useState<number[]>([]);
+  const [items, setItems] = useState<FashionItem[]>([]);
 
   const [logoutModalVisible, setLogoutModalVisible] = React.useState(false);
 
@@ -32,12 +41,50 @@ function MyPageScreen({
   };
 
   const handlePasswordChange = () => {
-    navigation.navigate('ChangePasswordScreen');
+    navigation.navigate('ChangePassword');
   };
 
   const handleGPTRefineOn = (newValue: boolean) => {
     setIsGPTRefineOn(newValue);
     userSlice.actions.setGPTUsable(isGPTRefineOn);
+  };
+
+  //유저의 클릭 로그 받아옴 (최신순)
+  useEffect(() => {
+    fetchClickLog(id).then((response) => {
+      response.sort((a, b) => b.search - a.search);
+
+      const uniqueIdsSet = new Set<number>();
+      const sortedIds: number[] = [];
+
+      response.forEach(result => {
+        if (!uniqueIdsSet.has(result.item)) {
+          uniqueIdsSet.add(result.item);
+          sortedIds.push(result.item);
+        }
+      });
+
+      setClickLog(sortedIds);
+    });
+    fetchItemDetails();
+  }, []);
+
+  //최근 아이템 디테일 불러오기
+  const fetchItemDetails = useCallback(async () => {
+    try {
+      console.log(clickLog);
+      const itemDetails = await Promise.all(
+          clickLog.map(itemId => fetchFashionItemDetails(String(itemId))),
+      );
+      setItems([...itemDetails]);
+    } catch (error) {
+      console.error('Error fetching item detail data:', error);
+    }
+  }, [clickLog]);
+
+  const navigateToItemDetail = (item: FashionItem) => {
+    // @ts-ignore
+    navigation.navigate('ItemDetail', {item});
   };
 
   return (
@@ -76,6 +123,21 @@ function MyPageScreen({
         <View style={styles.dividerBar} />
         <View style={styles.viewedItemsContainer}>
           <Text style={styles.viewedItemsHeader}>Recently Viewed Items</Text>
+          <FlatList
+              style={styles.itemCatalog}
+              columnWrapperStyle={{justifyContent: 'space-around'}}
+              data={items}
+              numColumns={2}
+              keyExtractor={item => item.id}
+              renderItem={({item}) => (
+                  <CatalogItem
+                      fashionItem={item}
+                      onNavigateToDetail={navigateToItemDetail}
+                  />
+              )}
+              contentContainerStyle={styles.catalogGrid}
+              onEndReachedThreshold={0.1}
+          />
         </View>
         <Portal>
           <Modal
@@ -194,6 +256,18 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: fontSize.middle,
     fontWeight: 'bold',
+  },
+  itemCatalog: {
+    alignSelf: 'center',
+    backgroundColor: 'white',
+  },
+  catalogGrid: {
+    justifyContent: 'space-between',
+    flexGrow: 1,
+    margin: 8, // Adjust as needed
+    padding: 16,
+    backgroundColor: 'white', // Adjust as needed
+    width: '100%',
   },
 });
 

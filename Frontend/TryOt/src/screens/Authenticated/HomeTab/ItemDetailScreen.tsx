@@ -12,6 +12,7 @@ import {reloadSearchQueryHistory} from "../../../api/itemDetailApi";
 import {SearchQueryHistoryItem} from "../../../models/SearchQueryHistoryItem";
 
 import HashtagChip from "../../../components/HashtagChip";
+import {MyPageTabStackProps} from "../MyPageTab/MyPageTab";
 
 export type ItemDetailScreenProps = {
   ItemDetail: {
@@ -19,11 +20,13 @@ export type ItemDetailScreenProps = {
   };
 }
 
+type ItemDetailScreenPropType = NativeStackScreenProps<HomeStackProps, 'ItemDetail'> | NativeStackScreenProps<MyPageTabStackProps, 'ItemDetail'>;
+
 function ItemDetailScreen({
   route,
-}: NativeStackScreenProps<HomeStackProps, 'ItemDetail'>) {
-  const item: FashionItem | null = route.params.item; // Receive the entire item from route.params
-  const imageUrl = `https://tryot.s3.ap-northeast-2.amazonaws.com/item_img/${item.id}.jpg`;
+}: ItemDetailScreenPropType) {
+  const item: FashionItem | null = route.params && 'item' in route.params ? route.params.item : null;
+  const imageUrl = item ? `https://tryot.s3.ap-northeast-2.amazonaws.com/item_img/${item.id}.jpg` : '';
   const [loading, setLoading] = useState(!item); // Set loading to true if item is null
   const [uniqueQueries, setUniqueQueries] = useState<SearchQueryHistoryItem[]>([]);
 
