@@ -22,6 +22,7 @@ function ItemDetailScreen({
 
   useEffect(() => {
     if (item) {
+      console.log(item.search_query_istory);
       setLoading(false);
     }
   }, [item]);
