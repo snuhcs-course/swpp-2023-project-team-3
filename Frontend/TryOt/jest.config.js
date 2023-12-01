@@ -1,11 +1,13 @@
 module.exports = {
   preset: 'react-native',
   collectCoverage: true,
-  collectCoverageFrom: ['src/**/*.{ts,tsx}', '<rootDir>/App.tsx'],
+  collectCoverageFrom: ['src/**/*.{ts,tsx}', '<rootDir>/App.tsx'], 
   coverageReporters: ['lcov', 'text'],
 
   rootDir: './',
-  testMatch: ['<rootDir>/__tests__/**/*.test.ts(x)'],
+  testMatch:['<rootDir>/__tests__/**/*.test.ts(x)'],
+  //  ['<rootDir>/__tests__/SignUpScreen.test.tsx'],
+  
 
   transformIgnorePatterns: ['node_modules/(?!@react-native|react-native)'],
   moduleNameMapper: {
