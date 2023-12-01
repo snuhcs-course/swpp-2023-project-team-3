@@ -20,6 +20,7 @@ import {ActivityIndicator, PaperProvider} from 'react-native-paper';
 import {vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
+import {clickLogApi} from "../../../api/clickLogApi";
 
 type ItemSimilarityDictionary = {[key: string]: number};
 
@@ -36,6 +37,7 @@ function CatalogScreen({
   navigation,
   route,
 }: NativeStackScreenProps<HomeStackProps, 'Catalog'>) {
+  const [logId, setLogId] = useState<number>(0);
   const {gptUsable, id} = useSelector((state: RootState) => state.user);
   const [query, setQuery] = useState<string>(route.params.searchQuery);
   const [items, setItems] = useState<FashionItem[]>([]);
@@ -67,13 +69,14 @@ function CatalogScreen({
         apiBody = {searchQuery: query};
       }
       const response = await searchItems(id, apiBody);
-      console.log(response);
+      //console.log(response);
       setSearchQueries(response.text);
 
       const userQueryIds = response.items.query;
       const gpt1Ids = response.items.gpt_query1;
       const gpt2Ids = response.items.gpt_query2;
       const gpt3Ids = response.items.gpt_query3;
+      setLogId(response.log_id);
 
       const results = [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids];
       setItemDataArray(results);
@@ -167,7 +170,10 @@ function CatalogScreen({
 
   const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
-    navigation.navigate('ItemDetail', {item});
+    if (logId !== 0) {
+      clickLogApi(item.id, logId, 1);
+      navigation.navigate('ItemDetail', {item});
+    }
   };
 
   useEffect(() => {

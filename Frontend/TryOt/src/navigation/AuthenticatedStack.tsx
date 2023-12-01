@@ -107,7 +107,7 @@ const AuthenticatedStack: React.FC = () => {
                         headerShown: false,
                         tabBarStyle: (route => {
                             const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
-                            if (routeName === 'ChangePasswordScreen') {
+                            if (routeName === 'ChangePasswordScreen' || routeName === 'ItemDetail') {
                                 return { display: 'none' };
                             }
                             return;
