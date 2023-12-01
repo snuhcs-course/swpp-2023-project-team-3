@@ -30,7 +30,7 @@ export const fetchFashionItemDetails = async (
   }
 };
 
-// 아이템 상세페이지에서 새로 받아오는 용
+// 아이템 상세페이지에서 검색 기록 새로 받아옴
 export const reloadSearchQueryHistory = async (
     itemId: string
 ): Promise<SearchQueryHistoryItem[]> => {

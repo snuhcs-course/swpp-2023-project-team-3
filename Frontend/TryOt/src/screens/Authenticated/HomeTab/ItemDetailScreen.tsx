@@ -8,6 +8,11 @@ import {useEffect, useState} from 'react';
 import {HomeStackProps} from './HomeTab';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
+import {reloadSearchQueryHistory} from "../../../api/itemDetailApi";
+import {SearchQueryHistoryItem} from "../../../models/SearchQueryHistoryItem";
+
+import HashtagChip from "../../../components/HashtagChip";
+
 export type ItemDetailScreenProps = {
   ItemDetail: {
     item: FashionItem;
@@ -18,11 +23,34 @@ function ItemDetailScreen({
   route,
 }: NativeStackScreenProps<HomeStackProps, 'ItemDetail'>) {
   const item: FashionItem | null = route.params.item; // Receive the entire item from route.params
+  const imageUrl = `https://tryot.s3.ap-northeast-2.amazonaws.com/item_img/${item.id}.jpg`;
   const [loading, setLoading] = useState(!item); // Set loading to true if item is null
+  const [uniqueQueries, setUniqueQueries] = useState<SearchQueryHistoryItem[]>([]);
+
+  //첫 클릭에서만 하면 됨.
+  useEffect(() => {
+    if (item) {
+      reloadSearchQueryHistory(item.id).then((response) => {
+
+        // Function to filter out duplicate queries
+        const filterUniqueQueries = (history: SearchQueryHistoryItem[]) => {
+          const uniqueQueries: { [key: string]: boolean } = {};
+          return history.filter((item) => {
+            if (!uniqueQueries[item.query]) {
+              uniqueQueries[item.query] = true;
+              return true;
+            }
+            return false;
+          });
+        };
+        // Use the filtered queries to render HashtagChips
+        setUniqueQueries(filterUniqueQueries(response));
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (item) {
-      console.log(item.search_query_istory);
       setLoading(false);
     }
   }, [item]);
@@ -50,7 +78,7 @@ function ItemDetailScreen({
           <View style={styles.imageContainer}>
             <Image
               style={{width: 60 * vw, height: 100 * vw, margin: 3 * vw}} //TODO: 배율 조정하기
-              source={{uri: item.imageUrl[0].replace(/_54/, '_500')}}
+              source={{uri: imageUrl}}
             />
           </View>
           <View style={styles.descriptionContainer}>
@@ -65,7 +93,9 @@ function ItemDetailScreen({
           </View>
           <View style={styles.borderLine} />
           <View style={styles.queryLogContainer}>
-            <Text>쿼리 기록 (Iteration 4)</Text>
+            {uniqueQueries.map((item, index) => (
+                <HashtagChip key={index} label={item.query} />
+            ))}
           </View>
         </ScrollView>
       ) : (
@@ -122,11 +152,8 @@ const styles = StyleSheet.create({
   },
 
   queryLogContainer: {
-    backgroundColor: 'lightgray',
-    flex: 1,
-    alignItems: 'center',
     padding: 10,
-    marginTop: 10,
+    marginBottom: 80,
   },
 
   shortDescriptionText: {
@@ -145,6 +172,7 @@ const styles = StyleSheet.create({
 
   descriptionContainer: {
     padding: 3 * vw,
+    paddingBottom: vw,
     backgroundColor: 'white',
     flex: 1,
   },
