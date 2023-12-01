@@ -108,12 +108,14 @@ function ChatScreen({
           id: 0,
           who: 'Trytri',
         };
-        // @ts-ignore
-        gptMessage.items = Object.keys(gptMessage.items).map(parseInt);
+// @ts-ignore
+        gptMessage.items = Object.keys(gptMessage.items).map(
+            (value: string) => +value,
+        );
         if (chatroom !== gptMessage.chatroom) {
           setChatroom(gptMessage.chatroom);
         }
-
+        console.log(gptMessage);
         setMessages(prevMsg => {
           gptMessage.id = prevMsg[prevMsg.length - 1].id + 1;
           // @ts-ignore
