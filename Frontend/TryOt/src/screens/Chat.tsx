@@ -206,7 +206,9 @@ function Chat({
           <Pressable
             onPress={onChatRequest}
             disabled={disableButton}
-            style={styles.inputTextButton}>
+            style={styles.inputTextButton}
+            testID = "sendButton"
+            >
             <Image
               style={styles.inputTextButtonImage}
               source={require('../assets/Icon/Send.png')}
