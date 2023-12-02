@@ -1,18 +1,18 @@
 import React, {useCallback} from 'react';
 import {Image, View, StyleSheet, Text, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import BasicTextInput from '../components/BasicTextInput';
-import TextLikeButton from '../components/TextLikeButton';
-import BlackBasicButton from '../components/BlackBasicButton';
-import {type RootStackNavigation} from '../../App';
-import {color, vw} from '../constants/design';
-import userSlice from '../slices/user';
+import BasicTextInput from '../../components/BasicTextInput';
+import TextLikeButton from '../../components/TextLikeButton';
+import BlackBasicButton from '../../components/BlackBasicButton';
+import {UnauthenticatedStackNavigation} from "../../navigation/UnauthenticatedStack";
+import {color, vw} from '../../constants/design';
+import userSlice from '../../slices/user';
 import Toast from 'react-native-toast-message';
-import {useAppDispatch} from '../store';
+import {useAppDispatch} from '../../store';
 import {ActivityIndicator} from 'react-native-paper';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import useCheckBox from '../components/CheckBox';
-import tryAxios from '../util/tryAxios';
+import useCheckBox from '../../components/CheckBox';
+import tryAxios from '../../util/tryAxios';
 
 function LoginScreen() {
   const dispatch = useAppDispatch();
@@ -21,7 +21,7 @@ function LoginScreen() {
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
-  const {navigate} = useNavigation<RootStackNavigation>();
+  const {navigate} = useNavigation<UnauthenticatedStackNavigation>();
   const handleSignUpClick = () => {
     navigate('SignUp');
   };
@@ -78,7 +78,7 @@ function LoginScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../assets/Icon/Logo_Text.png')}
+        source={require('../../assets/Icon/Logo_Text.png')}
         style={styles.logo}
         resizeMode={'contain'}
       />

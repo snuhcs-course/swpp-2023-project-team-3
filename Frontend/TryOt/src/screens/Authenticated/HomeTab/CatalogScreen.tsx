@@ -10,23 +10,34 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {HomeStackParamList} from './Home';
-import {searchItems} from '../api/searchItemsApi';
-import {fetchFashionItemDetails} from '../api/itemDetailApi';
-import {FashionItem} from '../models/FashionItem';
-import CatalogItem from '../components/CatalogItem';
-import QueryRefineModal from '../components/QueryRefineModal';
+import {HomeStackProps} from "./HomeTab";
+import {searchItems} from '../../../api/searchItemsApi';
+import {fetchFashionItemDetails} from '../../../api/itemDetailApi';
+import {FashionItem} from '../../../models/FashionItem';
+import CatalogItem from '../../../components/CatalogItem';
+import QueryRefineModal from '../../../components/QueryRefineModal';
 import {ActivityIndicator, PaperProvider} from 'react-native-paper';
-import {vw} from '../constants/design';
+import {vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
-import {RootState} from '../store/reducer';
+import {RootState} from '../../../store/reducer';
+import {clickLogApi} from "../../../api/clickLogApi";
 
 type ItemSimilarityDictionary = {[key: string]: number};
 
-function Catalog({
+export type CatalogScreenProps = {
+  Catalog: {
+    searchQuery: string;
+    gpt_query1?: string;
+    gpt_query2?: string;
+    gpt_query3?: string;
+  };
+}
+
+function CatalogScreen({
   navigation,
   route,
-}: NativeStackScreenProps<HomeStackParamList, 'Catalog'>) {
+}: NativeStackScreenProps<HomeStackProps, 'Catalog'>) {
+  const [logId, setLogId] = useState<number>(0);
   const {gptUsable, id} = useSelector((state: RootState) => state.user);
   const [query, setQuery] = useState<string>(route.params.searchQuery);
   const [items, setItems] = useState<FashionItem[]>([]);
@@ -58,13 +69,14 @@ function Catalog({
         apiBody = {searchQuery: query};
       }
       const response = await searchItems(id, apiBody);
-      console.log(response);
+      //console.log(response);
       setSearchQueries(response.text);
 
       const userQueryIds = response.items.query;
       const gpt1Ids = response.items.gpt_query1;
       const gpt2Ids = response.items.gpt_query2;
       const gpt3Ids = response.items.gpt_query3;
+      setLogId(response.log_id);
 
       const results = [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids];
       setItemDataArray(results);
@@ -158,7 +170,10 @@ function Catalog({
 
   const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
-    navigation.navigate('ItemDetail', {item});
+    if (logId !== 0) {
+      clickLogApi(item.id, logId, 1);
+      navigation.navigate('ItemDetail', {item});
+    }
   };
 
   useEffect(() => {
@@ -200,7 +215,7 @@ function Catalog({
           }}>
           <Image
             style={{resizeMode: 'contain', width: '5%', height: '100%'}}
-            source={require('../assets/Icon/Vector.png')}
+            source={require('../../../assets/Icon/Vector.png')}
           />
           <Text style={{color: 'black', paddingRight: 5 * vw}}>
             GPT has refined your query into new queries
@@ -302,4 +317,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Catalog;
+export default CatalogScreen;
