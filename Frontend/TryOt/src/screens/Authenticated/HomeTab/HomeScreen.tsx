@@ -1,20 +1,18 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
 
-import {queryPlaceholders} from '../constants/queryPlaceholders';
+import {queryPlaceholders} from '../../../constants/queryPlaceholders';
 
-import {
-  NativeStackScreenProps,
-  createNativeStackNavigator,
-} from '@react-navigation/native-stack';
-import Catalog from './Catalog';
-import Chat from './Chat';
-import {color, fontSize, vh, vw} from '../constants/design';
-import ItemDetailScreen from './ItemDetailScreen';
-import {FashionItem} from '../models/FashionItem';
-import DismissKeyboardView from '../components/DismissKeyboardView';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {color, fontSize, vh, vw} from '../../../constants/design';
+import DismissKeyboardView from '../../../components/DismissKeyboardView';
+import {HomeStackProps} from './HomeTab';
 
-function Search({navigation}: NativeStackScreenProps<HomeStackParamList>) {
+export type HomeScreenProps = {
+  Home: undefined;
+};
+
+function HomeScreen({navigation}: NativeStackScreenProps<HomeStackProps>) {
   const [isCatalog, setIsCatalog] = useState(true);
   const [inputText, setInputText] = useState('');
   const onPressHandler = useCallback(() => {
@@ -55,7 +53,7 @@ function Search({navigation}: NativeStackScreenProps<HomeStackParamList>) {
         <View style={styles.inputTextWrapper}>
           <Image
             style={styles.textInnerImage}
-            source={require('../assets/Icon/Logo_Black.png')}
+            source={require('../../../assets/Icon/Logo_Black.png')}
           />
           <TextInput
             style={styles.inputText}
@@ -135,57 +133,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export type HomeStackParamList = {
-  Search: undefined;
-  Catalog: {
-    searchQuery: string;
-    gpt_query1?: string;
-    gpt_query2?: string;
-    gpt_query3?: string;
-  };
-  Chat: {
-    searchQuery: string;
-    chatroom?: number;
-  };
-  ItemDetail: {
-    item: FashionItem;
-  };
-};
-const Stack = createNativeStackNavigator<HomeStackParamList>();
-
-export default function Home() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Search"
-        component={Search}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="ItemDetail"
-        component={ItemDetailScreen}
-        options={{
-          headerShadowVisible: false,
-          headerTitle: '',
-          headerTransparent: true,
-          headerTintColor: 'black',
-        }}
-      />
-      <Stack.Screen
-        name="Catalog"
-        component={Catalog as any}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="Chat"
-        component={Chat as any}
-        options={{
-          headerShadowVisible: false,
-          headerTitle: '',
-          headerTransparent: true,
-          headerTintColor: 'black',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
+export default HomeScreen;

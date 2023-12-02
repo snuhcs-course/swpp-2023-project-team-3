@@ -1,33 +1,28 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
-import {vw} from '../../constants/design';
+import {vw} from '../../../constants/design';
 import {
   historyDetailApi,
   type catalogHistory,
   type chatHistory,
   type historyDetailResponse,
-} from '../../api/historyDetailApi';
+} from '../../../api/historyDetailApi';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../store/reducer';
+import {RootState} from '../../../store/reducer';
 import HistoryTabScreen from './components/HistoryTabScreen';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HistoryTabStackParamList} from './HistoryTab';
+import {NativeStackNavigationProp, NativeStackScreenProps} from '@react-navigation/native-stack';
+import {HistoryTabStackProps} from './HistoryTab';
+import {HistoryTabScreenProps} from "./components/HistoryTabScreen";
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {LoggedInParamList} from '../../../App';
+import {AuthenticatedStackProps} from "../../../navigation/AuthenticatedStack";
 import {CompositeNavigationProp} from '@react-navigation/native';
 
-type PrimaryNavigator = NativeStackNavigationProp<
-  HistoryTabStackParamList,
-  'HistoryScreen'
->;
-type PrimaryNavigatorParent = BottomTabNavigationProp<LoggedInParamList>;
-
 export type HistoryScreenProps = {
-  navigation: CompositeNavigationProp<PrimaryNavigator, PrimaryNavigatorParent>;
+  History: undefined;
 };
 
-function HistoryScreen({navigation}: HistoryScreenProps) {
+function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps>) {
   // about tab bar
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -81,29 +76,26 @@ function HistoryScreen({navigation}: HistoryScreenProps) {
         case 'first':
           return (
             <HistoryTabScreen
-              navigation={navigation}
               histories={history}
               isLoading={isLoading}
               isError={isError}
-            />
+             navigation={navigation}/>
           );
         case 'second':
           return (
             <HistoryTabScreen
-              navigation={navigation}
               histories={chatHistory}
               isLoading={isLoading}
               isError={isError}
-            />
+             navigation={navigation}/>
           );
         case 'third':
           return (
             <HistoryTabScreen
-              navigation={navigation}
               histories={catalogHistory}
               isLoading={isLoading}
               isError={isError}
-            />
+             navigation={navigation}/>
           );
         default:
           return null;

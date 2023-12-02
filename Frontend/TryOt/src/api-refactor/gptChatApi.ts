@@ -2,7 +2,7 @@
 import axios from 'axios';
 import {CHAT_URL} from './config/endpoint';
 
-interface GptChatResponse {
+export interface GptChatResponse {
   user?: number;
   chatroom: number;
   query: string;

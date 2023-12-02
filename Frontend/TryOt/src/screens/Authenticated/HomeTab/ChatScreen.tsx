@@ -11,13 +11,13 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {HomeStackParamList} from './Home';
-import ChatBubble from '../components/ChatBubble';
-import {fontSize, vh, vw} from '../constants/design';
+import {HomeStackProps} from './HomeTab';
+import ChatBubble from '../../../components/ChatBubble';
+import {fontSize, vh, vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
-import {RootState} from '../store/reducer';
-import {gptChatApi} from '../api/gptChatApi';
-import {chatHistoryApi} from '../api/chatHistoryApi';
+import {RootState} from '../../../store/reducer';
+import {gptChatApi} from '../../../api/gptChatApi';
+import {chatHistoryApi} from '../../../api/chatHistoryApi';
 
 type userMessage = {
   id: number;
@@ -57,10 +57,17 @@ export function isUserMessage(msg: any): msg is userMessage {
   );
 }
 
-function Chat({
+export type ChatScreenProps = {
+  Chat: {
+    searchQuery: string;
+    chatroom?: number;
+  };
+};
+
+function ChatScreen({
   navigation,
   route,
-}: NativeStackScreenProps<HomeStackParamList, 'Chat'>) {
+}: NativeStackScreenProps<HomeStackProps, 'Chat'>) {
   const {searchQuery} = route.params;
   // states
   const [messages, setMessages] = useState<message[]>([]);
@@ -84,11 +91,24 @@ function Chat({
     async (currQuery: string) => {
       try {
         const gptResponse = await gptChatApi(currQuery, id, chatroom);
-        let gptMessage: gptMessage = {
+        let gptMessage: {
+          summary?: string;
+          answer: string;
+          gpt_query1: string;
+          gpt_query3: string;
+          query: string;
+          gpt_query2: string;
+          chatroom: number;
+          id: number;
+          user?: number;
+          items: {[p: number]: [number, number]};
+          who: string;
+        } = {
           ...gptResponse,
           id: 0,
           who: 'Trytri',
         };
+        // @ts-ignore
         gptMessage.items = Object.keys(gptMessage.items).map(
           (value: string) => +value,
         );
@@ -98,6 +118,7 @@ function Chat({
         console.log(gptMessage);
         setMessages(prevMsg => {
           gptMessage.id = prevMsg[prevMsg.length - 1].id + 1;
+          // @ts-ignore
           return prevMsg.concat(gptMessage);
         });
       } catch {
@@ -211,7 +232,7 @@ function Chat({
             >
             <Image
               style={styles.inputTextButtonImage}
-              source={require('../assets/Icon/Send.png')}
+              source={require('../../../assets/Icon/Send.png')}
             />
           </Pressable>
         </View>
@@ -273,4 +294,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Chat;
+export default ChatScreen;
