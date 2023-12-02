@@ -1,12 +1,13 @@
 import React from 'react';
-import {historyDetailResponse} from '../../../api/historyDetailApi';
+import {historyDetailResponse} from '../../../../api/historyDetailApi';
 import {FlatList} from 'react-native-gesture-handler';
 import {StyleSheet, Text, View} from 'react-native';
-import {LoadingAndError} from '../../../components/LoadingAndError';
+import {LoadingAndError} from '../../../../components/LoadingAndError';
 import {ActivityIndicator} from 'react-native-paper';
 import HistoryCell from './HistoryCell';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HistoryTabStackParamList} from '../HistoryTab';
+import {NativeStackNavigationProp, NativeStackScreenProps} from '@react-navigation/native-stack';
+import {HistoryTabStackProps} from '../HistoryTab';
+import {HomeStackProps} from "../../HomeTab/HomeTab";
 
 const LoadingView = () => {
   return (
@@ -19,23 +20,14 @@ const LoadingView = () => {
 
 const separatorItem = () => <View style={styles.separator} />;
 
-type HistoryTabScreenProps = {
-  navigation: NativeStackNavigationProp<
-    HistoryTabStackParamList,
-    'HistoryScreen',
-    undefined
-  >;
+export type HistoryTabScreenProps = {
+  navigation: NativeStackNavigationProp<HistoryTabStackProps>;
   histories: historyDetailResponse;
   isLoading: boolean;
   isError: boolean;
 };
 
-function HistoryTabScreen({
-  navigation,
-  histories,
-  isLoading,
-  isError,
-}: HistoryTabScreenProps) {
+function HistoryTabScreen({isLoading, isError, histories, navigation}: HistoryTabScreenProps) {
   return (
     <LoadingAndError
       isLoading={isLoading}
