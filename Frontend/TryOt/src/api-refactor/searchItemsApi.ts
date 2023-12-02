@@ -4,7 +4,7 @@ import axios from 'axios';
 const BASE_URL =
   'https://dxw12un6m8.execute-api.ap-northeast-2.amazonaws.com/test/invocations';
 
-interface SearchItemsResponse {
+export interface SearchItemsResponse {
   user_id: number;
   log_id: number;
   text: string[]; //[오리지날 검색어, gpt 쿼리 1, gpt 쿼리 2, gpt 쿼리 3]

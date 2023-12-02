@@ -10,7 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {HomeStackProps} from "./HomeTab";
+import {HomeStackProps} from './HomeTab';
 import {searchItems} from '../../../api/searchItemsApi';
 import {fetchFashionItemDetails} from '../../../api/itemDetailApi';
 import {FashionItem} from '../../../models/FashionItem';
@@ -20,7 +20,7 @@ import {ActivityIndicator, PaperProvider} from 'react-native-paper';
 import {vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
-import {clickLogApi} from "../../../api/clickLogApi";
+import {clickLogApi} from '../../../api/clickLogApi';
 
 type ItemSimilarityDictionary = {[key: string]: number};
 
@@ -31,7 +31,7 @@ export type CatalogScreenProps = {
     gpt_query2?: string;
     gpt_query3?: string;
   };
-}
+};
 
 function CatalogScreen({
   navigation,
