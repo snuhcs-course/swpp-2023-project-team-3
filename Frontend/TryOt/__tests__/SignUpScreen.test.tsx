@@ -6,7 +6,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import SignUpScreen from '../src/screens/SignUpScreen';
+import SignUpScreen from '../src/screens/UnAuthenticated/SignUpScreen';
 
 const user = {
     Email: "test@email.com",
@@ -19,9 +19,8 @@ describe('SignUp success', () => {
     jest.useFakeTimers()
     test('snap shot', () => {
         render( 
-            <NavigationContainer>
-                <SignUpScreen />
-            </NavigationContainer>
+            <NavigationContainer><SignUpScreen /></NavigationContainer>
+            
         );
         const json = screen.toJSON();
         expect(json).toMatchSnapshot();
