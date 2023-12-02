@@ -3,13 +3,12 @@
 import React from 'react';
 import { render, fireEvent, waitFor, RenderOptions } from '@testing-library/react-native';
 import { Provider } from 'react-redux'; // Assuming you use Redux, adjust as needed
-import configureStore from 'redux-mock-store'; // Assuming you use Redux, adjust as needed
 import { RouteProp } from '@react-navigation/native';
 
-import Chat from '../src/screens/Chat'; // Import the Chat component
-import {HomeStackParamList} from '../src/screens/Home';
+import Chat from '../src/screens/Authenticated/HomeTab/ChatScreen'; // Import the Chat component
 import mockStore from './mockStore';
 import {RootState} from '../src/store/reducer';
+import { HomeStackProps } from '../src/screens/Authenticated/HomeTab/HomeTab';
 
 // Mock the navigation prop
 const navigation: any = {
@@ -25,7 +24,7 @@ const initialState = {
   }
 }; // Add your initial state as needed
 
-const createRoute = (params: { searchQuery: string; chatroom?: number }): RouteProp<HomeStackParamList, 'Chat'> => {
+const createRoute = (params: { searchQuery: string; chatroom?: number }): RouteProp<HomeStackProps, 'Chat'> => {
   return { key: 'unique-key', name: 'Chat', params };
 };
 
@@ -90,7 +89,7 @@ describe('Chat Component', () => {
     // For example, check if the message is added to the chat messages state
   });
 
-  it('enables send button for non-empty input', () => {
+  it('enables send button for non-empty input', async() => {
     const route = createRoute({ searchQuery: 'Test', chatroom: 123 });
     const { getByPlaceholderText, getByTestId, getByText } = render(
       <Provider store={store}>
