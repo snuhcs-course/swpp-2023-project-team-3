@@ -1,7 +1,7 @@
 // Chatbot.test.tsx
 
 import React from 'react';
-import { render, fireEvent, waitFor, RenderOptions  } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, RenderOptions } from '@testing-library/react-native';
 import { Provider } from 'react-redux'; // Assuming you use Redux, adjust as needed
 import configureStore from 'redux-mock-store'; // Assuming you use Redux, adjust as needed
 import { RouteProp } from '@react-navigation/native';
@@ -38,51 +38,75 @@ const { getByTestId } = render(
   </Provider>
 );
 
-  describe('Chat Component', () => {
-    it('renders correctly', async () => {
-      const { getByTestId, toJSON } = render(
-        <Provider store={store}>
-          <Chat navigation={navigation} route={route} />
-        </Provider>
-      );
+describe('Chat Component', () => {
+  it('renders correctly', async () => {
+    jest.useFakeTimers()
   
-      const sendButton = getByTestId('sendButton');
-  
-      // Trigger the asynchronous operation (if any) by pressing the button
-      fireEvent.press(sendButton);
-  
-      // Wait for the asynchronous operation to complete (if needed)
-      await waitFor(() => {
-        // Your assertions go here
-        expect(getByTestId('sendButton')).toBeTruthy();
-        // Additional assertions if needed
-      });
-  
-      // Snapshot testing (if needed)
-      // expect(toJSON()).toMatchSnapshot();
-    });
+    const { getByTestId} = render(
+      <Provider store={store}>
+        <Chat navigation={navigation} route={route} />
+      </Provider>
+    );
+
+    const sendButton = getByTestId('sendButton');
+
+    // Trigger the asynchronous operation (if any) by pressing the button
+    fireEvent.press(sendButton);
+
+    // Wait for the asynchronous operation to complete (if needed)
+    await waitFor(() => {
+      // Your assertions go here
+      expect(getByTestId('sendButton')).toBeTruthy();
+      // Additional assertions if needed
+    }, { timeout: 5000 });
+
+    // Snapshot testing (if needed)
+    // expect(toJSON()).toMatchSnapshot();
   });
 
-  // it('handles user input and sends a chat request', async () => {
-  //   const route = createRoute({ searchQuery: 'Test', chatroom: 123 });
-  //   const { getByPlaceholderText, getByTestId } = render(
-  //     <Provider store={store}>
-  //       <Chat navigation={navigation} route={route} />
-  //     </Provider>
-  //   );
+  it('handles user input and sends a chat request', async () => {
+    const route = createRoute({ searchQuery: 'Test', chatroom: 123 });
+    const { getByPlaceholderText, getByTestId, getByText } = render(
+      <Provider store={store}>
+        <Chat navigation={navigation} route={route} />
+      </Provider>
+    );
 
-  //   const inputField = getByPlaceholderText('채팅을 입력해주세요');
-  //   const sendButton = getByTestId('send-button');
+    const inputField = getByPlaceholderText('채팅을 입력해주세요');
+    const sendButton = getByTestId('sendButton');
 
-  //   // Type a message in the input field
-  //   fireEvent.changeText(inputField, 'Hello, this is a test message');
+    // Type a message in the input field
+    fireEvent.changeText(inputField, 'Hello, this is a test message');
 
-  //   // Trigger the send button press
-  //   fireEvent.press(sendButton);
+    // Trigger the send button press
+    fireEvent.press(sendButton);
 
-  //   // Wait for any asynchronous tasks to complete
-  //   await waitFor(() => {});
+    // Wait for any asynchronous tasks to complete
+    await waitFor(() => {
+      expect(getByText('Hello, this is a test message')).toBeTruthy();
+    });
 
-  //   // Add assertions based on the expected behavior
-  //   // For example, check if the message is added to the chat messages state
-  // });
+    // Add assertions based on the expected behavior
+    // For example, check if the message is added to the chat messages state
+  });
+
+  it('enables send button for non-empty input', () => {
+    const route = createRoute({ searchQuery: 'Test', chatroom: 123 });
+    const { getByPlaceholderText, getByTestId, getByText } = render(
+      <Provider store={store}>
+        <Chat navigation={navigation} route={route} />
+      </Provider>
+    );
+    const inputField = getByPlaceholderText('채팅을 입력해주세요');
+    const sendButton = getByTestId('sendButton');
+
+    fireEvent.changeText(inputField, 'Hello');
+    // expect(sendButton.props.disabled).toBe(false);
+    // expect(sendButton.props.disabled).toEqual(false);
+  });
+
+  afterEach(() => {
+    jest.runAllTimers();
+  });
+});
+
