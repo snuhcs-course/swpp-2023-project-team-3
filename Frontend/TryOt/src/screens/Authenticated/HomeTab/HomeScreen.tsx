@@ -3,21 +3,14 @@ import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
 
 import {queryPlaceholders} from '../../../constants/queryPlaceholders';
 
-import {
-  NativeStackScreenProps,
-  createNativeStackNavigator,
-} from '@react-navigation/native-stack';
-import CatalogScreen from './CatalogScreen';
-import ChatScreen from './ChatScreen';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {color, fontSize, vh, vw} from '../../../constants/design';
-import ItemDetailScreen from './ItemDetailScreen';
-import {FashionItem} from '../../../models/FashionItem';
 import DismissKeyboardView from '../../../components/DismissKeyboardView';
-import {HomeStackProps} from "./HomeTab";
+import {HomeStackProps} from './HomeTab';
 
 export type HomeScreenProps = {
   Home: undefined;
-}
+};
 
 function HomeScreen({navigation}: NativeStackScreenProps<HomeStackProps>) {
   const [isCatalog, setIsCatalog] = useState(true);

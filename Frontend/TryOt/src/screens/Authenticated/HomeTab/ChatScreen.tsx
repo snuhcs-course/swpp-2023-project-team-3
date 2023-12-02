@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {HomeStackProps} from "./HomeTab";
+import {HomeStackProps} from './HomeTab';
 import ChatBubble from '../../../components/ChatBubble';
 import {fontSize, vh, vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
@@ -62,7 +62,7 @@ export type ChatScreenProps = {
     searchQuery: string;
     chatroom?: number;
   };
-}
+};
 
 function ChatScreen({
   navigation,
@@ -101,16 +101,16 @@ function ChatScreen({
           chatroom: number;
           id: number;
           user?: number;
-          items: { [p: number]: [number, number] };
-          who: string
+          items: {[p: number]: [number, number]};
+          who: string;
         } = {
           ...gptResponse,
           id: 0,
           who: 'Trytri',
         };
-// @ts-ignore
+        // @ts-ignore
         gptMessage.items = Object.keys(gptMessage.items).map(
-            (value: string) => +value,
+          (value: string) => +value,
         );
         if (chatroom !== gptMessage.chatroom) {
           setChatroom(gptMessage.chatroom);
