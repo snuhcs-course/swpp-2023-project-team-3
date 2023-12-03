@@ -5,6 +5,7 @@ const BASE_URL =
   'https://dxw12un6m8.execute-api.ap-northeast-2.amazonaws.com/test/invocations';
 
 interface SearchItemsResponse {
+  statusCode?: number;
   user_id: number;
   log_id: number;
   text: string[]; //[오리지날 검색어, gpt 쿼리 1, gpt 쿼리 2, gpt 쿼리 3]
@@ -41,7 +42,6 @@ export const searchItems = async (
   } else {
     requestFormat.text = query.searchQuery;
   }
-  try {
     const requestBody = {
       user_id: userId,
       ...requestFormat,
@@ -50,22 +50,26 @@ export const searchItems = async (
       BASE_URL,
       requestBody,
     );
+
     if (response.status === 200) {
       //console.log(response.data);
-      return response.data;
+      const responseData = response.data;
+      // Check if there is a 'statusCode' key in the response data
+      if ('statusCode' in responseData) {
+        if (responseData.statusCode !== 200) {
+          // Handle non-200 status code
+          console.log(responseData);
+          const errorMessage =
+              responseData.statusCode === 400
+                  ? 'Your query is not related to Fashion.'
+                      : responseData.statusCode === 500
+                          ? 'GPT is not available, please turn it off.'
+                          : 'Search Failed. Please try again.'
+          throw new Error(errorMessage);
+        }
+      }
+      return responseData;
     } else {
-      const errorMessage =
-        response.status === 400
-          ? 'Your query is not related to Fashion.'
-          : response.status === 424
-          ? 'GPT is not available, please turn it off.'
-          : response.status === 500
-          ? 'Internal Server is not working.'
-          : 'API request failed';
-      throw new Error(errorMessage);
+      throw new Error("Search Failed. Please try again.");
     }
-  } catch (error) {
-    console.error(error);
-    throw new Error('API request failed');
-  }
 };
