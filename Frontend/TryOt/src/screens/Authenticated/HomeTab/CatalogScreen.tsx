@@ -52,7 +52,7 @@ function CatalogScreen({
   const [pageSize] = useState(20); // Number of items to load per page
 
   const [itemDataArray, setItemDataArray] = useState<
-    ItemSimilarityDictionary[]
+  (ItemSimilarityDictionary)[]
   >([]);
   const [sortedIds, setSortedIds] = useState<string[]>([]);
 
@@ -79,8 +79,13 @@ function CatalogScreen({
       const gpt3Ids = response.items.gpt_query3;
       setLogId(response.log_id);
 
-      const results = [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids];
-      setItemDataArray(results);
+      const results = [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids]
+          .filter((value: ItemSimilarityDictionary | undefined) => value !== undefined);
+      if (results.length > 0) {
+        // @ts-ignore
+        setItemDataArray(results);
+      }
+
     } catch (error) {
       if (error instanceof Error) {
         console.error(error); // Log the error for debugging purposes
@@ -137,7 +142,7 @@ function CatalogScreen({
 
   //for merging and sorting the fetched item ids and their similarities
   const mergeAndSortItemIds = useCallback(() => {
-    const mergedDictionary: ItemSimilarityDictionary = mergeDictionaries();
+    const mergedDictionary: ItemSimilarityDictionary | undefined = mergeDictionaries();
     const sortedMergedDictionary = sortDictionaryByValues(mergedDictionary);
     const idArrays = sortedMergedDictionary.map(([id, _]) => id);
     setSortedIds(idArrays);
@@ -267,11 +272,11 @@ const styles = StyleSheet.create({
   searchQueryInput: {
     padding: 10,
     width: Dimensions.get('screen').width * 0.9,
-    height: Dimensions.get('screen').height * 0.05,
+    height: Dimensions.get('screen').height * 0.06,
     margin: Dimensions.get('screen').width * 0.05,
     marginBottom: 10,
     backgroundColor: '#eee',
-    borderRadius: 10,
+    borderRadius: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

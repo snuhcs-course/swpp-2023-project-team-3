@@ -95,12 +95,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 5,
     width: 90 * vw,
     alignSelf: 'center',
     padding: 4 * vw,
   },
-
   inputContainerStyle: {
     backgroundColor: 'white',
     flexDirection: 'column',

@@ -5,6 +5,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {HistoryScreenProps} from '../HistoryScreen';
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {HistoryTabStackProps} from "../HistoryTab";
+import {fontSize} from "../../../../constants/design";
 
 type HistoryCellProps = {
   navigation: NativeStackNavigationProp<HistoryTabStackProps>
@@ -103,8 +104,8 @@ const styles = StyleSheet.create({
   title: {marginVertical: 10},
   titleFont: {
     color: 'black',
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: fontSize.middle,
+    fontWeight: 'normal',
   },
 });
 

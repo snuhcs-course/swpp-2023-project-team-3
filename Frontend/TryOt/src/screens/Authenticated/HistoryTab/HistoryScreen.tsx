@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {TabBar, TabView} from 'react-native-tab-view';
-import {vw} from '../../../constants/design';
+import {color, fontSize, vw} from '../../../constants/design';
 import {
   type catalogHistory,
   type chatHistory,
@@ -149,15 +149,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   focusedTabLabel: {
-    color: 'black',
-    fontSize: 12,
+    color: color.pointPurple,
+    fontSize: fontSize.middle,
+    fontWeight: 'bold',
   },
   tabLabel: {
     color: '#B5B5B5',
-    fontSize: 12,
+    fontSize: fontSize.middle,
   },
   tabIndicator: {
-    backgroundColor: '#000',
+    backgroundColor: color.pointPurple,
   },
 });
 

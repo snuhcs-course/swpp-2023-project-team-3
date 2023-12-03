@@ -12,8 +12,8 @@ interface SearchItemsResponse {
   items: {
     query: {[key: string]: number}; //key: item id, number: similarity score
     gpt_query1: {[key: string]: number};
-    gpt_query2: {[key: string]: number};
-    gpt_query3: {[key: string]: number};
+    gpt_query2?: {[key: string]: number};
+    gpt_query3?: {[key: string]: number};
   };
   timestamp: number;
 }
@@ -52,7 +52,7 @@ export const searchItems = async (
     );
 
     if (response.status === 200) {
-      //console.log(response.data);
+      console.log(response.data);
       const responseData = response.data;
       // Check if there is a 'statusCode' key in the response data
       if ('statusCode' in responseData) {

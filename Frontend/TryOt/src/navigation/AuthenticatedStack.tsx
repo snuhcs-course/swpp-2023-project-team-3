@@ -55,9 +55,11 @@ const AuthenticatedStack: React.FC = () => {
                     tabBarInactiveBackgroundColor: 'black',
                     tabBarActiveTintColor: 'white',
                     tabBarHideOnKeyboard: true,
+                    tabBarStyle: {
+                        paddingBottom: '10%',
+                    },
                     tabBarIcon: ({ focused, color, size }) => {
                         let iconName = '';
-
                         if (route.name === 'HomeTab') {
                             iconName = focused ? 'home' : 'home-outline';
                         } else if (route.name === 'HistoryTab') {
