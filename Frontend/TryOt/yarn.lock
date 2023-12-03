@@ -1828,10 +1828,10 @@
     react-is "^16.13.0"
     use-latest-callback "^0.1.5"
 
-"@react-navigation/elements@^1.3.19":
-  version "1.3.19"
-  resolved "https://registry.npmjs.org/@react-navigation/elements/-/elements-1.3.19.tgz"
-  integrity sha512-7hLvSYKPuDS070pza5gd43WDX7QgfuEmuTWNbCJhKdWlLudYmq3qzxGCBwCfO2dEI6+p8tla5wruaWiGKAbTYw==
+"@react-navigation/elements@^1.3.19", "@react-navigation/elements@^1.3.21":
+  version "1.3.21"
+  resolved "https://registry.npmjs.org/@react-navigation/elements/-/elements-1.3.21.tgz"
+  integrity sha512-eyS2C6McNR8ihUoYfc166O1D8VYVh9KIl0UQPI8/ZJVsStlfSTgeEEh+WXge6+7SFPnZ4ewzEJdSAHH+jzcEfg==
 
 "@react-navigation/native-stack@^6.9.14":
   version "6.9.14"
@@ -1857,6 +1857,15 @@
   integrity sha512-lTM8gSFHSfkJvQkxacGM6VJtBt61ip2XO54aNfswD+KMw6eeZ4oehl7m0me3CR9hnDE4+60iAZR8sAhvCiI3NA==
   dependencies:
     nanoid "^3.1.23"
+
+"@react-navigation/stack@^6.3.20":
+  version "6.3.20"
+  resolved "https://registry.npmjs.org/@react-navigation/stack/-/stack-6.3.20.tgz"
+  integrity sha512-vE6mgZzOgoa5Uy7ayT97Cj+ZIK7DK+JBYVuKUViILlWZy6IWK7HFDuqoChSbZ1ajTIfAxj/acVGg1jkbAKsToA==
+  dependencies:
+    "@react-navigation/elements" "^1.3.21"
+    color "^4.2.3"
+    warn-once "^0.1.0"
 
 "@reduxjs/toolkit@^1.9.7":
   version "1.9.7"
@@ -1903,6 +1912,15 @@
   integrity sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==
   dependencies:
     "@sinonjs/commons" "^3.0.0"
+
+"@testing-library/react-native@^12.4.0":
+  version "12.4.0"
+  resolved "https://registry.npmjs.org/@testing-library/react-native/-/react-native-12.4.0.tgz"
+  integrity sha512-FPc/0LPL+xoYxt10IUyYv19I9BRL6FtZ8EGzOvlyT7wXXARzryASQmz4pj2ZBtp5Xn43bYzpbNZO8kIWNv0rLA==
+  dependencies:
+    jest-matcher-utils "^29.7.0"
+    pretty-format "^29.7.0"
+    redent "^3.0.0"
 
 "@tsconfig/react-native@^3.0.0":
   version "3.0.2"
@@ -3961,6 +3979,11 @@ imurmurhash@^0.1.4:
   resolved "https://registry.npmjs.org/imurmurhash/-/imurmurhash-0.1.4.tgz"
   integrity sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==
 
+indent-string@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/indent-string/-/indent-string-4.0.0.tgz"
+  integrity sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==
+
 inflight@^1.0.4:
   version "1.0.6"
   resolved "https://registry.npmjs.org/inflight/-/inflight-1.0.6.tgz"
@@ -4684,7 +4707,7 @@ jest-worker@^29.7.0:
     merge-stream "^2.0.0"
     supports-color "^8.0.0"
 
-jest@^29.0.0, jest@^29.2.1:
+jest@^29.0.0, jest@^29.2.1, jest@>=28.0.0:
   version "29.7.0"
   resolved "https://registry.npmjs.org/jest/-/jest-29.7.0.tgz"
   integrity sha512-NIy3oAFp9shda19hy4HK0HRTWKtPJmGdnvywu01nOqNC2vZg+Z+fvJDxpMQA88eb2I9EcafcdjYgsDthnYTvGw==
@@ -5280,6 +5303,11 @@ mimic-fn@^2.1.0:
   resolved "https://registry.npmjs.org/mimic-fn/-/mimic-fn-2.1.0.tgz"
   integrity sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
 
+min-indent@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/min-indent/-/min-indent-1.0.1.tgz"
+  integrity sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==
+
 minimatch@^3.0.2, minimatch@^3.0.4, minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
   resolved "https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz"
@@ -5828,7 +5856,7 @@ react-native-encrypted-storage@^4.0.3:
   resolved "https://registry.npmjs.org/react-native-encrypted-storage/-/react-native-encrypted-storage-4.0.3.tgz"
   integrity sha512-0pJA4Aj2S1PIJEbU7pN/Qvf7JIJx3hFywx+i+bLHtgK0/6Zryf1V2xVsWcrD50dfiu3jY1eN2gesQ5osGxE7jA==
 
-react-native-gesture-handler@^2.13.4, react-native-gesture-handler@>=1.10.1:
+react-native-gesture-handler@^2.13.4, "react-native-gesture-handler@>= 1.0.0", react-native-gesture-handler@>=1.10.1:
   version "2.13.4"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.13.4.tgz"
   integrity sha512-smpYOVbvWABpq2H+lmDnfOLCTH934aUPO1w2/pQXvm1j+M/vmGQmvgRDJOpXcks17HLtNNKXD6tcODf3aPqDfA==
@@ -5993,7 +6021,7 @@ react-shallow-renderer@^16.15.0:
     object-assign "^4.1.1"
     react-is "^16.12.0 || ^17.0.0 || ^18.0.0"
 
-react-test-renderer@18.2.0:
+react-test-renderer@>=16.8.0, react-test-renderer@18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-18.2.0.tgz"
   integrity sha512-JWD+aQ0lh2gvh4NM3bBM42Kx+XybOxCpgYK7F8ugAlpaTSnWsX+39Z4XkOykGZAHrjwwTZT3x3KxswVWxHPUqA==
@@ -6002,7 +6030,7 @@ react-test-renderer@18.2.0:
     react-shallow-renderer "^16.15.0"
     scheduler "^0.23.0"
 
-react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18", react@^18.2.0, react@>=0.14.5, react@>=16.0, react@>=16.3.0, react@>=16.8, react@>=16.x, react@>=17.0.0, react@18.2.0:
+react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18", react@^18.2.0, react@>=0.14.5, react@>=16.0, react@>=16.3.0, react@>=16.8, react@>=16.8.0, react@>=16.x, react@>=17.0.0, react@18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
@@ -6045,6 +6073,14 @@ recast@^0.21.0:
     esprima "~4.0.0"
     source-map "~0.6.1"
     tslib "^2.0.1"
+
+redent@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/redent/-/redent-3.0.0.tgz"
+  integrity sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==
+  dependencies:
+    indent-string "^4.0.0"
+    strip-indent "^3.0.0"
 
 redux-thunk@^2.4.2:
   version "2.4.2"
@@ -6611,6 +6647,13 @@ strip-final-newline@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/strip-final-newline/-/strip-final-newline-2.0.0.tgz"
   integrity sha512-BrpvfNAE3dcvq7ll3xVumzjKjZQ5tI1sEUIKr3Uoks0XUl45St3FlatVqef9prk4jRDzhW6WZg+3bk93y6pLjA==
+
+strip-indent@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/strip-indent/-/strip-indent-3.0.0.tgz"
+  integrity sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ==
+  dependencies:
+    min-indent "^1.0.0"
 
 strip-json-comments@^3.1.1:
   version "3.1.1"
