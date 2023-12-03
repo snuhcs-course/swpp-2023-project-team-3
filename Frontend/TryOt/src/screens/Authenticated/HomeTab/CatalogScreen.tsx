@@ -70,7 +70,7 @@ function CatalogScreen({
         apiBody = {searchQuery: query};
       }
       const response = await searchItems(id, apiBody);
-      //console.log(response);
+      console.log(response);
       setSearchQueries(response.text);
 
       const userQueryIds = response.items.query;
