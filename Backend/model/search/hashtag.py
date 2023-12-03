@@ -26,7 +26,7 @@ def process_id_with_retry(id):
 
     for attempt in range(max_retry_attempts):
         try:
-            print(f"Attempt: {attempt+1}")
+            print(f"ID: {id}, Attempt: {attempt+1}")
             response = client.chat.completions.create(
                 model="gpt-4-vision-preview",
                 messages=[
@@ -61,7 +61,7 @@ def process_id_with_retry(id):
 # Create a new CSV file for writing
 with open("hashtag.csv", "a") as f:
     # f.write("id, hashtags\n")  # Write header
-    for id in hashtag_df["id"][197:]:
+    for id in hashtag_df["id"][222:]:
         content = process_id_with_retry(id)
 
         if content is not None:
