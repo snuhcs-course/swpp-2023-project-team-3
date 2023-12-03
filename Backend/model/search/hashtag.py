@@ -22,7 +22,7 @@ client.api_key = load_api_key()
 def process_id_with_retry(id):
     image_url = f"https://tryot.s3.ap-northeast-2.amazonaws.com/item_img/{id}.jpg"
     max_retry_attempts = 3
-    retry_delay_seconds = 120  # Adjust this based on your needs
+    retry_delay_seconds = 100  # Adjust this based on your needs
 
     for attempt in range(max_retry_attempts):
         try:
@@ -61,7 +61,7 @@ def process_id_with_retry(id):
 # Create a new CSV file for writing
 with open("hashtag.csv", "a") as f:
     # f.write("id, hashtags\n")  # Write header
-    for id in hashtag_df["id"][222:]:
+    for id in hashtag_df["id"][286:]:
         content = process_id_with_retry(id)
 
         if content is not None:
