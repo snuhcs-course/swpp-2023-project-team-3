@@ -52,6 +52,8 @@ function LoginScreen() {
       }
       dispatch(userSlice.actions.setUser(response));
     } catch (error) {
+      //@ts-ignore
+      Alert.alert(error.message)
       Alert.alert('알림', 'login fail:(');
     } finally {
       setLoading(false);
@@ -92,6 +94,10 @@ function LoginScreen() {
           secureTextEntry={true}
           onChangeText={text => handleTextInputs(text, 'password')}
         />
+        <View style={styles.rowContainer}>
+          <RememberMeButton />
+          <TextLikeButton text={'Forgot Password?'} textColor={'black'} />
+        </View>
         <BlackBasicButton
           buttonText={
             loading ? <ActivityIndicator color="white" /> : <Text>Sign In</Text>

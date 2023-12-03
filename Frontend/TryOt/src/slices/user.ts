@@ -35,6 +35,11 @@ const userSlice = createSlice({
     logoutUser(state) {
       // Clear all user-related data
       state.id = 0;
+      state.email = '';
+      state.username = '';
+      state.age = 0;
+      state.nickname = '';
+      state.gender = 'F';
     },
   },
   extraReducers: builder => {},
