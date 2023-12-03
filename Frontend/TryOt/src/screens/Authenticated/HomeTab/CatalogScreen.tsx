@@ -21,6 +21,7 @@ import {vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
 import {clickLogApi} from '../../../api/clickLogApi';
+import Search from '../../../models-refactor/search/Search';
 
 type ItemSimilarityDictionary = {[key: string]: number};
 
@@ -146,7 +147,6 @@ function CatalogScreen({
     } else {
       setTargetIndex([1, 0, 0, 0]);
     }
-
     try {
       await fetchItemIds();
     } catch (error) {
