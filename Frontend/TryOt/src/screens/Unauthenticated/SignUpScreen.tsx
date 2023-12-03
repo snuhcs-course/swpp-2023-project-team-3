@@ -36,13 +36,14 @@ function SignUpScreen() {
   //navigation for page transition
   const {navigate} = useNavigation<UnauthenticatedStackNavigation>();
 
-  //button disablied
+  //button disabled
   const isFormValid = () => {
     return (
       isEmailValid &&
       isPasswordValid &&
       isConfirmPasswordValid &&
-      !isUsernameValid
+      isUsernameValid &&
+      email.length > 0 && password.length > 0 && username.length > 0 && confirmPassword.length > 0
     );
   };
 
@@ -58,31 +59,6 @@ function SignUpScreen() {
     if (loading) {
       return;
     }
-    if (!email || !email.trim()) {
-      return Alert.alert('notification', 'please enter email.');
-    }
-    if (!username || !username.trim()) {
-      return Alert.alert('notification', 'please enter username.');
-    }
-    if (!password || !password.trim()) {
-      return Alert.alert('notification', 'please enter password.');
-    }
-    if (!confirmPassword || !confirmPassword.trim()) {
-      return Alert.alert('notification', 'please enter [confirm password].');
-    }
-    if (
-      !/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(
-        email,
-      )
-    ) {
-      return Alert.alert('알림', '올바른 이메일 주소가 아닙니다.');
-    }
-    if (!/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@^!%*#?&]).{8,50}$/.test(password)) {
-      return Alert.alert(
-        '알림',
-        '비밀번호는 영문,숫자,특수문자($@^!%*#?&)를 모두 포함하여 8자 이상 입력해야합니다.',
-      );
-    }
     try {
       setLoading(true);
       const response = await tryAxios('post', 'user/register/', {
@@ -90,28 +66,35 @@ function SignUpScreen() {
         password,
         email,
         gender: 'F',
-        age: 10,
-        nickname: 'test',
+        age: 0,
+        nickname: email,
       });
+      navigate('SignIn');
+      console.log(response);
       Toast.show({
         type: 'success',
         text1: 'sign up success!',
       });
-      navigate('SignIn');
     } catch (error) {
+      console.log(error);
       Alert.alert('notification', 'Sign up fail');
     } finally {
       setLoading(false);
     }
-  }, [loading, navigate, email, username, password]);
+  }, [loading, username, password, email]);
 
   //functions
   const handleEmailChange = (text: string) => {
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    const isValid = emailPattern.test(text);
-
+    const isValid = emailPattern.test(text) && text.length > 0;
     setEmail(text); // Update the email state
     setIsEmailValid(isValid); // Update the email validation state
+  };
+
+  const handleUserNameChange = (text: string) => {
+    const isLongEnough = text.length > 5;
+    setUsername(text); // Update the email state
+    setIsUsernameValid(isLongEnough); // Update the email validation state
   };
 
   const handlePasswordChange = (text: string) => {
@@ -131,7 +114,6 @@ function SignUpScreen() {
       errorMessage =
         'Password must include at least one uppercase letter, one lowercase letter, and one digit.';
     }
-
     setPassword(text);
     setIsPasswordValid(isValid);
     setPasswordMessageError(errorMessage);
@@ -139,7 +121,7 @@ function SignUpScreen() {
 
   const handleConfirmPasswordChange = (text: string) => {
     setConfirmPassword(text);
-    if (password !== text) {
+    if (password !== text && text.length === 0) {
       setIsConfirmPasswordValid(false);
     } else {
       setIsConfirmPasswordValid(true);
@@ -162,7 +144,9 @@ function SignUpScreen() {
             />
             <BasicTextInput
               label={'Username'}
-              onChangeText={text => setUsername(text)}
+              onChangeText={handleUserNameChange}
+              isValid={isUsernameValid}
+              errorMessage={usernameMessageError}
             />
             <BasicTextInput
               label={'Password'}

@@ -58,7 +58,6 @@ class Search {
     );
 
     this.displayedItems = sortedMergedItem.map(([id, _]) => new ProxyItem(id));
-
     this.notifyObserver();
   }
 

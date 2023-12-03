@@ -7,7 +7,7 @@ import AuthenticatedStack from './AuthenticatedStack';
 import UnauthenticatedStack from './UnauthenticatedStack';
 
 const AppNavigator: React.FC = () => {
-    const isLoggedIn = useSelector((state: RootState) => !!state.user.username);
+    const isLoggedIn = useSelector((state: RootState) => state.user.id !== 0);
 
     return (
         <NavigationContainer>
