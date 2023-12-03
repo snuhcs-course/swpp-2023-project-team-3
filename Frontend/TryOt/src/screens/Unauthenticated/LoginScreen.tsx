@@ -27,7 +27,7 @@ function LoginScreen() {
   };
   const [isRememberMe, RememberMeButton] = useCheckBox('Remember Me');
 
-  const onSubmit = useCallback(async () => {
+  const onSubmit = async () => {
     if (loading) {
       return;
     }
@@ -58,7 +58,7 @@ function LoginScreen() {
     } finally {
       setLoading(false);
     }
-  }, [loading, dispatch, username, password]);
+  };
 
   const [isButtonActive, setIsButtonActive] = React.useState(false);
 

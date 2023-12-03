@@ -13,13 +13,16 @@ import { Alert } from 'react-native';
 
 const AppNavigator: React.FC = () => {
     const isLoggedIn = useSelector((state: RootState) => state.user.id != 0);
+    const [isLoading, setIsLoading] = React.useState(false);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         const tokenCheck = async () => {
+            setIsLoading(true);
             try {
                 const token = await EncryptedStorage.getItem('accessToken');
                 if (!token) {
+                    Alert.alert('notification', 'please try login again.');
                     return;
                 }
                 const response = await tryAxios('get', `user/token-check/`,{url : token});
@@ -27,13 +30,15 @@ const AppNavigator: React.FC = () => {
             } catch (error) {
                 dispatch(userSlice.actions.logoutUser());
                 Alert.alert('notification', 'please try login again.');
+            } finally{
+                setIsLoading(false);
             }
         };
         tokenCheck();
     }, [dispatch]);
     return (
         <NavigationContainer>
-            {isLoggedIn ? <AuthenticatedStack /> : <UnauthenticatedStack />}
+            {isLoggedIn ? <AuthenticatedStack /> : isLoading ? <></> : <UnauthenticatedStack />}
         </NavigationContainer>
     );
 };
