@@ -11,10 +11,10 @@ class SearchLog(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
-    query = models.TextField()
-    gpt_query1 = models.TextField()
-    gpt_query2 = models.TextField()
-    gpt_query3 = models.TextField()
+    query = models.TextField(null=True)
+    gpt_query1 = models.TextField(null=True)
+    gpt_query2 = models.TextField(null=True)
+    gpt_query3 = models.TextField(null=True)
     is_deleted = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default = timezone.now)
 

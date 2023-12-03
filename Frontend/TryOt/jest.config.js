@@ -3,9 +3,20 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '<rootDir>/App.tsx'],
   coverageReporters: ['lcov', 'text'],
-
+  coveragePathIgnorePatterns: [
+    'src/api/*',
+    'scr/api-refactore/*',
+    'src/models/*',
+  ],
   rootDir: './',
   testMatch: ['<rootDir>/__tests__/**/*.test.ts(x)'],
+  // [
+
+  //   '<rootDir>/__tests__/HistoryTab.test.tsx',
+  //   '<rootDir>/__tests__/SignUpScreen.test.tsx',
+  // ],
+  // ['<rootDir>/__tests__/**/*.test.ts(x)'],
+  //  ['<rootDir>/__tests__/SignUpScreen.test.tsx'],
 
   transformIgnorePatterns: ['node_modules/(?!@react-native|react-native)'],
   moduleNameMapper: {
