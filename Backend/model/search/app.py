@@ -74,11 +74,11 @@ def predict():
             queryList.append(inputs['text'])
             user_id = inputs['user_id']
             timestamp = int(datetime.now().timestamp())
-
-            gptResponse = gpt.get_response(queryList[0])
-            gptResponse = gptResponse["choices"][0]["text"].strip()
             try : 
-                gptResponses = gptResponse.split(",")
+                gptResponse = gpt.get_response(queryList[0])
+                gptResponse = gptResponse["choices"][0]["text"].strip()
+            # try : 
+                gptResponses = gptResponse.split(",") # needs to 
             except :
                 return Response(response=json.dumps({"message" : "GPT is not available, please turn it off."}), status=424, mimetype="application/json")
     
