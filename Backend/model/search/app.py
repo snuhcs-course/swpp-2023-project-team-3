@@ -80,7 +80,7 @@ def predict():
             try : 
                 gptResponses = gptResponse.split(",")
             except :
-                return Response(response=json.dumps({"messgage" : "GPT is not available, please turn it off."}), status=424, mimetype="application/json")
+                return Response(response=json.dumps({"message" : "GPT is not available, please turn it off."}), status=424, mimetype="application/json")
     
             gptInputs = gptResponses[1:]
 
