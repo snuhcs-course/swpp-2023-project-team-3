@@ -1,22 +1,18 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {TabView, TabBar} from 'react-native-tab-view';
+import {StyleSheet, Text, View} from 'react-native';
+import {TabBar, TabView} from 'react-native-tab-view';
 import {vw} from '../../../constants/design';
 import {
-  historyDetailApi,
   type catalogHistory,
   type chatHistory,
+  historyDetailApi,
   type historyDetailResponse,
 } from '../../../api/historyDetailApi';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
 import HistoryTabScreen from './components/HistoryTabScreen';
-import {NativeStackNavigationProp, NativeStackScreenProps} from '@react-navigation/native-stack';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {HistoryTabStackProps} from './HistoryTab';
-import {HistoryTabScreenProps} from "./components/HistoryTabScreen";
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {AuthenticatedStackProps} from "../../../navigation/AuthenticatedStack";
-import {CompositeNavigationProp} from '@react-navigation/native';
 
 export type HistoryScreenProps = {
   History: undefined;
@@ -66,9 +62,11 @@ function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps
   }, [id]);
 
   useEffect(() => {
-    fetchingHistory();
+    return navigation.addListener('focus', () => {
+      fetchingHistory();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigation]);
 
   const renderScene = useCallback(
     ({route}: {route: (typeof routes)[0]}) => {
@@ -113,6 +111,7 @@ function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps
         navigationState={{index, routes}}
         renderScene={renderScene}
         onIndexChange={setIndex}
+        animationEnabled={false}
         renderTabBar={props => (
           <TabBar
             {...props}
@@ -124,6 +123,7 @@ function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps
               </Text>
             )}
             indicatorStyle={styles.tabIndicator}
+            pressColor={'white'}
           />
         )}
       />
@@ -147,7 +147,6 @@ const styles = StyleSheet.create({
 
   tabBar: {
     backgroundColor: 'white',
-    width: vw * 50,
   },
   focusedTabLabel: {
     color: 'black',
