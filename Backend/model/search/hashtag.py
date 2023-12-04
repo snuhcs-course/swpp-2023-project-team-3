@@ -61,11 +61,15 @@ def process_id_with_retry(id):
 # Create a new CSV file for writing
 with open("hashtag.csv", "a") as f:
     # f.write("id, hashtags\n")  # Write header
-    for id in hashtag_df["id"][286:]:
+    count = 0
+    for id in hashtag_df["id"][530:]:
+        count += 1
         content = process_id_with_retry(id)
 
         if content is not None:
             f.write(f"{id}, {content}\n")
+            if count % 20 == 0: f.flush()
         else:
-            print("Failed to process after multiple retry attempts. Finish writing to file.")
-            f.close()
+            print("Failed to process after multiple retry attempts.")
+            f.write(f"{id}, Failed to process after multiple retry attempts.\n")
+            f.flush()
