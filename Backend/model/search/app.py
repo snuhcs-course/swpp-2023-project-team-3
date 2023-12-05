@@ -108,6 +108,7 @@ def predict():
                 
                 return Response(response=json.dumps(output), status=200, mimetype="application/json")
             else:
+                print(response.json())
                 return Response(response=json.dumps({"message" : "Search History Log Server is not working."}), status=500, mimetype="application/json")
     else :
         return Response(

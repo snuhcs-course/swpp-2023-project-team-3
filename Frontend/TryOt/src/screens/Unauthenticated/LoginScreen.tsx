@@ -92,10 +92,6 @@ function LoginScreen() {
           secureTextEntry={true}
           onChangeText={text => handleTextInputs(text, 'password')}
         />
-        <View style={styles.rowContainer}>
-          <RememberMeButton />
-          <TextLikeButton text={'Forgot Password?'} textColor={'black'} />
-        </View>
         <BlackBasicButton
           buttonText={
             loading ? <ActivityIndicator color="white" /> : <Text>Sign In</Text>

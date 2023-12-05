@@ -2,6 +2,7 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
+  Alert,
   Dimensions,
   FlatList,
   Image,
@@ -21,6 +22,7 @@ import {vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
 import {clickLogApi} from '../../../api/clickLogApi';
+import Search from '../../../models-refactor/search/Search';
 
 type ItemSimilarityDictionary = {[key: string]: number};
 
@@ -69,7 +71,6 @@ function CatalogScreen({
         apiBody = {searchQuery: query};
       }
       const response = await searchItems(id, apiBody);
-      //console.log(response);
       setSearchQueries(response.text);
 
       const userQueryIds = response.items.query;
@@ -81,7 +82,13 @@ function CatalogScreen({
       const results = [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids];
       setItemDataArray(results);
     } catch (error) {
-      console.error('Error fetching id data:', error);
+      if (error instanceof Error) {
+        console.error(error); // Log the error for debugging purposes
+        Alert.alert('Notification', error.message);
+      } else {
+        console.error('An unknown error occurred:', error);
+        Alert.alert('Notification', 'An unexpected error occurred');
+      }
     }
   }, [id, query]);
 
@@ -146,7 +153,6 @@ function CatalogScreen({
     } else {
       setTargetIndex([1, 0, 0, 0]);
     }
-
     try {
       await fetchItemIds();
     } catch (error) {

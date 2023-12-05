@@ -68,10 +68,10 @@ function ChangePasswordScreen({
     try {
       await ChangeUserPassword(id, token, newPassword);
       setDoesOldPasswordMatch(true);
-      navigation.navigate('MyPageScreen');
+      navigation.navigate('MyPage');
     } catch (e) {
       setDoesOldPasswordMatch(false);
-      navigation.navigate('MyPageScreen');
+      navigation.navigate('MyPage');
       console.log(e);
     }
   };

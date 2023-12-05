@@ -17,13 +17,13 @@ import {fetchFashionItemDetails} from "../../../api/itemDetailApi";
 import {FashionItem} from "../../../models/FashionItem";
 import {clickLogApi} from "../../../api/clickLogApi";
 
-
 function MyPageScreen({
   navigation,
 }: NativeStackScreenProps<MyPageTabStackProps>) {
   const {email, nickname, gender, username, gptUsable, id} = useSelector(
     (state: RootState) => state.user,
   );
+  const dispatch = useDispatch();
 
   const [isGPTRefineOn, setIsGPTRefineOn] = React.useState(gptUsable);
 
@@ -36,7 +36,10 @@ function MyPageScreen({
   const showLogoutModal = () => setLogoutModalVisible(true);
   const hideLogoutModal = () => setLogoutModalVisible(false);
 
+  //TODO: 로그아웃 시 로그아웃 모달 띄우기
   const handleLogout = () => {
+    dispatch(userSlice.actions.logoutUser());
+    console.log(id);
     showLogoutModal();
   };
 
@@ -46,7 +49,7 @@ function MyPageScreen({
 
   const handleGPTRefineOn = (newValue: boolean) => {
     setIsGPTRefineOn(newValue);
-    userSlice.actions.setGPTUsable(isGPTRefineOn);
+    dispatch(userSlice.actions.setGPTUsable(newValue));
   };
 
   //유저의 클릭 로그 받아옴 (최신순)
@@ -99,7 +102,7 @@ function MyPageScreen({
             <Text style={styles.letter}>{username.at(0)}</Text>
           </View>
           <View style={styles.userTextContainer}>
-            <Text style={styles.username}>{nickname}</Text>
+            <Text style={styles.username}>{username}</Text>
             <Text style={styles.email}>{email}</Text>
           </View>
         </View>

@@ -5,16 +5,6 @@ export interface LocalVariables {
   gptUsable: boolean;
 }
 
-const initialState: UserInfo & Token & LocalVariables = {
-  id: 0,
-  username: '',
-  age: 0,
-  gender: 'F',
-  email: '',
-  token: '',
-  nickname: '',
-  gptUsable: true,
-};
 
 const testUser: UserInfo & Token & LocalVariables = {
   id: 2,
@@ -41,6 +31,10 @@ const userSlice = createSlice({
     },
     setGPTUsable: (state, action) => {
       state.gptUsable = action.payload;
+    },
+    logoutUser(state) {
+      // Clear all user-related data
+      state.id = 0;
     },
   },
   extraReducers: builder => {},
