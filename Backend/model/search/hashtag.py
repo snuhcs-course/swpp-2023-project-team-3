@@ -1,7 +1,7 @@
 from openai import OpenAI
-import json
 import pandas as pd
 import time
+import os
 
 hashtag_df = pd.read_csv("item_df.csv", usecols=['id'], sep=',')
 prompt = """
@@ -11,13 +11,13 @@ I am essentially trying to create hashtag fashion keywords for these clothings, 
 So try to generate meaningful keywords, not too simple yet not too detailed.
 """
 
-def load_api_key(api_file="openai-api.json"):
-    with open(api_file) as f:
-        key = json.load(f)
-    return key["OPENAI_API_KEY"]
+# def load_api_key(api_file="openai-api.json"):
+#     with open(api_file) as f:
+#         key = json.load(f)
+#     return key["OPENAI_API_KEY"]
 
 client = OpenAI()
-client.api_key = load_api_key()
+client.api_key = os.environ["OPENAI_API_KEY"] # load_api_key()
 
 def process_id_with_retry(id):
     image_url = f"https://tryot.s3.ap-northeast-2.amazonaws.com/item_img/{id}.jpg"
@@ -58,17 +58,40 @@ def process_id_with_retry(id):
 
     return None  # Return None if all retry attempts fail
 
-# Create a new CSV file for writing
-with open("hashtag.csv", "a") as f:
-    # f.write("id, hashtags\n")  # Write header
-    count = 0
-    for id in hashtag_df["id"][1820:]:
-        count += 1
-        content = process_id_with_retry(id)
-        if count % 20 == 0: f.flush()
-        if content is not None:
-            f.write(f"{id}, {content}\n")
-        else:
-            print("Failed to process after multiple retry attempts.")
-            f.write(f"{id}, Failed to process after multiple retry attempts.\n")
-            f.flush()
+# generate hashtags starting from the given id
+def generate(idxs):
+    # Create a new CSV file for writing
+    with open("hashtag.csv", "a") as f:
+        # f.write("id, hashtags\n")  # Write header
+        count = 0
+        for id in hashtag_df["id"][idxs]:
+            count += 1
+            content = process_id_with_retry(id)
+            if content is not None:
+                f.write(f"{id}, {content}\n")
+                if count % 20 == 0: 
+                    print("Writing to file.")
+                    f.flush()
+                    os.fsync(f.fileno()) # sync all internal buffers, force write of file
+            else:
+                print("Failed to process after multiple retry attempts.")
+                f.write(f"{id}, Failed to process after multiple retry attempts.\n")
+                f.flush()
+                os.fsync(f.fileno())
+
+def getIndex(id):
+    index = hashtag_df.index[hashtag_df.id == id]
+    return index[0]
+
+def fillInMissingIds():
+    generated_df = pd.read_csv("hashtag.csv", sep=',')
+    missing_values = set(hashtag_df.iloc[:, 0]).symmetric_difference(set(generated_df.iloc[:, 0]))
+    idxs = [getIndex(id) for id in missing_values]
+    generate(idxs)
+    return list(missing_values)
+
+if __name__ == "__main__":
+    # fillInMissingIds()
+    generated_df = pd.read_csv("hashtag.csv", sep=',')
+    print(f"original length: {len(hashtag_df['id'])}, generated length: {len(generated_df['id'])}")
+    print(f"Are there any duplicates? : {generated_df.duplicated(subset=['id'], keep='last').any()}")
