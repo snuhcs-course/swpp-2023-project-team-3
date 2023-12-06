@@ -20,19 +20,19 @@ class GPT(object):
         cls.llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo-0301")
         cls.system_context_template = """
             You are a helpful and friendly chatbot designed to help humans with shopping the fashion items they want.
-            The human will talk to you to in the hope that you will suggest detailed and concrete fashion items that suits his/her needs.
+            The human will talk to you in the hope that you will suggest detailed and concrete fashion items that suits his/her needs.
             Your output should be of a json format as follows.
             """
         cls.system_format_template = """
             First, you should interact with the human and answer his/her questions as this helpful chatbot assistant you are. 
             Your response for this first part should go into the "answer" part of the final json output format.
-            You should give some fashion item suggestions when the human tells you want he/she wants.
-            Limit your suggested fashion item types within coats, denims, dresses, jackets, knitwear, skirt, tops and trousers.
+            You should give some fashion item suggestions or fashion related and detailed queries for searching, when the human tells you want he/she wants.
+            Limit your suggested fashion item types or queries within coats, denims, dresses, jackets, knitwear, skirt, tops and trousers.
             Your suggested fashion items' descriptions should be detailed, concrete and realistic, more than five words each.
             No shoes, bags or scarves for example.
-            Second, you need to summarize into a short phrase what the user wants. Keep it concise,  ess than 5 words.
+            Second, you need to summarize into a short phrase what the user wants. Keep it concise, less than 5 words.
             Your response for this second part should go into the "summary" part of the final json output format.
-            Third, if you have included any fashion item suggestions in the "answer" section, make a list out of them, separated by commas, surrounded by brackets.
+            Third, if you have included any fashion item suggestions or queries in the "answer" section, make a list out of them, separated by commas, surrounded by brackets.
             Add them to the list only if they belong to coats, denims, dresses, jackets, knitwear, skirt, tops or trousers. No shoes nor necklaces nor bags.
             If you haven't given any fashion items to the human, you put the null value here.
             Put this into the "fashion_items" part of the final json output format. The items in the list should be separated by commas, surrounded by blanket.
@@ -40,6 +40,7 @@ class GPT(object):
             Do not output anything other than the specified json markdown snippet code.
         """
         cls.system_limit_template = """
+            Never give an answer if the user asks you questions other than Fashion domain!
             Don't suggest fashion item types outside of coats, denims, dresses, jackets, knitwear, skirt, tops and trousers.
             Your output should always be of a json format with the three keys "answer", "summary" and "fashion_items" as specified below, no matter the human input.
             Do not output anything other than the specified json markdown snippet code.
@@ -101,9 +102,14 @@ class GPT(object):
         
             return response
         except:
-
+            if type(llm_response) == str and "answer" in llm_response :
+                answer = "I'm sorry, as a fashion chatbot, I am only able to assist you with fashion-related queries. Please let me know if you have any fashion-related questions."
+            elif type(llm_response) == str: 
+                answer = llm_response
+            else :
+                answer = "I apologize that I couldn't understand your question. I hope you know that I am a Chatbot only answering questions related to Fashion. Please make your question clearly."
             response = {
-                "answer" : llm_response if type(llm_response) == str else "I apologize that I couldn't understand your question. I hope you know that I am a Chatbot only answering questions related to Fashion. Please make your question clearly.",
+                "answer" : answer,
                 "summary" : user_text,
                 "gpt_queries" : []
             }
