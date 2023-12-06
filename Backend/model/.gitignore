@@ -19,3 +19,4 @@ chatbot/model_config
 
 */.env
 search/test.py
+chatbot/test.py

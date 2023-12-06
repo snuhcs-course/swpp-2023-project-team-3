@@ -89,7 +89,9 @@ class GPT(object):
         llm_response = chain.predict(question=user_text)
         try : 
             response_dict = cls.output_parser.parse(llm_response)
-            queries = [i for i in response_dict.get('fashion_items') if i is not None]
+            if response_dict.get('fashion_items') is not None:
+                queries = [i for i in response_dict.get('fashion_items') if i is not None]
+            else: queries = []
             
             response = {
                 "answer" : response_dict.get('answer'),
