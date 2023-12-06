@@ -22,8 +22,8 @@ class ClipTextEmbedding(object):
 
     @classmethod
     def __init__(cls):
-        if cls.model == None:
-            print("It's None")
+        # if cls.model == None:
+        #     print("It's None")
         cls.model, cls.processor = cls._get_model()
 
     @classmethod

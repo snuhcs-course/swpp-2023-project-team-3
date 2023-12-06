@@ -14,7 +14,7 @@ class GPT(object):
     @classmethod
     def __init__(cls):
         if cls.key == None :
-            print("key is none")
+            # print("key is none")
             if cls.api_file == None:
                 cls.api_file = API_FILES
             cls.key = cls.load_api_key()
