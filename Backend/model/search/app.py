@@ -24,6 +24,14 @@ def ping():
     status = 200 if health else 404
     return Response(response="\n", status=status, mimetype="application/json")
 
+def is_binary(s):
+    try: 
+        if (int(s) == 0 or int(s) == 1): return True
+    except ValueError:
+        return False
+    else:
+        return False
+
 @app.route("/invocations", methods=["POST"])
 def predict():
     data = None
@@ -77,14 +85,16 @@ def predict():
             try : 
                 gptResponse = gpt.get_response(queryList[0])
                 gptResponse = gptResponse["choices"][0]["text"].strip()
-            # try : 
-                gptResponses = gptResponse.split(",") # needs to 
             except :
-                return Response(response=json.dumps({"message" : "GPT is not available, please turn it off."}), status=424, mimetype="application/json")
-    
+                return Response(response=json.dumps({"message" : "GPT is not available, please turn off the GPT refinement option for the time being."}), status=424, mimetype="application/json")
+            
+            gptResponses = gptResponse.split(",")
+            if not (len(gptResponse) >= 4 and is_binary(gptResponse[0])):
+                return Response(response=json.dumps({"message" : "GPT couldn't process your query. Please rephrase it or try again after turning off the GPT refinement option."}), status=424, mimetype="application/json")
+
             gptInputs = gptResponses[1:]
 
-            if gptResponses[0] == "1":  # gpt checks whether the query is relevant to Fashion Domain
+            if gptResponses[0] == "1":  # user query is fashion-relevant
                 for cnt, query in enumerate(gptInputs):
                     if cnt < 3:
                         queryList.append(query.strip())
@@ -95,7 +105,7 @@ def predict():
                 response = loop.run_until_complete(post_log(sendDict))
                 print(response.json())
             else :
-                return Response(response=json.dumps({"message" : "Your query is not related to Fashion."}), status=400, mimetype="application/json")
+                return Response(response=json.dumps({"message" : "Your query is not fashion-relevant."}), status=400, mimetype="application/json")
     
             if response.status_code == 201:
                 response = response.json()
