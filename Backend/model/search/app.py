@@ -86,11 +86,11 @@ def predict():
                 gptResponse = gpt.get_response(queryList[0])
                 gptResponse = gptResponse["choices"][0]["text"].strip()
             except :
-                return Response(response=json.dumps({"message" : "GPT is not available, please turn off the GPT refinement option for the time being."}), status=424, mimetype="application/json")
+                return Response(response=json.dumps({"message" : "Oops! GPT is currently unavailable. Please disable GPT refinement for now."}), status=424, mimetype="application/json")
             
             gptResponses = gptResponse.split(",")
             if not (len(gptResponse) >= 4 and is_binary(gptResponse[0])):
-                return Response(response=json.dumps({"message" : "GPT couldn't process your query. Please rephrase it or try again after turning off the GPT refinement option."}), status=424, mimetype="application/json")
+                return Response(response=json.dumps({"message" : "Oops! Please try a fashion-related search. Turn off GPT refinement if issues persist."}), status=424, mimetype="application/json")
 
             gptInputs = gptResponses[1:]
 
@@ -105,7 +105,7 @@ def predict():
                 response = loop.run_until_complete(post_log(sendDict))
                 print(response.json())
             else :
-                return Response(response=json.dumps({"message" : "Your query is not fashion-relevant."}), status=400, mimetype="application/json")
+                return Response(response=json.dumps({"message" : "Oops! Fashion-related searches only, please."}), status=400, mimetype="application/json")
     
             if response.status_code == 201:
                 response = response.json()
