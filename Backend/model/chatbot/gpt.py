@@ -5,7 +5,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import (
     ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, AIMessagePromptTemplate, MessagesPlaceholder
     )
-from langchain.memory import ConversationTokenBufferMemory
+from langchain.memory import ConversationSummaryBufferMemory
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 from dotenv import load_dotenv
 load_dotenv()
@@ -17,7 +17,7 @@ class GPT(object):
     def __init__(cls):
         
         cls.openai.api_key = os.getenv('OPENAI_API_KEY')
-        cls.llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo-0301")
+        cls.llm = ChatOpenAI(temperature=0.0, model="gpt-4")
         cls.system_context_template = """
             You are a helpful and friendly chatbot designed to help humans with shopping the fashion items they want.
             The human will talk to you in the hope that you will suggest detailed and concrete fashion items that suits his/her needs.
@@ -27,13 +27,13 @@ class GPT(object):
             First, you should interact with the human and answer his/her questions as this helpful chatbot assistant you are. 
             Your response for this first part should go into the "answer" part of the final json output format.
             You should give some fashion item suggestions or fashion related and detailed queries for searching, when the human tells you want he/she wants.
-            Limit your suggested fashion item types or queries within coats, denims, dresses, jackets, knitwear, skirt, tops and trousers.
+            Limit your suggested fashion item types within coats, denims, dresses, jackets, knitwear, skirt, tops and trousers.
             Your suggested fashion items' descriptions should be detailed, concrete and realistic, more than five words each.
-            No shoes, bags or scarves for example.
+            No shoes, no bags and no scarves. No shoes. And your items should not include specific brand names.
             Second, you need to summarize into a short phrase what the user wants. Keep it concise, less than 5 words.
             Your response for this second part should go into the "summary" part of the final json output format.
             Third, if you have included any fashion item suggestions or queries in the "answer" section, make a list out of them, separated by commas, surrounded by brackets.
-            Add them to the list only if they belong to coats, denims, dresses, jackets, knitwear, skirt, tops or trousers. No shoes nor necklaces nor bags.
+            Add them to the list only if they belong to coats, denims, dresses, jackets, knitwear, skirt, tops or trousers.
             If you haven't given any fashion items to the human, you put the null value here.
             Put this into the "fashion_items" part of the final json output format. The items in the list should be separated by commas, surrounded by blanket.
             Your output should always be of a json format with the three keys "answer", "summary" and "fashion_items" as specified above, no matter the human input.
@@ -53,13 +53,13 @@ class GPT(object):
         response_schemas = [
             ResponseSchema(name="answer", description="Answer to the human's question. This is the only part that will be visible to the human."),
             ResponseSchema(name="summary", description="A short phrase that can encapsulate what the human wants"),
-            ResponseSchema(name="fashion_items", description="list of fashion items generated in your answer above to the human. separated by commas, surrounded with brackets", type="list")
+            ResponseSchema(name="fashion_items", description="list of fashion items generated in your answer above to the human. separated by commas, surrounded with brackets.", type="list")
         ]
         cls.output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
     
     @classmethod
     def get_response(cls, user_text, chat_history):
-        memory = ConversationTokenBufferMemory(llm=cls.llm, memory_key="chat_history", return_messages=True, max_token_limit=3000)
+        memory = ConversationSummaryBufferMemory(llm=cls.llm, memory_key="chat_history", return_messages=True, max_token_limit=3000)
         if chat_history is not None:
             for user_chat in chat_history["user_chat"]:
                 memory.chat_memory.add_user_message(user_chat["query"])
@@ -87,27 +87,20 @@ class GPT(object):
 
         chain = LLMChain(llm=cls.llm, prompt=prompt, verbose=True, memory=memory)
         llm_response = chain.predict(question=user_text)
-        print(llm_response)
         try : 
-            
             response_dict = cls.output_parser.parse(llm_response)
-            print(response_dict)
-            queries = [i for i in response_dict.get('fashion_items') if i is not None]
+            if response_dict.get('fashion_items') is not None:
+                queries = [i for i in response_dict.get('fashion_items') if i is not None]
+            else: queries = []
             
             response = {
                 "answer" : response_dict.get('answer'),
                 "summary" : response_dict.get('summary'),
                 "gpt_queries" : queries
             }
-        
             return response
         except:
-            if type(llm_response) == str and "answer" in llm_response :
-                answer = "I'm sorry, as a fashion chatbot, I am only able to assist you with fashion-related queries. Please let me know if you have any fashion-related questions."
-            elif type(llm_response) == str: 
-                answer = llm_response
-            else :
-                answer = "I apologize that I couldn't understand your question. I hope you know that I am a Chatbot only answering questions related to Fashion. Please make your question clearly."
+            answer = "Apologies for the inconvenience. It appears there's a technical issue processing your input. Remember, I'm here exclusively for fashion-related questions. If you have another fashion inquiry or need style advice, please let me know, and I'll do my best to assist you!"
             response = {
                 "answer" : answer,
                 "summary" : user_text,
