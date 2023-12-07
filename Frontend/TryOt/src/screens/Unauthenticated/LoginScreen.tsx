@@ -1,10 +1,10 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import {Image, View, StyleSheet, Text, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import BasicTextInput from '../../components/BasicTextInput';
 import TextLikeButton from '../../components/TextLikeButton';
 import BlackBasicButton from '../../components/BlackBasicButton';
-import {UnauthenticatedStackNavigation} from "../../navigation/UnauthenticatedStack";
+import {UnauthenticatedStackNavigation} from '../../navigation/UnauthenticatedStack';
 import {color, vw} from '../../constants/design';
 import userSlice from '../../slices/user';
 import Toast from 'react-native-toast-message';
@@ -48,12 +48,13 @@ function LoginScreen() {
         text1: 'login success!',
       });
       if (isRememberMe) {
+        console.log('remembering this account');
         await EncryptedStorage.setItem('accessToken', response.token);
       }
       dispatch(userSlice.actions.setUser(response));
     } catch (error) {
       //@ts-ignore
-      Alert.alert(error.message)
+      Alert.alert(error.message);
       Alert.alert('알림', 'login fail:(');
     } finally {
       setLoading(false);
