@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {TabBar, TabView} from 'react-native-tab-view';
-import {vw} from '../../../constants/design';
 import {
   type catalogHistory,
   type chatHistory,
@@ -13,12 +12,15 @@ import {RootState} from '../../../store/reducer';
 import HistoryTabScreen from './components/HistoryTabScreen';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {HistoryTabStackProps} from './HistoryTab';
+import {fontSize} from '../../../constants/design';
 
 export type HistoryScreenProps = {
   History: undefined;
 };
 
-function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps>) {
+function HistoryScreen({
+  navigation,
+}: NativeStackScreenProps<HistoryTabStackProps>) {
   // about tab bar
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -77,7 +79,8 @@ function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps
               histories={history}
               isLoading={isLoading}
               isError={isError}
-             navigation={navigation}/>
+              navigation={navigation}
+            />
           );
         case 'second':
           return (
@@ -85,7 +88,8 @@ function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps
               histories={chatHistory}
               isLoading={isLoading}
               isError={isError}
-             navigation={navigation}/>
+              navigation={navigation}
+            />
           );
         case 'third':
           return (
@@ -93,7 +97,8 @@ function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps
               histories={catalogHistory}
               isLoading={isLoading}
               isError={isError}
-             navigation={navigation}/>
+              navigation={navigation}
+            />
           );
         default:
           return null;
@@ -111,7 +116,7 @@ function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps
         navigationState={{index, routes}}
         renderScene={renderScene}
         onIndexChange={setIndex}
-        animationEnabled={false}
+        animationEnabled={true}
         renderTabBar={props => (
           <TabBar
             {...props}
@@ -149,15 +154,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   focusedTabLabel: {
-    color: 'black',
-    fontSize: 12,
+    color: '#654EA1',
+    fontSize: fontSize.middle,
+    fontWeight: 'bold',
+    width: 100,
+    height: 50,
   },
   tabLabel: {
     color: '#B5B5B5',
     fontSize: 12,
   },
   tabIndicator: {
-    backgroundColor: '#000',
+    backgroundColor: '#654EA1',
   },
 });
 

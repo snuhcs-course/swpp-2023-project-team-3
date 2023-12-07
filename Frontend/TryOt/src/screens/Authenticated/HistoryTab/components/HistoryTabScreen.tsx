@@ -5,9 +5,8 @@ import {StyleSheet, Text, View} from 'react-native';
 import {LoadingAndError} from '../../../../components/LoadingAndError';
 import {ActivityIndicator} from 'react-native-paper';
 import HistoryCell from './HistoryCell';
-import {NativeStackNavigationProp, NativeStackScreenProps} from '@react-navigation/native-stack';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HistoryTabStackProps} from '../HistoryTab';
-import {HomeStackProps} from "../../HomeTab/HomeTab";
 
 const LoadingView = () => {
   return (
@@ -27,7 +26,12 @@ export type HistoryTabScreenProps = {
   isError: boolean;
 };
 
-function HistoryTabScreen({isLoading, isError, histories, navigation}: HistoryTabScreenProps) {
+function HistoryTabScreen({
+  isLoading,
+  isError,
+  histories,
+  navigation,
+}: HistoryTabScreenProps) {
   return (
     <LoadingAndError
       isLoading={isLoading}
@@ -44,6 +48,7 @@ function HistoryTabScreen({isLoading, isError, histories, navigation}: HistoryTa
             <HistoryCell navigation={navigation} history={item} />
           )}
           ItemSeparatorComponent={separatorItem}
+          ListHeaderComponent={separatorItem}
           keyExtractor={item => `${item.id}${item.timestamp.getTime()}`}
         />
       </View>
@@ -62,7 +67,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     width: '100%',
   },
-  separator: {backgroundColor: '#EEEEEE', height: 10},
+  separator: {backgroundColor: '#EEEEEE', height: 5},
 });
 
 const loadingStyles = StyleSheet.create({
