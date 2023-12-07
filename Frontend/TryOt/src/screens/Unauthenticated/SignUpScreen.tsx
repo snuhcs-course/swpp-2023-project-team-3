@@ -9,19 +9,19 @@ import {
   Alert,
 } from 'react-native';
 import BlackBasicButton from '../../components/BlackBasicButton';
-import BasicTextInput from '../../components/BasicTextInput';
+import BasicTextInput, { BasicOptionInput } from '../../components/BasicTextInput';
 import {ActivityIndicator, PaperProvider} from 'react-native-paper';
 import {color, fontSize, vw} from '../../constants/design';
-import axios from 'axios';
-import {serverName} from '../../constants/dev';
 import {useNavigation} from '@react-navigation/native';
 import {UnauthenticatedStackNavigation} from "../../navigation/UnauthenticatedStack";
 import Toast from 'react-native-toast-message';
 import tryAxios from '../../util/tryAxios';
+import { ItemType } from 'react-native-dropdown-picker';
 
 function SignUpScreen() {
   const [loading, setLoading] = React.useState(false);
   const [email, setEmail] = React.useState('');
+  const [gender, setGender] = React.useState<'F'|'M'|'U'>('F');
   const [password, setPassword] = React.useState('');
   const [username, setUsername] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
@@ -30,6 +30,7 @@ function SignUpScreen() {
   const [isEmailValid, setIsEmailValid] = React.useState(true);
   const [isPasswordValid, setIsPasswordValid] = React.useState(true);
   const [isUsernameValid, setIsUsernameValid] = React.useState(true);
+  const [isGenderValid, setIsGenderValid] = React.useState(false);
   const [isConfirmPasswordValid, setIsConfirmPasswordValid] =
     React.useState(true);
 
@@ -43,6 +44,7 @@ function SignUpScreen() {
       isPasswordValid &&
       isConfirmPasswordValid &&
       isUsernameValid &&
+      isGenderValid &&
       email.length > 0 && password.length > 0 && username.length > 0 && confirmPassword.length > 0
     );
   };
@@ -54,6 +56,7 @@ function SignUpScreen() {
   );
   const usernameMessageError = 'Please enter a valid username';
   const confirmPasswordMessageError = 'Passwords do not match';
+  const genderMessageError = 'Please select your gender';
 
   const onSubmit = useCallback(async () => {
     if (loading) {
@@ -65,7 +68,7 @@ function SignUpScreen() {
         username,
         password,
         email,
-        gender: 'F',
+        gender,
         age: 0,
         nickname: email,
       });
@@ -121,12 +124,17 @@ function SignUpScreen() {
 
   const handleConfirmPasswordChange = (text: string) => {
     setConfirmPassword(text);
-    if (password !== text && text.length === 0) {
+    if (password !== text || text.length === 0) {
       setIsConfirmPasswordValid(false);
     } else {
       setIsConfirmPasswordValid(true);
     }
   };
+
+  const handleGenderChange = (text : ItemType<string>)=>{
+    setGender(text.value as "M" | "F" | "U");
+    setIsGenderValid(true);
+  }
 
   return (
     <View style={styles.root}>
@@ -148,6 +156,7 @@ function SignUpScreen() {
               isValid={isUsernameValid}
               errorMessage={usernameMessageError}
             />
+            <BasicOptionInput onSelectItem={handleGenderChange} items={[{label: "Male", value : "M"},{label: "Female", value : "F"},{label: "Unisex", value : "U"}]} />
             <BasicTextInput
               label={'Password'}
               onChangeText={handlePasswordChange}
@@ -196,7 +205,7 @@ const styles = StyleSheet.create({
     width: 90 * vw,
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginTop: '10%',
+    marginTop: '13%',
     paddingBottom: 20,
   },
 

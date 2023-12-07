@@ -27,7 +27,7 @@ export interface UserInfo {
   username: string;
   email: string;
   nickname: string;
-  gender: 'M' | 'F';
+  gender: 'M' | 'F' | 'U';
   age: number;
 }
 
