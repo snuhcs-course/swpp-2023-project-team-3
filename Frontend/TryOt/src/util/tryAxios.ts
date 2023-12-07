@@ -18,19 +18,12 @@ export default async function tryAxios<
       params?: RequestTypes[Method][Type];
     } = {
       method,
-      url: `${serverName}/${query as string}`,
+      url: `${serverName}/${query as string}${(requestData as any)['url'] ?? ''}`,
     };
-
-    form[method == 'get' ? 'params' : 'data'] = requestData;
-    console.log(form);
+    if(method != 'get') form['data'] = requestData;
     const {data} = await axios(form);
-
-    //TODO : reponse data 타입 체크 by io-ts
-    console.log(data);
-
     return data;
   } catch (err) {
-    console.log(err);
     throw new Error((err as AxiosError).message);
   }
 }
