@@ -150,6 +150,7 @@ function CatalogScreen({
     setPage(1);
 
     const isNavigatedFromItemDetails = route.params?.prevScreen === 'ItemDetails';
+    console.log(isNavigatedFromItemDetails);
 
     if (gptUsable && !isNavigatedFromItemDetails) {
       setTargetIndex([1, 1, 1, 1]);
@@ -175,8 +176,9 @@ function CatalogScreen({
 
   useEffect(() => {
     console.log('------Catalog is rendered------');
+    setQuery(route.params.searchQuery);
     fetchData();
-  }, []);
+  }, [route.params.searchQuery]);
 
   const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
