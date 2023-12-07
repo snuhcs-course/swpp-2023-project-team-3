@@ -23,8 +23,9 @@ export type ItemDetailScreenProps = {
 type ItemDetailScreenPropType = NativeStackScreenProps<HomeStackProps, 'ItemDetail'> | NativeStackScreenProps<MyPageTabStackProps, 'ItemDetail'>;
 
 function ItemDetailScreen({
-  route,
-}: ItemDetailScreenPropType) {
+                            navigation,
+                            route,
+                          }: ItemDetailScreenPropType) {
   const item: FashionItem | null = route.params && 'item' in route.params ? route.params.item : null;
   const imageUrl = item ? `https://tryot.s3.ap-northeast-2.amazonaws.com/item_img/${item.id}.jpg` : '';
   const [loading, setLoading] = useState(!item); // Set loading to true if item is null
@@ -57,6 +58,12 @@ function ItemDetailScreen({
       setLoading(false);
     }
   }, [item]);
+
+  const handleHashtagClick = (query: string) => {
+    (navigation as any).navigate('Catalog', {
+      searchQuery: query,
+    });
+  };
 
   const openPurchaseURl = () => {
     if (item) {
@@ -97,7 +104,7 @@ function ItemDetailScreen({
           <View style={styles.borderLine} />
           <View style={styles.queryLogContainer}>
             {uniqueQueries.map((item, index) => (
-                <HashtagChip key={index} label={item.query} />
+                <HashtagChip key={index} label={item.query} onClick={() => handleHashtagClick(item.query)} />
             ))}
           </View>
         </ScrollView>

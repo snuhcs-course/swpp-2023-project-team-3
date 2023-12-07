@@ -32,6 +32,7 @@ export type CatalogScreenProps = {
     gpt_query1?: string;
     gpt_query2?: string;
     gpt_query3?: string;
+    prevScreen?: string;
   };
 };
 
@@ -148,9 +149,12 @@ function CatalogScreen({
     setItems([]);
     setPage(1);
 
-    if (gptUsable) {
+    const isNavigatedFromItemDetails = route.params?.prevScreen === 'ItemDetails';
+
+    if (gptUsable && !isNavigatedFromItemDetails) {
       setTargetIndex([1, 1, 1, 1]);
     } else {
+      //ItemDetails 에서 온거라면 GPT Index 는 모두 꺼져 있어야한다.
       setTargetIndex([1, 0, 0, 0]);
     }
     try {
