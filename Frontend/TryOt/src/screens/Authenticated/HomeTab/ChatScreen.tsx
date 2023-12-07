@@ -216,7 +216,7 @@ function ChatScreen({
           <TextInput
             onChangeText={text => setQuery(text)}
             value={query}
-            placeholder="채팅을 입력해주세요"
+            placeholder="Message..."
             placeholderTextColor="#666"
             importantForAutofill="yes"
             returnKeyType="next"
