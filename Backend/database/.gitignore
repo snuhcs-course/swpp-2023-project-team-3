@@ -1,6 +1,7 @@
 ## WARNING: DON'T ERASE THIS GIT IGNORE
 private_constants.py
 item_df.csv
+hashtag.csv
 
 # Created by https://www.toptal.com/developers/gitignore/api/django,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=django,python
