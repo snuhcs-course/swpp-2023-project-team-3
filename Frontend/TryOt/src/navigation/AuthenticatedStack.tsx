@@ -28,25 +28,6 @@ export const Tab = createBottomTabNavigator<AuthenticatedStackProps>();
 
 createNativeStackNavigator<AuthenticatedStackProps>();
 const AuthenticatedStack: React.FC = () => {
-    const dispatch = useAppDispatch();
-
-    useEffect(() => {
-        const getTokenAndRefresh = async () => {
-            try {
-                const token = await EncryptedStorage.getItem('accessToken');
-                if (!token) {
-                    return;
-                }
-                const response = await tryAxios('get', 'user/token-check/', { token });
-                dispatch(userSlice.actions.setUser(response));
-                await EncryptedStorage.setItem('accessToken', response.token);
-            } catch (error) {
-                Alert.alert('notification', 'please try login again.');
-            }
-        };
-        getTokenAndRefresh();
-    }, [dispatch]);
-
     return (
             <Tab.Navigator
                 initialRouteName="HomeTab"

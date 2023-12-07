@@ -27,7 +27,7 @@ function LoginScreen() {
   };
   const [isRememberMe, RememberMeButton] = useCheckBox('Remember Me');
 
-  const onSubmit = useCallback(async () => {
+  const onSubmit = async () => {
     if (loading) {
       return;
     }
@@ -52,11 +52,13 @@ function LoginScreen() {
       }
       dispatch(userSlice.actions.setUser(response));
     } catch (error) {
+      //@ts-ignore
+      Alert.alert(error.message)
       Alert.alert('알림', 'login fail:(');
     } finally {
       setLoading(false);
     }
-  }, [loading, dispatch, username, password]);
+  };
 
   const [isButtonActive, setIsButtonActive] = React.useState(false);
 
@@ -92,6 +94,10 @@ function LoginScreen() {
           secureTextEntry={true}
           onChangeText={text => handleTextInputs(text, 'password')}
         />
+        <View style={styles.rowContainer}>
+          <RememberMeButton />
+          <TextLikeButton text={'Forgot Password?'} textColor={'black'} />
+        </View>
         <BlackBasicButton
           buttonText={
             loading ? <ActivityIndicator color="white" /> : <Text>Sign In</Text>
