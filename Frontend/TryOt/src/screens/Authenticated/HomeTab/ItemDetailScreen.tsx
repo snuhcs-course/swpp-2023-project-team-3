@@ -62,6 +62,7 @@ function ItemDetailScreen({
   const handleHashtagClick = (query: string) => {
     (navigation as any).navigate('Catalog', {
       searchQuery: query,
+      prevScreen: 'ItemDetails',
     });
   };
 

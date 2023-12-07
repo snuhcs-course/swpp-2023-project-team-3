@@ -150,7 +150,6 @@ function CatalogScreen({
     setPage(1);
 
     const isNavigatedFromItemDetails = route.params?.prevScreen === 'ItemDetails';
-    console.log(isNavigatedFromItemDetails);
 
     if (gptUsable && !isNavigatedFromItemDetails) {
       setTargetIndex([1, 1, 1, 1]);
@@ -163,7 +162,7 @@ function CatalogScreen({
     } catch (error) {
       console.log(error);
     }
-  }, [fetchItemIds, gptUsable]);
+  }, [fetchItemIds, gptUsable, route.params.searchQuery]);
 
   //refine search only changes the combination of gpt queries
   const handleRefineSearch = useCallback(() => {
