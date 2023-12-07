@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Switch, Modal, Portal, PaperProvider, ActivityIndicator} from 'react-native-paper';
 import CatalogItem from '../../../components/CatalogItem';
@@ -16,6 +16,7 @@ import {fetchClickLog} from "../../../api/userApi";
 import {fetchFashionItemDetails} from "../../../api/itemDetailApi";
 import {FashionItem} from "../../../models/FashionItem";
 import {clickLogApi} from "../../../api/clickLogApi";
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 function MyPageScreen({
   navigation,
@@ -37,10 +38,10 @@ function MyPageScreen({
   const hideLogoutModal = () => setLogoutModalVisible(false);
 
   //TODO: 로그아웃 시 로그아웃 모달 띄우기
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await EncryptedStorage.removeItem('accessToken');
     dispatch(userSlice.actions.logoutUser());
     console.log(id);
-    showLogoutModal();
   };
 
   const handlePasswordChange = () => {
@@ -117,7 +118,7 @@ function MyPageScreen({
             <Icon name="chevron-forward-outline" />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleLogout}>
+        <TouchableOpacity onPress={()=>{showLogoutModal()}}>
           <View style={styles.TableRow}>
             <Text style={styles.text}>Logout</Text>
             <Icon name="chevron-forward-outline" />

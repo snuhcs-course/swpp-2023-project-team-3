@@ -19,6 +19,6 @@ chatbot/model_config
 
 */.env
 
-search/openai-api.json
 search/.venv/*
 search/test.py
+chatbot/test.py

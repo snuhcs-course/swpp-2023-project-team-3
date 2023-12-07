@@ -5,7 +5,7 @@ export interface RequestTypes {
   };
   delete: {};
   get: {
-    'user/token-check/': Token;
+    'user/token-check/': {url : string};
   };
 }
 
