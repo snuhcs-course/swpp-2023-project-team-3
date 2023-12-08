@@ -6,6 +6,58 @@ print(cwd)
 api_dir = "openai-api.json"
 API_FILES = os.path.join(cwd, api_dir)
 
+prompt = '''[SYSTEM]: Your model is tasked with two primary goals: Classification and Fashion Translation.
+
+1. Classification:
+    - Determine whether the user input is fashion-relevant.
+    - Output 1 for explicit fashion queries and also for seemingly abstract words that can be translated into fashion items; otherwise, output 0.
+    - Precision in classification is crucial for meaningful responses.
+
+2. Fashion Translation:
+    - Translate the user input into a list of fashion items if the classification result is 1.
+    - Include similar items for specific fashion mentions.
+    - For abstract queries, capture the essence and style realistically.
+    - Ensure the list reflects current fashion trends from Farfetch and is free from overly imaginative items.
+    Important Note:
+        - The generated list will be used to search our fashion database (Farfetch).
+        - Our Farfetch dataset only includes women's fashion items in the following categories: coats, denims, dresses, jackets, knitwear, skirts, tops, or trousers.
+        - Prioritize general and relatable fashion items available on Farfetch; avoid specific brand names.
+        - Exclude items that do not exist on Farfetch, fall outside the specified categories, or are not women's clothing for user relevance.
+        - The goal is to provide practical and relevant fashion suggestions aligned with Farfetchs inventory, enhancing the user's fashion experience.
+
+Output Format:
+    - Response format: [Classification Result], Fashion Item 1, Fashion Item 2, ...
+    - Classification Result: 1 for fashion-relevant, 0 for not.
+    - Each fashion item should be descriptive (more than 4 words, less than 70 tokens).
+    - Adhering strictly to this format is vital for clarity and consistency.
+
+Avoid Unnecessary Information:
+    - Exclude phrases like 'Sorry, I don't understand.'
+    - Keep the response focused on fashion-related content.
+
+Examples:
+
+[USER]: Timeless elegance in fashion
+[ASSISTANT]: 1, Timeless Trench Coat, Structured Denim Jacket, Floral Print Midi Dress, Oversized Cashmere Knit Sweater, Pleated Hobble Skirt, Embellished Chiffon Blouse
+
+[USER]: Striped T-shirt
+[ASSISTANT]: 1, Striped Short-Sleeved T-shirt, Striped Long Sleeve Top, Striped Long-Sleeved Cropped T-shirt
+
+[USER]: Astronomy and celestial phenomena
+[ASSISTANT]: 0
+
+[USER]: Taylor Swift
+[ASSISTANT]: 1, Textured Silver Sequin Dress, Mesh Ruffles Frill Blouse, Distressed Skinny Denim Jeans, Layered Tulle Textured Skirts
+
+Ensure precise classification and offer practical fashion suggestions to enhance the user's experience with the fashion database.
+'''
+
+
+def format_prompt(query):
+    format_query = f"[USER]: {query}" \
+    "\n[ASSISTANT]: "
+    return prompt+format_query
+
 class GPT(object):
     import openai
     key = None
@@ -24,7 +76,7 @@ class GPT(object):
     def load_api_key(cls):
         print(cls.api_file)
         if cls.api_file == None:
-            raise ValueError("The api file is none")
+            raise ValueError("The API file for OpenAI does not exist.")
         else:
             with open(cls.api_file) as f:
                 cls.key = json.load(f)
@@ -33,36 +85,9 @@ class GPT(object):
     
     @classmethod
     def get_response(cls, query):
-        prompt = '''
-                [SYSTEM]: Develop upon user's input query and output relevant but more detailed, concrete and diverse fashion items.
-                Do not output anything other than the list of fashion items.
-                Depending on context, limit your output fashion item types within coats, denims, dresses, jackets, knitwear, skirt, tops and trousers.
-                [SYSTEM]: If user query is a specific fashion item, you should return fashion items of the same type.
-                [SYSTEM]: If user query is abstract, you outputs should encapsulate the essense and the style of the query.
-                [SYSTEM]: If user query is totally fashion-irrelevant, you should still return fashion items while trying hard to relate to the query.
-                [SYSTEM]: Even when the user query is impossible to understand, you should still output a list of fashion items at the expense of relevance to query.
-                [SYSTEM]: When user query is fashion-relevant, put 1 at the start of the list. Keep in mind to classify seemingly fashion-unrelated user query as fashion-relevant
-                as long as they can be smoothly and semantically well-translated into a list of fashion items.
-                [SYSTEM]: When user query is totally random and virtually impossible to convert them into fashion items, put 0 at the start of the list. Keep in mind that
-                even when the query does not include direct fashion items but is rather abstract, if it is a concept that can be translated into fashion, put 1 at the start of the list.
-                [USER]: Timeless elegance in fashion
-                [ASSISTANT]: 1, Timeless Trench Coat, Structured Denim Jacket, Floral Print Midi Dress, Oversized Cashmere Knit Sweater, Pleated Hobble Skirt, Embellished Chiffon Blouse
-                [USER]: Striped T-shirt
-                [ASSISTANT]: 1, striped short-sleeved T-shirt, striped long sleeve top, striped long-sleeved cropped T-shirt
-                [USER]: 
-                [USER]: Astronomy and celestial phenomena
-                [ASSISTANT]: 0, Faux Fur Moon-Crescent Cardigan, Astronomical Print Denim Jeans, Siren of The Stars Suede Dress, Celestial Scene Embroidered Blazer
-                [USER]: taylor swift
-                [ASSISTANT]: 1, Textured Silver Sequin Dress, Embellished Cowboy Boots, Mesh Ruffles Frill Blouse, Distressed Skinny Denim Jeans, Layered Tulle Textured skirts
-                Your output must be only a list of fashion items related to users query separated by commas, each more than 4 words and less than 70 tokens.
-                Don't say unnecessary things like "Sorry, I don't understand.".
-                Your list should be comprised of at least three fashion items.
-                ''' \
-                f"[USER]: {query}" \
-                "[ASSISTANT]:"
         response = cls.openai.Completion.create(
             model="gpt-3.5-turbo-instruct",
-            prompt=prompt,
+            prompt=format_prompt(query),
             max_tokens=50,
             temperature=1,
             n=1 # n만큼 choice를 줌...

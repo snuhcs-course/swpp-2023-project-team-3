@@ -86,26 +86,35 @@ def predict():
                 gptResponse = gpt.get_response(queryList[0])
                 gptResponse = gptResponse["choices"][0]["text"].strip()
             except :
-                return Response(response=json.dumps({"message" : "Oops! GPT is currently unavailable. Please disable GPT refinement for now."}), status=424, mimetype="application/json")
+                return Response(response=json.dumps({"errorMessage" : "Oops! GPT is currently unavailable. Please disable GPT refinement for now.",
+                                                     "statusCode": "424"}), status=200, mimetype="application/json")
             
             gptResponses = gptResponse.split(",")
-            if not (len(gptResponse) >= 4 and is_binary(gptResponse[0])):
-                return Response(response=json.dumps({"message" : "Oops! Please try a fashion-related search. Turn off GPT refinement if issues persist."}), status=424, mimetype="application/json")
+
+            if (gptResponses[0] == "0"): 
+                return Response(response=json.dumps({"errorMessage" : "Oops! Fashion-related searches only, please.",
+                                                     "statusCode": "400"}), status=200, mimetype="application/json")
+            if not (is_binary(gptResponses[0]) and len(gptResponses) >= 2):
+                return Response(response=json.dumps({"errorMessage" : "Oops! Please try a fashion-related search. Turn off GPT refinement if issues persist.",
+                                                     "statusCode": "424"}), status=200, mimetype="application/json")
 
             gptInputs = gptResponses[1:]
 
-            if gptResponses[0] == "1":  # user query is fashion-relevant
-                for cnt, query in enumerate(gptInputs):
-                    if cnt < 3:
-                        queryList.append(query.strip())
-                finalDict, sendDict = fclip.ret_queries(queryList)
-                sendDict["user"] = user_id
-                sendDict = json.dumps(sendDict)
-                loop = asyncio.get_event_loop()
-                response = loop.run_until_complete(post_log(sendDict))
-                print(response.json())
-            else :
-                return Response(response=json.dumps({"message" : "Oops! Fashion-related searches only, please."}), status=400, mimetype="application/json")
+            # if gptResponses[0] == "1":  # user query is fashion-relevant
+
+            # Now gptResponses[0] is always 1
+            for cnt, query in enumerate(gptInputs):
+                if cnt < 3:
+                    queryList.append(query.strip())
+            finalDict, sendDict = fclip.ret_queries(queryList)
+            sendDict["user"] = user_id
+            sendDict = json.dumps(sendDict)
+            loop = asyncio.get_event_loop()
+            response = loop.run_until_complete(post_log(sendDict))
+
+            # else :
+            #     return Response(response=json.dumps({"errorMessage" : "Oops! Fashion-related searches only, please.",
+            #                                          "statusCode": "400"}), status=200, mimetype="application/json")
     
             if response.status_code == 201:
                 response = response.json()
@@ -118,9 +127,9 @@ def predict():
                 
                 return Response(response=json.dumps(output), status=200, mimetype="application/json")
             else:
-                print(response.json())
-                return Response(response=json.dumps({"message" : "Search History Log Server is not working."}), status=500, mimetype="application/json")
+                return Response(response=json.dumps({"errorMessage" : "Oops! We're currently facing an issue with the Search History feature. Please bear with us and try again later.",
+                                                     "statusCode": "500"}), status=200, mimetype="application/json")
     else :
         return Response(
-            response=json.dumps({"message" : "request content-type should be application/json."}), status=415, mimetype="text/plain"
+            response=json.dumps({"errorMessage" : "Unsupported media type. Please use 'application/json' content-type."}), status=415, mimetype="text/plain"
         )
