@@ -22,7 +22,6 @@ import {vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
 import {clickLogApi} from '../../../api/clickLogApi';
-import Search from '../../../models-refactor/search/Search';
 
 type ItemSimilarityDictionary = {[key: string]: number};
 
@@ -47,6 +46,9 @@ function CatalogScreen({
   const [loading, setLoading] = useState(false);
   const [searchQueries, setSearchQueries] = useState<string[]>([query]);
   const [targetIndex, setTargetIndex] = useState<number[]>([]);
+  const [finalSearchQuery, setFinalSearchQuery] = useState<string>(
+    route.params.searchQuery,
+  );
 
   //search results (+pagination)
   const [page, setPage] = useState(1);
@@ -69,7 +71,7 @@ function CatalogScreen({
       if (searchQueries.length === 1) {
         apiBody = route.params;
       } else {
-        apiBody = {searchQuery: query};
+        apiBody = {searchQuery: finalSearchQuery};
       }
       const response = await searchItems(id, apiBody);
       setSearchQueries(response.text);
@@ -86,12 +88,14 @@ function CatalogScreen({
       if (error instanceof Error) {
         console.error(error); // Log the error for debugging purposes
         Alert.alert('Notification', error.message);
+        return;
       } else {
         console.error('An unknown error occurred:', error);
         Alert.alert('Notification', 'An unexpected error occurred');
+        return;
       }
     }
-  }, [id, query]);
+  }, [id, finalSearchQuery]);
 
   //for fetching the item details with pagination
   const fetchItemDetails = useCallback(async () => {
@@ -149,7 +153,8 @@ function CatalogScreen({
     setItems([]);
     setPage(1);
 
-    const isNavigatedFromItemDetails = route.params?.prevScreen === 'ItemDetails';
+    const isNavigatedFromItemDetails =
+      route.params?.prevScreen === 'ItemDetails';
 
     if (gptUsable && !isNavigatedFromItemDetails) {
       setTargetIndex([1, 1, 1, 1]);
@@ -162,7 +167,7 @@ function CatalogScreen({
     } catch (error) {
       console.log(error);
     }
-  }, [fetchItemIds, gptUsable, route.params.searchQuery]);
+  }, [fetchItemIds, gptUsable]);
 
   //refine search only changes the combination of gpt queries
   const handleRefineSearch = useCallback(() => {
@@ -176,8 +181,13 @@ function CatalogScreen({
   useEffect(() => {
     console.log('------Catalog is rendered------');
     setQuery(route.params.searchQuery);
+    setFinalSearchQuery(route.params.searchQuery);
+  }, [navigation, route.params.searchQuery]);
+
+  useEffect(() => {
+    console.log(finalSearchQuery);
     fetchData();
-  }, [route.params.searchQuery]);
+  }, [finalSearchQuery]);
 
   const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
@@ -216,7 +226,7 @@ function CatalogScreen({
           importantForAutofill="yes"
           returnKeyType="next"
           clearButtonMode="while-editing"
-          onSubmitEditing={() => fetchData()}
+          onSubmitEditing={() => setFinalSearchQuery(query)}
           blurOnSubmit={false}
         />
         <View
