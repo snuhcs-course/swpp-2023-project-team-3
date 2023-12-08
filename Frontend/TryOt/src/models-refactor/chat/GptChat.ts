@@ -1,22 +1,21 @@
 import ChatComponent from './ChatComponent';
-import {GptChatResponse} from '../../api-refactor/gptChatApi';
 import ProxyItem from '../items/ProxyItem';
 
 class GptChat extends ChatComponent {
-  private gptChat: GptChatResponse;
+  private answer: string;
   private items: ProxyItem[] = [];
 
-  constructor(gptChat: GptChatResponse) {
+  constructor(answer: string, items: (number | string)[]) {
     super();
-    this.gptChat = gptChat;
+    this.answer = answer;
 
-    for (const itemId of Object.keys(gptChat.items)) {
-      this.items.push(new ProxyItem(itemId));
+    for (const itemId of items) {
+      this.items.push(new ProxyItem(String(itemId)));
     }
   }
 
-  public getData(): {}[] {
-    return [{...this.gptChat, items: this.items}];
+  public getData() {
+    return [{answer: this.answer, items: this.items}];
   }
 }
 

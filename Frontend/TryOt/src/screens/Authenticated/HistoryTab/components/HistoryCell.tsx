@@ -22,7 +22,6 @@ function HistoryCell({navigation, history}: HistoryCellProps) {
       onPress={() => {
         if (isChat) {
           navigation.navigate('Chat', {
-            searchQuery: '',
             chatroom: history.id,
           });
         } else {
