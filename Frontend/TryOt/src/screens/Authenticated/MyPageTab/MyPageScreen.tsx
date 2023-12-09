@@ -152,19 +152,18 @@ function MyPageScreen({
               Do you really want to logout?
             </Text>
             <View
-              style={{width: '100%', backgroundColor: 'black', height: 1}}
+              style={{width: '80%', backgroundColor: '#ccc', height: 1}}
             />
-            <TouchableOpacity style={styles.modalButton} onPress={handleLogout}>
-              <Text style={styles.modalButtonText}>Logout</Text>
-            </TouchableOpacity>
-            <View
-              style={{width: '100%', backgroundColor: 'black', height: 1}}
-            />
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={hideLogoutModal}>
-              <Text style={styles.modalButtonText}>Cancel</Text>
-            </TouchableOpacity>
+            <View style={styles.modalButtonWrapper}>
+              <TouchableOpacity style={styles.modalButton} onPress={handleLogout}>
+                <Text style={[styles.modalButtonText, {color : 'red'}]}>Logout</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={hideLogoutModal}>
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </Modal>
         </Portal>
       </View>
@@ -240,11 +239,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
   },
-
+  modalButtonWrapper : {
+    width : '100%',
+    flexDirection : 'row',
+    justifyContent : 'space-evenly',
+    marginVertical : 10
+  },
   modalButton: {
-    padding: 10,
-    width: '100%',
+    padding: 5,
+    width: '30%',
     borderRadius: 10,
+    borderWidth : 2,
   },
   modalButtonText: {
     color: 'black',

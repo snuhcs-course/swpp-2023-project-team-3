@@ -121,7 +121,7 @@ function SignUpScreen() {
 
   const handleConfirmPasswordChange = (text: string) => {
     setConfirmPassword(text);
-    if (password !== text && text.length === 0) {
+    if (password !== text || text.length === 0) {
       setIsConfirmPasswordValid(false);
     } else {
       setIsConfirmPasswordValid(true);
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     width: 90 * vw,
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginTop: '10%',
+    marginTop: '13%',
     paddingBottom: 20,
   },
 

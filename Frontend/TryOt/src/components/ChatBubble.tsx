@@ -56,8 +56,9 @@ export default function ChatBubble({
   }, [fetchData]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{who}</Text>
+    <View style={[styles.container, who=="Trytri" ? styles.otherContainer : styles.userContainer]}>
+      <View style={[styles.triangle, who=="Trytri" ? styles.triangleLeft : styles.triangleRight]} />
+      {/* <Text style={who=="Trytri" ? styles.title : styles.userTitle}>{who}</Text> */}
       {isUserMessage(msg) ? (
         isErrorMsg ? (
           <Text style={styles.errormessage}>{msg.content}</Text>
@@ -90,16 +91,56 @@ export default function ChatBubble({
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
     margin: ((vw * 10) / 360) * 100,
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+    position: 'relative',
+    maxWidth : 81*vw
+  },
+  userContainer: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#4CAF50', // Green for user
+  },
+  otherContainer: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#000', // Light gray for others
+  },
+  triangle: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    position: 'absolute',
+  },
+  triangleRight: {
+    borderRightWidth: 25,
+    borderBottomWidth: 20,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: '#4CAF50', // Match user container color
+    bottom: 10,
+    right: -10,
+  },
+  triangleLeft: {
+    borderLeftWidth: 25,
+    borderBottomWidth: 20,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: '#000', // Match other container color
+    bottom: 10,
+    left: -10,
   },
   title: {
-    color: '#999',
+    color: '#aaa',
     fontSize: 12,
   },
+  userTitle : {
+    color: '#000',
+    alignSelf : 'flex-end'
+  },
   content: {
-    color: 'black',
+    color: '#fff',
     fontSize: 14,
   },
   errormessage: {
