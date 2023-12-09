@@ -7,36 +7,45 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {color, fontSize, vh, vw} from '../../../constants/design';
 import DismissKeyboardView from '../../../components/DismissKeyboardView';
 import {HomeStackProps} from './HomeTab';
+import Toast from "react-native-toast-message";
+import {useIsFocused} from "@react-navigation/native";
 
 export type HomeScreenProps = {
   Home: undefined;
 };
 
 function HomeScreen({navigation}: NativeStackScreenProps<HomeStackProps>) {
+  const isFocused = useIsFocused();
   const [isCatalog, setIsCatalog] = useState(true);
   const [inputText, setInputText] = useState('');
   const onPressHandler = useCallback(() => {
     setIsCatalog(isCatalog => !isCatalog);
   }, []);
   const onSubmitEditingHandler = () => {
-    navigation.navigate(isCatalog ? 'Catalog' : 'Chat', {
-      searchQuery: inputText,
-    });
+    if (inputText.trim()) {
+      navigation.navigate(isCatalog ? 'Catalog' : 'Chat', {
+        searchQuery: inputText,
+      });
+    } else {
+      setInputText('');
+    }
   };
 
   const [placeholderText, setPlaceholderText] = useState('');
+
   useEffect(() => {
+    setInputText('');
     const randomIndex = Math.floor(Math.random() * queryPlaceholders.length);
     const placeholderText = queryPlaceholders[randomIndex];
     setPlaceholderText(placeholderText);
-  }, []);
+  }, [isFocused]);
 
   return (
     <DismissKeyboardView
       style={{backgroundColor: color.background, height: 100 * vh}}>
       <View style={styles.inputWrapper}>
         <View>
-          <Text style={styles.titleText}>find your style</Text>
+          <Text style={styles.titleText}>Try-Ot</Text>
         </View>
         <View style={styles.optionWrapper}>
           <Text
@@ -64,8 +73,10 @@ function HomeScreen({navigation}: NativeStackScreenProps<HomeStackProps>) {
             clearButtonMode="while-editing"
             blurOnSubmit={false}
             onSubmitEditing={onSubmitEditingHandler}
-            onChangeText={text => {
-              setInputText(text);
+            value={inputText}
+            onChangeText={(text) => {
+              const englishOnlyText = text.replace(/[^a-zA-Z\s]/g, '');
+              setInputText(englishOnlyText);
             }}
           />
         </View>
@@ -87,9 +98,9 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontFamily: 'Syncopate-Bold',
-    fontSize: fontSize.large + 5,
+    fontSize: fontSize.large + 10,
     color: color.text.title,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   optionWrapper: {
     marginLeft: 5 * vw,
@@ -97,14 +108,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 20,
     borderWidth: 1,
-    borderColor: color.border,
-    borderRadius: 8,
+    borderColor: 'black',
+    borderRadius: 30,
   },
   optionText: {
-    margin: 1,
+    margin: 0,
     padding: 5,
-    borderRadius: 8,
-    color: 'black',
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 30,
+    color: 'gray',
     textAlign: 'center',
   },
   choosenText: {
@@ -116,8 +129,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderWidth: 1,
     borderColor: color.border,
-    borderRadius: 10,
+    borderRadius: 30,
     width: 90 * vw,
+    height: 13 * vw,
     paddingLeft: 10,
     justifyContent: 'center',
     alignItems: 'center',
