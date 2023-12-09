@@ -1,0 +1,50 @@
+1: 1, Black Long Coat, Classic White Blouse, High-Waisted Trousers, Wool Turtleneck Sweater, Midi Black Skirt
+2: 1, Boho Embroidered Maxi Dress, Oversized Crochet Cardigan, Printed Wide Leg Pants, Suede Fringed Crossbody Bag, Flowy Bell-Sleeve Blouse, Platform Espadrille Sandals
+3: 1, Abstract Print Ruffled Dress, Bold Color Block Top, Asymmetrical Hemline Skirt, Structured Artistic Jacket, Flowy Wide Leg Trousers, Geometric Print Blouse
+4: 1, Oversized Graphic Hoodie, Ripped Straight Leg Jeans, Leather High Top Sneakers, Reflective Puffer Jacket, Logo Print Bucket Hat, Printed Logo Backpack
+5: 1, Organic Cotton Printed T-shirt, Recycled Nylon Mini Skirt, Vegan Leather Jacket, Upcycled Denim Jeans, Fair Trade Cotton Dress, Eco-Friendly Bamboo Knit Top, Recycled Polyester Blouse
+6: 1, Oversized Turtleneck Sweater, Slim-Fit Trousers, Slip-On Sneakers, Structured Tote Bag, Minimalist Leather Watch, Classic Button-Down Shirt, Straight Leg Jeans
+7: 1, T-shirt Dress, Linen Wide Leg Trousers, Eyelet Cami Top, Denim Mini Skirt, Utility Jumpsuit
+8: 1, High-Waisted Black Trousers, Off-the-Shoulder White Blouse, Black Wrap Midi Dress, White Denim Jacket, Black and White Striped Knit Sweater
+9: 1, Layered Satin Midi Dress, Draped Cropped Cardigan, Layered Mesh and Chiffon Top, Textured Wide-Leg Pants
+10: 1, Neon Orange Turtleneck Sweater, Embroidered Mesh Pencil Skirt, Studded Leather Biker Jacket, Puff Sleeve Mini Dress, Metallic Over-the-Knee Boots
+11: 1, Sophisticated White Blazer, Minimalist Tailored Trousers, Polished Black Ankle Boots, Tailored Pencil Skirt, Structured High Neck Blouse
+12: 1, Patterned Tie-Neck Blouse, Printed Crepe Flared Pants, Color-Block Knit Cardigan, Floral Paisley Print Scarf, Striped Double-Breasted Blazer
+13: 1, Classic Double-Breasted Coat, High-Rise Wide Leg Jeans, Satin Midi Slip Dress, Pearl-Embellished Knit Sweater, Button-Front Midi Skirt
+14: 1, Floral Print Wrap Dress, Striped Linen-blend Shorts, Oversized Patchwork Denim Jacket, Ruffled Cotton-blend Mini Skirt, Knitted Crop Top with Cutout Details
+15: 1, Graphic Print Oversized Hoodie, Logo Print Sweatshirt, Distressed High-Waisted Ripped Jeans, Platform High Top Sneakers, Graphic Print Dad Hat
+16: 1, Printed Patchwork Denim Jacket, Retro Inspired Wide-Leg Jeans, Cropped Off-Shoulder Knitted Sweater, Pleated Midi Skirt, Statement Graphic T-shirt
+17: 1, High-Waisted Paperbag Trousers, Oversized Blazer Jacket, Ribbed Knit Sleeveless Dress, Chunky Platform Loafers, Organic Cotton T-Shirt, Oversized Denim Shirt
+18: 1, Metallic Ruffle Hem Blouse, Oversized Bomber Jacket, Studded Shift Dress, Embellished High Waist Pants
+19: 1, Classic Wool Coat, Timeless Black Trousers, Structured Leather Handbag
+20: 1, Timeless Midi Dress, Minimalist Slim-Fit Trousers, Classic Silk Blouse, Clean-cut Wool Coat, Chic Slit Skirt
+21: 1, Refined Double-Breasted Wool Coat, Elevated Leather Platform Boots, High-Waisted Tailored Trousers, Silk Satin Tunic Dress, Luxe Cashmere Turtleneck Sweater, Elevated Leather Belt Bag
+22: 1, Timeless Trench Coat, Structured Denim Jacket, Floral Print Midi Dress, Oversized Cashmere Knit Sweater, Pleated Hobble Skirt, Embellished Chiffon Blouse
+23: 1, Vintage-Inspired Floral Maxi Dress, Pleated High-Waisted Trousers, Lace Peter Pan Collar Blouse, Retro-Inspired Wool Blend Coat
+24: 1, Retro-inspired Bell Bottom Jeans, Vintage Printed Satin Top, High-Waisted Flared Skirt, Colorblock Slingback Heels
+25: 1, Ivory Silk Blouse, Tailored Pencil Skirt, Velvet Wrap Dress, High-Waisted Wide Leg Trousers, Wool Blend Blazer, Ribbed Cashmere Sweater
+26: 1, Tailored Sleek Blazer, High Waisted Wide Leg Trousers, Off-Shoulder Knit Sweater, Tassel Drop Earrings, Colorblock Midi Dress
+27: 1, Organic Cotton T-shirt, Recycled Denim Jeans, Vegan Leather Tote Bag, Sustainable Bamboo Skirt, Fair Trade Wool Sweater
+28: 1, Abstract Print Kimono Jacket, Artist's Graphic Printed Midi Dress, Tie-Dye Effect Silk Blouse, Patchwork Denim Culottes, Paint Splatter Ankle Boots, Brushstroke Print Skirt
+29: 1, Statement Shoulder Dress, Asymmetric Pleated Pants, Bold Print Blouse, Sculptural Heeled Boots, Metallic Wrap Skirt
+30: 1, Elegant Midi Dress, Classic Silk Blouse, Belted Wide-Leg Trousers, Structured Blazer, Pointed Toe Mules
+31: 1, Striped Wrap Dress, Structured Frill Blouse, Straight-Leg Trousers, Wide-Leg Cropped Denim Jeans, Minimalist Midi Skirt, Polished Leather Loafers
+32: 1, Contemporary Tailored Blazer, Modern Geometric Print Dress, Reimagined Classic White Shirt, Sleek Wide-Leg Trousers, Minimalist Strappy Sandals
+33: 1, Personality Printed Graphic Tee, Distressed Ripped Skinny Jeans, Bold Printed Bomber Jacket, Quilted Leather Mini Skirt, Chunky Platform Sneakers
+34: 1, Refined Black Trench Coat, Oversized Denim Jacket, Floral Embroidered Midi Dress, Soft Cashmere Knit Sweater, Pleated A-Line Midi Skirt
+35: 1, Oversized Blazer Jacket, Pleated Wide Leg Trousers, Flowy Wrap Maxi Skirt, Chunky Knit Turtleneck Sweater
+36: 1, Vintage Striped High-Waist Midi Skirt, Retro Floral Print Maxi Dress, 70s Inspired Bell Sleeve Blouse, Pleated Midi Skirt in a Polka Dot Print, High-Waisted Cropped Flare Jeans
+37: 1, Artistic Printed Midi Dress, Transformative Draped Jumpsuit, Asymmetrical Hem Knit Sweater, Abstract Patterned Skirt, Statement Dangling Earrings
+38: 1, Elegant Silk Wide-Leg Jumpsuit, Modern Square Toe Heels, Chic Mock Neck Midi Dress, Contemporary Tailored Blazer, Minimalist Leather Shoulder Bag
+39: 1, Timeless Turtleneck Sweater, Structured Wide-Leg Denim Pants, Contemporary Midi Dress, Oversized Knit Sweater, Pleated A-Line Skirt, Modern Blazer Jacket
+40: 1, Power-Shoulder Wool Blend Blazer, Graphic Print Cotton T-shirt, Wide-Leg Pleated Trousers, Chunky Cat-Eye Sunglasses, Chunky Platform Ankle Boots
+41: 1, Long-Sleeved Graphic T-shirt, Wide-Leg Printed Trousers, Bold Print Midi Dress, Tie-Dye Bucket Hat, Embroidered Denim Jacket
+42: 1, Simple Black Shift Dress, Minimalist White Blouse, Sophisticated High-Waisted Trousers, Neutral Colored Long Coat, Elegant Strappy Sandals
+43: 1, Timeless Wool Coat, A-Line Midi Dress, Classic Denim Jacket, Tweed Mini Skirt, Tailored Button-Down Blouse, High-Waisted Wide-Leg Trousers
+44: 1, Floral Print Highneck Blouse, Tailored Wide-Leg Trousers, Patchwork Denim Jacket, Pleated Midi Skirt, Abstract Print Shift Dress
+45: 1, Modern Wrap Top, Pinstriped Culottes, Geometric Print Shift Dress, Pleated High-Waisted Trousers
+46: 1, Satin Slip Dress, Oversized Wool Coat, Collared A-Line Dress, Cashmere Turtleneck Sweater, High Waisted Tailored Trousers, Sheer Button-Up Blouse
+47: 1, Tailored Blazer, Straight-Leg Trousers, Sleeveless Satin Blouse, Block-Heel Leather Ankle Boots, Pleated Midi Skirt, Embroidered Cashmere Sweater
+48: 1, Embroidered Denim Jacket, Asymmetric Hem Cropped Pants, Loose-Fit Cashmere Sweater, Polka Dot Midi Skirt, Textured Leather Ankle Boots, Statement Printed T-shirt
+49: 1, Effortless Linen Blend Shirt Dress, Classic Straight Leg Jeans, Lightweight Wool Knit Jumper, Strappy Sandals, Wide Leg Cropped Trousers
+50: 1, Relaxed Fit Linen Blouse, High-Rise Straight-Leg Trousers, Basic Leather Biker Jacket, Chunky Knit Chunky Sweater, A-Line Midi Skirt, Classic Blazer
