@@ -115,33 +115,42 @@ function MyPageScreen({
         <TouchableOpacity onPress={handlePasswordChange}>
           <View style={styles.TableRow}>
             <Text style={styles.text}>Change Password</Text>
-            <Icon name="chevron-forward-outline" />
+            <Icon name="chevron-forward-outline" size={20}/>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={()=>{showLogoutModal()}}>
           <View style={styles.TableRow}>
             <Text style={styles.text}>Logout</Text>
-            <Icon name="chevron-forward-outline" />
+            <Icon name="chevron-forward-outline" size={20}/>
           </View>
         </TouchableOpacity>
         <View style={styles.dividerBar} />
         <View style={styles.viewedItemsContainer}>
           <Text style={styles.viewedItemsHeader}>Recently Viewed Items</Text>
-          <FlatList
-              style={styles.itemCatalog}
-              columnWrapperStyle={{justifyContent: 'space-around'}}
-              data={items}
-              numColumns={2}
-              keyExtractor={item => item.id}
-              renderItem={({item}) => (
-                  <CatalogItem
-                      fashionItem={item}
-                      onNavigateToDetail={navigateToItemDetail}
-                  />
-              )}
-              contentContainerStyle={styles.catalogGrid}
-              onEndReachedThreshold={0.1}
-          />
+
+          {items.length > 0 ? (
+              <FlatList
+                  style={styles.itemCatalog}
+                  columnWrapperStyle={{ justifyContent: 'space-around' }}
+                  data={items}
+                  numColumns={2}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                      <CatalogItem
+                          fashionItem={item}
+                          onNavigateToDetail={navigateToItemDetail}
+                      />
+                  )}
+                  contentContainerStyle={styles.catalogGrid}
+                  onEndReachedThreshold={0.1}
+              />
+          ) : (
+              <View style={styles.emptyMessageContainer}>
+                <Text style={styles.emptyMessageText}>
+                  Looks like you haven't started your search yet!
+                </Text>
+              </View>
+          )}
         </View>
         <Portal>
           <Modal
@@ -175,7 +184,7 @@ function MyPageScreen({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: color.background,
-    paddingTop: 20,
+    paddingTop: 5,
   },
 
   userInfoContainer: {
@@ -217,6 +226,8 @@ const styles = StyleSheet.create({
 
   text: {
     color: 'black',
+    fontSize: fontSize.middle,
+    fontWeight: 'normal',
   },
 
   TableRow: {
@@ -253,12 +264,12 @@ const styles = StyleSheet.create({
 
   viewedItemsContainer: {
     backgroundColor: 'white',
-    padding: 10,
+    padding: 13,
   },
 
   viewedItemsHeader: {
     color: 'black',
-    fontSize: fontSize.middle,
+    fontSize: fontSize.large,
     fontWeight: 'bold',
   },
   itemCatalog: {
@@ -272,6 +283,18 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: 'white', // Adjust as needed
     width: '100%',
+  },
+  emptyMessageContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyMessageText: {
+    fontSize: fontSize.small,
+     margin: 10 * vh,
+    marginTop: 20 * vh,
+    marginBottom: 50 * vh,
+    textAlign: 'center',
   },
 });
 
