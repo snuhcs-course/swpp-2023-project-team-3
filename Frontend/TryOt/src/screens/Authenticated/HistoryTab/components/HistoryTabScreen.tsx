@@ -43,7 +43,7 @@ function HistoryTabScreen({
           renderItem={({item}) => <HistoryCell history={item} />}
           ItemSeparatorComponent={separatorItem}
           ListHeaderComponent={separatorItem}
-          keyExtractor={item => `${item.timestamp.getTime()}`}
+          keyExtractor={(_, index) => index.toString()}
         />
       </View>
     </LoadingAndError>
