@@ -1,31 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  LayoutChangeEvent,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import React from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 import RefinedQuery from './RefinedQuery';
-import SlidingUpPanel from 'rn-sliding-up-panel';
 import BlackBasicButton from './BlackBasicButton';
-import {searchItems} from '../api/searchItemsApi';
-import {fetchFashionItemDetails} from '../api/itemDetailApi';
-import BasicTextInput from './BasicTextInput';
-import userSlice from '../slices/user';
-import {useSelector} from 'react-redux';
-import {RootState} from '../store/reducer';
 import {Modal, Portal} from 'react-native-paper';
 import {fontSize, vw} from '../constants/design';
 
 interface QueryRefineModalProps {
   refineModalVisible: boolean;
   hideRefineModal: () => void;
-  targetIndex: number[];
-  setTargetIndex: (targetIndex: number[]) => void;
+  targetIndex: boolean[];
+  setTargetIndex: (targetIndex: boolean[]) => void;
   refinedQueries: string[]; // Original + refined queries (length of 6)
   onSearch: () => void;
 }
@@ -38,10 +22,9 @@ function QueryRefineModal({
   setTargetIndex,
   refinedQueries,
 }: QueryRefineModalProps) {
-
   const handleToggleSwitch = (index: number) => {
     const updatedTargetIndex = [...targetIndex];
-    updatedTargetIndex[index + 1] = updatedTargetIndex[index + 1] === 1 ? 0 : 1;
+    updatedTargetIndex[index + 1] = !updatedTargetIndex[index + 1];
     setTargetIndex(updatedTargetIndex);
   };
 
@@ -72,7 +55,7 @@ function QueryRefineModal({
               <RefinedQuery
                 key={index}
                 query={query}
-                isSwitchOn={targetIndex[index + 1] === 1}
+                isSwitchOn={targetIndex[index + 1]}
                 handleToggleSwitch={handleToggleSwitch}
                 gptIndex={index}
               />

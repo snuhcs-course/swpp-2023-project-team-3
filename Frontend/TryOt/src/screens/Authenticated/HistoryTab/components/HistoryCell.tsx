@@ -1,38 +1,16 @@
 import React from 'react';
-import type {
-  catalogHistory,
-  chatHistory,
-} from '../../../../api/historyDetailApi';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HistoryTabStackProps} from '../HistoryTab';
 import {color} from '../../../../constants/design';
+import {HistoryCellData} from '../../../../models-refactor/history/visitor/GetDataVisitor';
 
 type HistoryCellProps = {
-  navigation: NativeStackNavigationProp<HistoryTabStackProps>;
-  history: catalogHistory | chatHistory;
+  history: HistoryCellData;
 };
 
-function HistoryCell({navigation, history}: HistoryCellProps) {
-  const isChat = 'summary' in history;
+function HistoryCell({history}: HistoryCellProps) {
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => {
-        if (isChat) {
-          navigation.navigate('Chat', {
-            chatroom: history.id,
-          });
-        } else {
-          navigation.navigate('Catalog', {
-            searchQuery: history.query,
-            gpt_query1: history.gpt_query1,
-            gpt_query2: history.gpt_query2,
-            gpt_query3: history.gpt_query3,
-          });
-        }
-      }}>
+    <TouchableOpacity style={styles.container} onPress={history.onPress}>
       <View style={styles.header}>
         <View style={styles.info}>
           <Text>
@@ -49,19 +27,15 @@ function HistoryCell({navigation, history}: HistoryCellProps) {
             solid
           />
           <FontAwesome5
-            name={isChat ? 'comments' : 'search'}
+            name={history.emoji}
             size={12}
             style={{...styles.headerIcon, ...{transform: [{scaleX: -1}]}}}
           />
-          <Text style={styles.headerText}>
-            {isChat ? 'Chat Search' : 'Catalog Search'}
-          </Text>
+          <Text style={styles.headerText}>{history.searchType}</Text>
         </View>
       </View>
       <View style={styles.title}>
-        <Text style={styles.titleFont}>
-          {isChat ? history.summary : history.query}
-        </Text>
+        <Text style={styles.titleFont}>{history.title}</Text>
       </View>
     </TouchableOpacity>
   );

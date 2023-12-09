@@ -1,12 +1,10 @@
 import React from 'react';
-import {historyDetailResponse} from '../../../../api/historyDetailApi';
 import {FlatList} from 'react-native-gesture-handler';
 import {StyleSheet, Text, View} from 'react-native';
 import {LoadingAndError} from '../../../../components/LoadingAndError';
 import {ActivityIndicator} from 'react-native-paper';
 import HistoryCell from './HistoryCell';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HistoryTabStackProps} from '../HistoryTab';
+import {HistoryCellData} from '../../../../models-refactor/history/visitor/GetDataVisitor';
 
 const LoadingView = () => {
   return (
@@ -20,8 +18,7 @@ const LoadingView = () => {
 const separatorItem = () => <View style={styles.separator} />;
 
 export type HistoryTabScreenProps = {
-  navigation: NativeStackNavigationProp<HistoryTabStackProps>;
-  histories: historyDetailResponse;
+  histories: HistoryCellData[];
   isLoading: boolean;
   isError: boolean;
 };
@@ -30,7 +27,6 @@ function HistoryTabScreen({
   isLoading,
   isError,
   histories,
-  navigation,
 }: HistoryTabScreenProps) {
   return (
     <LoadingAndError
@@ -44,12 +40,10 @@ function HistoryTabScreen({
           data={histories}
           ListEmptyComponent={<></>}
           showsVerticalScrollIndicator={false}
-          renderItem={({item}) => (
-            <HistoryCell navigation={navigation} history={item} />
-          )}
+          renderItem={({item}) => <HistoryCell history={item} />}
           ItemSeparatorComponent={separatorItem}
           ListHeaderComponent={separatorItem}
-          keyExtractor={item => `${item.id}${item.timestamp.getTime()}`}
+          keyExtractor={item => `${item.timestamp.getTime()}`}
         />
       </View>
     </LoadingAndError>

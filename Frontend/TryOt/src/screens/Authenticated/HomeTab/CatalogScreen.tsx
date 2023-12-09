@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -12,9 +11,6 @@ import {
   View,
 } from 'react-native';
 import {HomeStackProps} from './HomeTab';
-import {searchItems} from '../../../api/searchItemsApi';
-import {fetchFashionItemDetails} from '../../../api/itemDetailApi';
-import {FashionItem} from '../../../models/FashionItem';
 import CatalogItem from '../../../components/CatalogItem';
 import QueryRefineModal from '../../../components/QueryRefineModal';
 import {ActivityIndicator, PaperProvider} from 'react-native-paper';
@@ -22,8 +18,8 @@ import {vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
 import {clickLogApi} from '../../../api/clickLogApi';
-
-type ItemSimilarityDictionary = {[key: string]: number};
+import Search from '../../../models-refactor/search/Search';
+import {FashionItem} from '../../../api-refactor/itemDetailApi';
 
 export type CatalogScreenProps = {
   Catalog: {
@@ -45,46 +41,50 @@ function CatalogScreen({
   const [items, setItems] = useState<FashionItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQueries, setSearchQueries] = useState<string[]>([query]);
-  const [targetIndex, setTargetIndex] = useState<number[]>([]);
+  const [targetIndex, setTargetIndex] = useState<boolean[]>([]);
   const [finalSearchQuery, setFinalSearchQuery] = useState<string>(
     route.params.searchQuery,
   );
-
-  //search results (+pagination)
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(20); // Number of items to load per page
-
-  const [itemDataArray, setItemDataArray] = useState<
-    ItemSimilarityDictionary[]
-  >([]);
-  const [sortedIds, setSortedIds] = useState<string[]>([]);
+  const searchManager = useMemo(
+    () => new Search(id, route.params),
+    [id, route.params],
+  );
 
   //refine modal
   const [refineModalVisible, setLogoutModalVisible] = useState(false);
   const showRefineModal = () => setLogoutModalVisible(true);
   const hideRefineModal = () => setLogoutModalVisible(false);
 
-  //for fetching entire data for one search
-  const fetchItemIds = useCallback(async () => {
+  const fetchData = useCallback(async () => {
+    //초기화
+    setItems([]);
+
+    const isNavigatedFromItemDetails =
+      route.params?.prevScreen === 'ItemDetails';
+
+    let __targetIndex: boolean[] = [];
+    if (gptUsable && !isNavigatedFromItemDetails) {
+      __targetIndex = [true, true, true, true];
+      setTargetIndex([true, true, true, true]);
+    } else {
+      //ItemDetails 에서 온거라면 GPT Index 는 모두 꺼져 있어야한다.
+      __targetIndex = [true, false, false, false];
+      setTargetIndex([true, false, false, false]);
+    }
+
     try {
-      let apiBody: typeof route.params;
-      if (searchQueries.length === 1) {
-        apiBody = route.params;
-      } else {
-        apiBody = {searchQuery: finalSearchQuery};
-      }
-      const response = await searchItems(id, apiBody);
-      setSearchQueries(response.text);
+      setLoading(true);
 
-      const userQueryIds = response.items.query;
-      const gpt1Ids = response.items.gpt_query1;
-      const gpt2Ids = response.items.gpt_query2;
-      const gpt3Ids = response.items.gpt_query3;
+      const response = await searchManager.search(
+        searchQueries.length === 1 ? undefined : finalSearchQuery,
+      );
       setLogId(response.log_id);
+      setSearchQueries(response.text);
+      searchManager.select(__targetIndex);
 
-      const results = [userQueryIds, gpt1Ids, gpt2Ids, gpt3Ids];
-      setItemDataArray(results);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       if (error instanceof Error) {
         console.error(error); // Log the error for debugging purposes
         Alert.alert('Notification', error.message);
@@ -95,99 +95,42 @@ function CatalogScreen({
         return;
       }
     }
-  }, [id, finalSearchQuery]);
-
-  //for fetching the item details with pagination
-  const fetchItemDetails = useCallback(async () => {
-    setLoading(true);
-    try {
-      const startIndex = (page - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
-      const slicedIds = sortedIds.slice(startIndex, endIndex);
-      const itemDetails = await Promise.all(
-        slicedIds.map(itemId => fetchFashionItemDetails(itemId)),
-      );
-      setItems(prevItems => [...prevItems, ...itemDetails]);
-      setPage(prevPage => prevPage + 1);
-    } catch (error) {
-      console.error('Error fetching item detail data:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, pageSize, sortedIds]);
-
-  //for merging each query dictionary
-  const mergeDictionaries = useCallback(() => {
-    return itemDataArray.reduce((result, dictionary, index) => {
-      if (targetIndex[index] === 1) {
-        for (const key in dictionary) {
-          if (dictionary.hasOwnProperty(key)) {
-            if (result[key] === undefined || dictionary[key] > result[key]) {
-              result[key] = dictionary[key];
-            }
-          }
-        }
-      }
-      return result;
-    }, {});
-  }, [itemDataArray, targetIndex]);
-
-  //for sorting the merged dictionary (return is array)
-  const sortDictionaryByValues = useCallback(
-    (dictionary: ItemSimilarityDictionary) => {
-      return Object.entries(dictionary).sort((a, b) => b[1] - a[1]);
-    },
-    [],
-  );
-
-  //for merging and sorting the fetched item ids and their similarities
-  const mergeAndSortItemIds = useCallback(() => {
-    const mergedDictionary: ItemSimilarityDictionary = mergeDictionaries();
-    const sortedMergedDictionary = sortDictionaryByValues(mergedDictionary);
-    const idArrays = sortedMergedDictionary.map(([id, _]) => id);
-    setSortedIds(idArrays);
-  }, [mergeDictionaries, sortDictionaryByValues]);
-
-  const fetchData = useCallback(async () => {
-    //초기화
-    setItems([]);
-    setPage(1);
-
-    const isNavigatedFromItemDetails =
-      route.params?.prevScreen === 'ItemDetails';
-
-    if (gptUsable && !isNavigatedFromItemDetails) {
-      setTargetIndex([1, 1, 1, 1]);
-    } else {
-      //ItemDetails 에서 온거라면 GPT Index 는 모두 꺼져 있어야한다.
-      setTargetIndex([1, 0, 0, 0]);
-    }
-    try {
-      await fetchItemIds();
-    } catch (error) {
-      console.log(error);
-    }
-  }, [fetchItemIds, gptUsable]);
+  }, [
+    finalSearchQuery,
+    gptUsable,
+    route.params?.prevScreen,
+    searchManager,
+    searchQueries.length,
+  ]);
 
   //refine search only changes the combination of gpt queries
-  const handleRefineSearch = useCallback(() => {
-    setItems([]); //보일 아이템들은 초기화
-    mergeAndSortItemIds();
-    fetchItemDetails().catch(error => {
-      console.log(error);
-    });
-  }, [fetchItemDetails, mergeAndSortItemIds]);
+  const handleRefineSearch = useCallback(async () => {
+    await searchManager?.select(targetIndex);
+  }, [searchManager, targetIndex]);
 
   useEffect(() => {
     console.log('------Catalog is rendered------');
+    searchManager.addObserver(setItems);
     setQuery(route.params.searchQuery);
     setFinalSearchQuery(route.params.searchQuery);
-  }, [navigation, route.params.searchQuery]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     console.log(finalSearchQuery);
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalSearchQuery]);
+
+  useEffect(() => {
+    if (targetIndex.length > 0) {
+      searchManager.select(targetIndex).catch(() => {
+        Alert.alert('Error occured', 'Try again', [
+          {text: 'OK', onPress: () => navigation.pop()},
+        ]);
+      });
+    }
+  }, [navigation, searchManager, targetIndex]);
 
   const navigateToItemDetail = (item: FashionItem) => {
     // @ts-ignore
@@ -196,18 +139,6 @@ function CatalogScreen({
       navigation.navigate('ItemDetail', {item});
     }
   };
-
-  useEffect(() => {
-    if (itemDataArray.length !== 0) {
-      mergeAndSortItemIds();
-    }
-  }, [itemDataArray]);
-
-  useEffect(() => {
-    if (sortedIds.length !== 0) {
-      fetchItemDetails();
-    }
-  }, [sortedIds]);
 
   // @ts-ignore
   return (
@@ -256,11 +187,8 @@ function CatalogScreen({
             />
           )}
           contentContainerStyle={styles.catalogGrid}
-          onEndReached={() => {
-            setPage(page + 1);
-            if (items.length !== 0) {
-              fetchItemDetails();
-            }
+          onEndReached={async () => {
+            await searchManager?.nextPage();
           }}
           onEndReachedThreshold={0.1}
           ListFooterComponent={loading ? <ActivityIndicator /> : null}

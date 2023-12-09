@@ -42,34 +42,31 @@ export const searchItems = async (
   } else {
     requestFormat.text = query.searchQuery;
   }
-    const requestBody = {
-      user_id: userId,
-      ...requestFormat,
-    };
-    const response = await axios.post<SearchItemsResponse>(
-      BASE_URL,
-      requestBody,
-    );
+  const requestBody = {
+    user_id: userId,
+    ...requestFormat,
+  };
+  const response = await axios.post<SearchItemsResponse>(BASE_URL, requestBody);
 
-    if (response.status === 200) {
-      //console.log(response.data);
-      const responseData = response.data;
-      // Check if there is a 'statusCode' key in the response data
-      if ('statusCode' in responseData) {
-        if (responseData.statusCode !== 200) {
-          // Handle non-200 status code
-          console.log(responseData);
-          const errorMessage =
-              responseData.statusCode === 400
-                  ? 'Your query is not related to Fashion.'
-                      : responseData.statusCode === 500
-                          ? 'GPT is not available, please turn it off.'
-                          : 'Search Failed. Please try again.'
-          throw new Error(errorMessage);
-        }
+  if (response.status === 200) {
+    //console.log(response.data);
+    const responseData = response.data;
+    // Check if there is a 'statusCode' key in the response data
+    if ('statusCode' in responseData) {
+      if (responseData.statusCode !== 200) {
+        // Handle non-200 status code
+        console.log(responseData);
+        const errorMessage =
+          responseData.statusCode === 400
+            ? 'Your query is not related to Fashion.'
+            : responseData.statusCode === 500
+            ? 'GPT is not available, please turn it off.'
+            : 'Search Failed. Please try again.';
+        throw new Error(errorMessage);
       }
-      return responseData;
-    } else {
-      throw new Error("Search Failed. Please try again.");
     }
+    return responseData;
+  } else {
+    throw new Error('Search Failed. Please try again.');
+  }
 };

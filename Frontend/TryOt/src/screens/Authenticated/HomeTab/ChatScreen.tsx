@@ -2,6 +2,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   Keyboard,
@@ -54,17 +55,29 @@ function ChatScreen({
 
   const onChatRequest = useCallback(async () => {
     setDisableButton(true);
-    await chatManager.sendMessage(query);
+    try {
+      await chatManager.sendMessage(query);
+    } catch {
+      Alert.alert('Error occured', 'Pleas try again', [
+        {text: 'OK', onPress: () => navigation.pop()},
+      ]);
+    }
     setQuery('');
     setDisableButton(false);
-  }, [chatManager, query]);
+  }, [chatManager, navigation, query]);
 
   const setChatroom = useCallback(async () => {
     chatManager.addObserver(setMessages);
     setDisableButton(true);
-    await chatManager.createOrLoadChatroom();
+    try {
+      await chatManager.createOrLoadChatroom();
+    } catch {
+      Alert.alert('Error occured', 'Pleas try again', [
+        {text: 'OK', onPress: () => navigation.pop()},
+      ]);
+    }
     setDisableButton(false);
-  }, [chatManager]);
+  }, [chatManager, navigation]);
 
   useEffect(() => {
     setChatroom();
