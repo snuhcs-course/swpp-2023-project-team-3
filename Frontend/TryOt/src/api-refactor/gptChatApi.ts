@@ -33,9 +33,7 @@ export const gptChatApi = async (
     if (chatroom !== undefined) {
       requestBody.chatroom = chatroom;
     }
-
     const response = await axios.post<GptChatResponse>(CHAT_URL, requestBody);
-    console.log(response.data);
     if (response.status === 200) {
       return response.data;
     } else {

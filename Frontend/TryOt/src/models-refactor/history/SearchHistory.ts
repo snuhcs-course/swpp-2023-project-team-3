@@ -12,6 +12,10 @@ class SearchHistory implements HistoryElement {
   accept<T>(visitor: HistoryVisitor<T>) {
     return visitor.searchHistoryVisitor(this);
   }
+
+  public getHistory() {
+    return this.history;
+  }
 }
 
 export default SearchHistory;
