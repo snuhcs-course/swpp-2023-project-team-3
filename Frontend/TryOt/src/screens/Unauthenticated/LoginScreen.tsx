@@ -25,17 +25,16 @@ function LoginScreen() {
   const handleSignUpClick = () => {
     navigate('SignUp');
   };
-  const [isRememberMe, RememberMeButton] = useCheckBox('Remember Me');
 
   const onSubmit = async () => {
     if (loading) {
       return;
     }
     if (!username || !username.trim()) {
-      return Alert.alert('notification', 'please enter username.');
+      return Alert.alert('Notification', 'Please enter a valid username.');
     }
     if (!password || !password.trim()) {
-      return Alert.alert('notification', 'please enter password.');
+      return Alert.alert('Notification', 'Please enter a valid password.');
     }
     try {
       setLoading(true);
@@ -43,19 +42,13 @@ function LoginScreen() {
         username,
         password,
       });
-      Toast.show({
-        type: 'success',
-        text1: 'login success!',
-      });
-      if (isRememberMe) {
-        console.log('remembering this account');
-        await EncryptedStorage.setItem('accessToken', response.token);
-      }
+      //무조건 리멤버미
+      await EncryptedStorage.setItem('accessToken', response.token);
       dispatch(userSlice.actions.setUser(response));
     } catch (error) {
       //@ts-ignore
-      Alert.alert(error.message);
-      Alert.alert('알림', 'login fail:(');
+      Alert.alert("Notification", "Username or password is incorrect.");
+      //Alert.alert(error.message);
     } finally {
       setLoading(false);
     }
@@ -86,18 +79,16 @@ function LoginScreen() {
         resizeMode={'contain'}
       />
       <View style={styles.formContainer}>
-        <BasicTextInput
-          label={'Username'}
-          onChangeText={text => handleTextInputs(text, 'username')}
-        />
-        <BasicTextInput
-          label={'Password'}
-          secureTextEntry={true}
-          onChangeText={text => handleTextInputs(text, 'password')}
-        />
-        <View style={styles.rowContainer}>
-          <RememberMeButton />
-          <TextLikeButton text={'Forgot Password?'} textColor={'black'} />
+        <View style={{paddingBottom: 10}}>
+          <BasicTextInput
+              label={'Username'}
+              onChangeText={text => handleTextInputs(text, 'username')}
+          />
+          <BasicTextInput
+              label={'Password'}
+              secureTextEntry={true}
+              onChangeText={text => handleTextInputs(text, 'password')}
+          />
         </View>
         <BlackBasicButton
           buttonText={

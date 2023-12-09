@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {ClickLog} from "../models/ClickLog";
 
-const BASE_URL = 'http://43.201.105.74/';
+const BASE_URL = 'http://3.34.1.54/';
 
 interface ChangeUserPasswordResponse {
   response: string;
@@ -9,7 +9,7 @@ interface ChangeUserPasswordResponse {
   token: string;
 }
 
-//TODO: 리팩토링 필요
+
 export const ChangeUserPassword = async (
   userId: number,
   oldPassword: string,
@@ -32,9 +32,9 @@ export const ChangeUserPassword = async (
     } else if (response.data.response === 'HTTP_400_BAD_REQUEST') {
       throw new Error('Old password is not correct');
     }
-
     return '';
   } catch (error) {
+      console.log(error);
     throw new Error(`API request failed`);
   }
 };
