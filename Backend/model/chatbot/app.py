@@ -4,6 +4,7 @@ import json
 from flask import Flask, jsonify, request, Response
 from inference import ClipTextEmbedding
 from datetime import datetime
+import openai
 from gpt import GPT
 import requests
 

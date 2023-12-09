@@ -1,10 +1,7 @@
-import json
-import os 
-
-cwd = os.getcwd()
-print(cwd)
-api_dir = "openai-api.json"
-API_FILES = os.path.join(cwd, api_dir)
+import os
+import openai
+from dotenv import load_dotenv
+load_dotenv()
 
 prompt = '''[SYSTEM]: Your model is tasked with two primary goals: Classification and Fashion Translation.
 
@@ -52,7 +49,6 @@ Examples:
 Ensure precise classification and offer practical fashion suggestions to enhance the user's experience with the fashion database.
 '''
 
-
 def format_prompt(query):
     format_query = f"[USER]: {query}" \
     "\n[ASSISTANT]: "
@@ -60,28 +56,9 @@ def format_prompt(query):
 
 class GPT(object):
     import openai
-    key = None
-    api_file = None
-    
     @classmethod
     def __init__(cls):
-        if cls.key == None :
-            # print("key is none")
-            if cls.api_file == None:
-                cls.api_file = API_FILES
-            cls.key = cls.load_api_key()
-            cls.openai.api_key = cls.key["OPENAI_API_KEY"]
-
-    @classmethod
-    def load_api_key(cls):
-        print(cls.api_file)
-        if cls.api_file == None:
-            raise ValueError("The API file for OpenAI does not exist.")
-        else:
-            with open(cls.api_file) as f:
-                cls.key = json.load(f)
-        
-        return cls.key
+        openai.api_key = os.environ.get('OPENAI_API_KEY')
     
     @classmethod
     def get_response(cls, query):
