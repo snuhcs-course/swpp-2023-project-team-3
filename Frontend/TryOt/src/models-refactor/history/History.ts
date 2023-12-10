@@ -22,6 +22,7 @@ class History {
   }
 
   public async getHistoryData() {
+    this.histories = [];
     const allHistory = await historyDetailApi(this.userId);
     const sortedHistory = allHistory.sort(
       (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
