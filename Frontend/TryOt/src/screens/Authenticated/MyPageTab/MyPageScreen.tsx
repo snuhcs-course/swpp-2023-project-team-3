@@ -1,23 +1,34 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Switch, Modal, Portal, PaperProvider, ActivityIndicator} from 'react-native-paper';
+import {
+  Switch,
+  Modal,
+  Portal,
+  PaperProvider,
+  ActivityIndicator,
+} from 'react-native-paper';
 import CatalogItem from '../../../components/CatalogItem';
 import userSlice from '../../../slices/user';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {RootState} from '../../../store/reducer';
 import {color, fontSize, vh, vw} from '../../../constants/design';
-import {
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
-import {MyPageTabStackProps} from "./MyPageTab";
-import {fetchClickLog} from "../../../api/userApi";
-import {fetchFashionItemDetails} from "../../../api/itemDetailApi";
-import {FashionItem} from "../../../models/FashionItem";
-import {clickLogApi} from "../../../api/clickLogApi";
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {MyPageTabStackProps} from './MyPageTab';
+import {fetchClickLog} from '../../../api/userApi';
+import {fetchFashionItemDetails} from '../../../api/itemDetailApi';
+import {FashionItem} from '../../../models/FashionItem';
+import {clickLogApi} from '../../../api/clickLogApi';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {useIsFocused} from "@react-navigation/native";
+import {useIsFocused} from '@react-navigation/native';
 
 function MyPageScreen({
   navigation,
@@ -57,7 +68,7 @@ function MyPageScreen({
 
   //유저의 클릭 로그 받아옴 (최신순)
   useEffect(() => {
-    fetchClickLog(id).then((response) => {
+    fetchClickLog(id).then(response => {
       response.sort((a, b) => b.search - a.search);
 
       const uniqueIdsSet = new Set<number>();
@@ -80,7 +91,7 @@ function MyPageScreen({
     try {
       console.log(clickLog);
       const itemDetails = await Promise.all(
-          clickLog.map(itemId => fetchFashionItemDetails(String(itemId))),
+        clickLog.map(itemId => fetchFashionItemDetails(String(itemId))),
       );
       setItems([...itemDetails]);
     } catch (error) {
@@ -117,13 +128,16 @@ function MyPageScreen({
         <TouchableOpacity onPress={handlePasswordChange}>
           <View style={styles.TableRow}>
             <Text style={styles.text}>Change Password</Text>
-            <Icon name="chevron-forward-outline" size={20}/>
+            <Icon name="chevron-forward-outline" size={20} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>{showLogoutModal()}}>
+        <TouchableOpacity
+          onPress={() => {
+            showLogoutModal();
+          }}>
           <View style={styles.TableRow}>
             <Text style={styles.text}>Logout</Text>
-            <Icon name="chevron-forward-outline" size={20}/>
+            <Icon name="chevron-forward-outline" size={20} />
           </View>
         </TouchableOpacity>
         <View style={styles.dividerBar} />
@@ -131,27 +145,27 @@ function MyPageScreen({
           <Text style={styles.viewedItemsHeader}>Recently Viewed Items</Text>
 
           {items.length > 0 ? (
-              <FlatList
-                  style={styles.itemCatalog}
-                  columnWrapperStyle={{ justifyContent: 'space-around' }}
-                  data={items}
-                  numColumns={items.length > 1 ? 2 : 1} // Adjust numColumns dynamically
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                      <CatalogItem
-                          fashionItem={item}
-                          onNavigateToDetail={navigateToItemDetail}
-                      />
-                  )}
-                  contentContainerStyle={styles.catalogGrid}
-                  onEndReachedThreshold={0.1}
-              />
+            <FlatList
+              style={styles.itemCatalog}
+              columnWrapperStyle={{justifyContent: 'space-around'}}
+              data={items}
+              numColumns={items.length > 1 ? 2 : 1} // Adjust numColumns dynamically
+              keyExtractor={item => item.id}
+              renderItem={({item}) => (
+                <CatalogItem
+                  fashionItem={item}
+                  onNavigateToDetail={navigateToItemDetail}
+                />
+              )}
+              contentContainerStyle={styles.catalogGrid}
+              onEndReachedThreshold={0.1}
+            />
           ) : (
-              <View style={styles.emptyMessageContainer}>
-                <Text style={styles.emptyMessageText}>
-                  Looks like you haven't started your search yet!
-                </Text>
-              </View>
+            <View style={styles.emptyMessageContainer}>
+              <Text style={styles.emptyMessageText}>
+                Looks like you haven't started your search yet!
+              </Text>
+            </View>
           )}
         </View>
         <Portal>
@@ -162,20 +176,21 @@ function MyPageScreen({
             <Text style={{padding: 10, color: 'black'}}>
               Do you really want to logout?
             </Text>
-            <View
-              style={{width: '100%', backgroundColor: 'black', height: 1}}
-            />
-            <TouchableOpacity style={styles.modalButton} onPress={handleLogout}>
-              <Text style={styles.modalButtonText}>Logout</Text>
-            </TouchableOpacity>
-            <View
-              style={{width: '100%', backgroundColor: 'black', height: 1}}
-            />
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={hideLogoutModal}>
-              <Text style={styles.modalButtonText}>Cancel</Text>
-            </TouchableOpacity>
+            <View style={{width: '80%', backgroundColor: '#ccc', height: 1}} />
+            <View style={styles.modalButtonWrapper}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={handleLogout}>
+                <Text style={[styles.modalButtonText, {color: 'red'}]}>
+                  Logout
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={hideLogoutModal}>
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </Modal>
         </Portal>
       </View>
@@ -253,11 +268,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
   },
-
-  modalButton: {
-    padding: 10,
+  modalButtonWrapper: {
     width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginVertical: 10,
+  },
+  modalButton: {
+    padding: 5,
+    width: '30%',
     borderRadius: 10,
+    borderWidth: 2,
   },
   modalButtonText: {
     color: 'black',
@@ -293,7 +314,7 @@ const styles = StyleSheet.create({
   },
   emptyMessageText: {
     fontSize: fontSize.small,
-     margin: 10 * vh,
+    margin: 10 * vh,
     marginTop: 20 * vh,
     marginBottom: 50 * vh,
     textAlign: 'center',

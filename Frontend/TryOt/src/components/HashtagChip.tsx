@@ -9,7 +9,12 @@ interface HashtagChipProps {
 
 const HashtagChip = (props: HashtagChipProps) => {
   return (
-    <TouchableOpacity onPress={props.onClick}>
+    <TouchableOpacity
+      onPress={() => {
+        {
+          /*props.onClick*/
+        }
+      }}>
       <View style={styles.container}>
         <Text style={styles.label}>#{props.label}</Text>
       </View>

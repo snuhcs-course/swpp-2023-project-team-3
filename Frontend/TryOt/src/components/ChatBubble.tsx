@@ -7,7 +7,7 @@ import ImageGridItem from './ImageGridItem';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackProps} from '../screens/Authenticated/HomeTab/HomeTab';
 import {ChatInfo} from '../models-refactor/chat/ChatComponent';
-import {clickLogApi} from "../api/clickLogApi";
+import {clickLogApi} from '../api/clickLogApi';
 
 type ChatBubbleProps = {
   who: string;
@@ -47,8 +47,20 @@ export default function ChatBubble({who, info, navigation}: ChatBubbleProps) {
   }, [fetchData]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{who}</Text>
+    <View
+      style={[
+        styles.container,
+        who == 'Tryot' ? styles.otherContainer : styles.userContainer,
+      ]}>
+      <View
+        style={[
+          styles.triangle,
+          who == 'Tryot' ? styles.triangleLeft : styles.triangleRight,
+        ]}
+      />
+      <Text style={{alignSelf: who == 'Tryot' ? 'flex-start' : 'flex-end'}}>
+        {who}
+      </Text>
       {'content' in info ? (
         <Text style={styles.content}>{info.content}</Text>
       ) : (
@@ -77,9 +89,46 @@ export default function ChatBubble({who, info, navigation}: ChatBubbleProps) {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
     margin: ((vw * 10) / 360) * 100,
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+    position: 'relative',
+    maxWidth: 81 * vw,
+  },
+  userContainer: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#e9cff5', // point purple
+  },
+  otherContainer: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#fff', // Light gray for others
+    borderWidth: 1,
+  },
+  triangle: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    position: 'absolute',
+  },
+  triangleRight: {
+    // borderRightWidth: 25,
+    // borderBottomWidth: 20,
+    // borderLeftColor: 'transparent',
+    // borderRightColor: 'transparent',
+    // borderBottomColor: '#c3b1cb', // Match user container color
+    // bottom: 10,
+    // right: -10,
+  },
+  triangleLeft: {
+    // borderLeftWidth: 25,
+    // borderBottomWidth: 20,
+    // borderLeftColor: 'transparent',
+    // borderRightColor: 'transparent',
+    // borderBottomColor: '#000', // Match other container color
+    // bottom: 10,
+    // left: -10,
   },
   title: {
     color: '#999',
