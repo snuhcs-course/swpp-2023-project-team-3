@@ -18,10 +18,7 @@ const ImageGridItem = ({
 
   return (
     <TouchableOpacity onPress={navigateToDetail} style={styles.container}>
-      <Image
-        source={{uri: imageUrl}}
-        style={styles.image}
-      />
+      <Image source={{uri: imageUrl}} style={styles.image} />
     </TouchableOpacity>
   );
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
-import {FashionItem} from '../models/FashionItem';
 import {fontSize, vw} from '../constants/design';
+import {FashionItem} from '../api-refactor/itemDetailApi';
 
 const CatalogItem = ({
   fashionItem,
@@ -18,10 +18,7 @@ const CatalogItem = ({
 
   return (
     <TouchableOpacity onPress={navigateToDetail} style={styles.container}>
-      <Image
-        source={{uri: imageUrl}}
-        style={styles.image}
-      />
+      <Image source={{uri: imageUrl}} style={styles.image} />
       <Text style={styles.brand}>{fashionItem.brand}</Text>
       <Text style={styles.shortDescription}>
         {fashionItem.shortDescription}

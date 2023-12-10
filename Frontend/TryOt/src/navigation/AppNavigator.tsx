@@ -21,15 +21,10 @@ const AppNavigator: React.FC = () => {
             setIsLoading(true);
             try {
                 const token = await EncryptedStorage.getItem('accessToken');
-                if (!token) {
-                    Alert.alert('notification', 'please try login again.');
-                    return;
-                }
                 const response = await tryAxios('get', `user/token-check/`,{url : token});
                 dispatch(userSlice.actions.setUser(response));
             } catch (error) {
                 dispatch(userSlice.actions.logoutUser());
-                Alert.alert('notification', 'please try login again.');
             } finally{
                 setIsLoading(false);
             }

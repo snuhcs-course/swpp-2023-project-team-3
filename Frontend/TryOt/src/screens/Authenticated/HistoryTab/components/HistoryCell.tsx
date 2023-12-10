@@ -1,20 +1,16 @@
 import React from 'react';
-import type {catalogHistory, chatHistory} from '../../../../api/historyDetailApi';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {HistoryScreenProps} from '../HistoryScreen';
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {HistoryTabStackProps} from "../HistoryTab";
+import {color} from '../../../../constants/design';
+import {HistoryCellData} from '../../../../models-refactor/history/visitor/GetDataVisitor';
 
 type HistoryCellProps = {
-  navigation: NativeStackNavigationProp<HistoryTabStackProps>
-  history: catalogHistory | chatHistory;
+  history: HistoryCellData;
 };
 
-function HistoryCell({navigation, history}: HistoryCellProps) {
-  const isChat = 'summary' in history;
+function HistoryCell({history}: HistoryCellProps) {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={history.onPress}>
       <View style={styles.header}>
         <View style={styles.info}>
           <Text>
@@ -31,38 +27,17 @@ function HistoryCell({navigation, history}: HistoryCellProps) {
             solid
           />
           <FontAwesome5
-            name={isChat ? 'comments' : 'search'}
+            name={history.emoji}
             size={12}
             style={{...styles.headerIcon, ...{transform: [{scaleX: -1}]}}}
           />
-          <Text>{isChat ? 'Chat Search' : 'Catalog Search'}</Text>
+          <Text style={styles.headerText}>{history.searchType}</Text>
         </View>
-        <Pressable
-          style={styles.button}
-          onPress={() => {
-            if (isChat) {
-              navigation.navigate('Chat', {
-                searchQuery: '',
-                chatroom: history.id
-              });
-            } else {
-              navigation.navigate('Catalog', {
-                searchQuery: history.query,
-                gpt_query1: history.gpt_query1,
-                gpt_query2: history.gpt_query2,
-                gpt_query3: history.gpt_query3,
-              });
-            }
-          }}>
-          <Text style={styles.buttonText}>Resume Search</Text>
-        </Pressable>
       </View>
       <View style={styles.title}>
-        <Text style={styles.titleFont}>
-          {isChat ? history.summary : history.query}
-        </Text>
+        <Text style={styles.titleFont}>{history.title}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -87,24 +62,26 @@ const styles = StyleSheet.create({
   },
   headerIcon: {
     paddingHorizontal: 8,
+    color: '#cfcade',
   },
+  headerText: {},
   button: {
     padding: 10,
     borderWidth: 1,
-    borderColor: '#654EA1',
+    borderColor: color.pointPurple,
     borderRadius: 5,
   },
   buttonText: {
-    color: '#654EA1',
+    color: color.pointPurple,
     fontSize: 14,
     fontWeight: 'bold',
   },
 
-  title: {marginVertical: 10},
+  title: {marginVertical: 3},
   titleFont: {
     color: 'black',
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 });
 

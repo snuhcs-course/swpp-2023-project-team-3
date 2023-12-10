@@ -1,24 +1,24 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {TabBar, TabView} from 'react-native-tab-view';
-import {vw} from '../../../constants/design';
-import {
-  type catalogHistory,
-  type chatHistory,
-  historyDetailApi,
-  type historyDetailResponse,
-} from '../../../api/historyDetailApi';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
 import HistoryTabScreen from './components/HistoryTabScreen';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {HistoryTabStackProps} from './HistoryTab';
+import {fontSize} from '../../../constants/design';
+import History from '../../../models-refactor/history/History';
+import GetDataVisitor, {
+  HistoryCellData,
+} from '../../../models-refactor/history/visitor/GetDataVisitor';
 
 export type HistoryScreenProps = {
   History: undefined;
 };
 
-function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps>) {
+function HistoryScreen({
+  navigation,
+}: NativeStackScreenProps<HistoryTabStackProps>) {
   // about tab bar
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -29,37 +29,23 @@ function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps
 
   // about fetching history
   const {id} = useSelector((state: RootState) => state.user);
-  const [history, setHistory] = useState<historyDetailResponse>([]);
-  const [catalogHistory, setCatalogHistory] = useState<catalogHistory[]>([]);
-  const [chatHistory, setChatHistory] = useState<chatHistory[]>([]);
+  const [history, setHistory] = useState<HistoryCellData[]>([]);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
 
+  const historyManager = useMemo<History>(() => new History(id), [id]);
+
   const fetchingHistory = useCallback(async () => {
     try {
-      const allHistory = await historyDetailApi(id);
-      const sortedHistory = allHistory.sort(
-        (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
-      );
-      setHistory(sortedHistory);
-      let cataloges: catalogHistory[] = [];
-      let chats: chatHistory[] = [];
-      for (const hist of sortedHistory) {
-        if ('query' in hist) {
-          cataloges = [...cataloges, hist];
-        } else {
-          chats = [...chats, hist];
-        }
-      }
-      setCatalogHistory(cataloges);
-      setChatHistory(chats);
+      await historyManager.getHistoryData();
+      setHistory(historyManager.accept(new GetDataVisitor(navigation)));
     } catch {
       setIsError(true);
     } finally {
       setIsLoading(false);
     }
-  }, [id]);
+  }, [historyManager, navigation]);
 
   useEffect(() => {
     return navigation.addListener('focus', () => {
@@ -77,29 +63,33 @@ function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps
               histories={history}
               isLoading={isLoading}
               isError={isError}
-             navigation={navigation}/>
+            />
           );
         case 'second':
           return (
             <HistoryTabScreen
-              histories={chatHistory}
+              histories={history.filter(
+                value => value.searchType === 'Chat Search',
+              )}
               isLoading={isLoading}
               isError={isError}
-             navigation={navigation}/>
+            />
           );
         case 'third':
           return (
             <HistoryTabScreen
-              histories={catalogHistory}
+              histories={history.filter(
+                value => value.searchType === 'Catalog Search',
+              )}
               isLoading={isLoading}
               isError={isError}
-             navigation={navigation}/>
+            />
           );
         default:
           return null;
       }
     },
-    [catalogHistory, chatHistory, history, isError, isLoading, navigation],
+    [history, isError, isLoading],
   );
 
   return (
@@ -111,7 +101,7 @@ function HistoryScreen({navigation}: NativeStackScreenProps<HistoryTabStackProps
         navigationState={{index, routes}}
         renderScene={renderScene}
         onIndexChange={setIndex}
-        animationEnabled={false}
+        animationEnabled={true}
         renderTabBar={props => (
           <TabBar
             {...props}
@@ -149,15 +139,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   focusedTabLabel: {
-    color: 'black',
-    fontSize: 12,
+    color: '#654EA1',
+    fontSize: fontSize.middle,
+    fontWeight: 'bold',
+    width: 100,
+    height: 50,
   },
   tabLabel: {
     color: '#B5B5B5',
     fontSize: 12,
   },
   tabIndicator: {
-    backgroundColor: '#000',
+    backgroundColor: '#654EA1',
   },
 });
 

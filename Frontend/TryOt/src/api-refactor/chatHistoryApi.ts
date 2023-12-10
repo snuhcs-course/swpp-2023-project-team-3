@@ -1,6 +1,9 @@
 // searchItemsApi.ts
 import axios from 'axios';
 import {DATABASE_URL} from './config/endpoint';
+import ChatComponent from '../models-refactor/chat/ChatComponent';
+import UserChat from '../models-refactor/chat/UserChat';
+import GptChat from '../models-refactor/chat/GptChat';
 
 export type ChatHistoryEntity = {
   id: number;
@@ -34,13 +37,28 @@ export type ChatHistory = {
 
 export const chatHistoryApi = async (
   chatroom: number,
-): Promise<ChatHistory> => {
+): Promise<ChatComponent> => {
   try {
     const response = await axios.get<ChatHistory>(
       `${DATABASE_URL}/history/chat/${chatroom}`,
     );
     if (response.status === 200) {
-      return response.data;
+      let chatHistory: ChatComponent | undefined;
+
+      for (const data of response.data.user_chat) {
+        const userChat = new UserChat(data.query);
+        for (const gptData of data.gpt_chat) {
+          const gptChat = new GptChat(gptData.answer, data.items);
+          userChat.add(gptChat);
+        }
+        if (chatHistory) {
+          chatHistory.add(userChat);
+        } else {
+          chatHistory = userChat;
+        }
+      }
+
+      return chatHistory!;
     } else {
       console.log(response.data);
       throw new Error('API response indicates failure');

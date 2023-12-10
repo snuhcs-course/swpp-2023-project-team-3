@@ -71,13 +71,9 @@ function SignUpScreen() {
       });
       navigate('SignIn');
       console.log(response);
-      Toast.show({
-        type: 'success',
-        text1: 'sign up success!',
-      });
     } catch (error) {
       console.log(error);
-      Alert.alert('notification', 'Sign up fail');
+      Alert.alert('Notification', 'Failed to sign up. Try again later.');
     } finally {
       setLoading(false);
     }
@@ -121,7 +117,8 @@ function SignUpScreen() {
 
   const handleConfirmPasswordChange = (text: string) => {
     setConfirmPassword(text);
-    if (password !== text && text.length === 0) {
+
+    if (password !== text || text.length === 0) {
       setIsConfirmPasswordValid(false);
     } else {
       setIsConfirmPasswordValid(true);
@@ -190,6 +187,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: color.background,
     flexDirection: 'column',
+    paddingTop: 10,
   },
 
   headerContainer: {
@@ -197,7 +195,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginTop: '10%',
-    paddingBottom: 20,
+    paddingBottom: 10,
   },
 
   formContainer: {
