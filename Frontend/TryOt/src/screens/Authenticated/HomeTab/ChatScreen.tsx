@@ -109,7 +109,10 @@ function ChatScreen({
           style={styles.inputTextContainer}
           onStartShouldSetResponder={() => true}>
           <TextInput
-            onChangeText={text => setQuery(text)}
+            onChangeText={text => {
+              const englishOnlyText = text.replace(/[^a-zA-Z\s]/g, '');
+              setQuery(englishOnlyText);
+            }}
             value={query}
             placeholder="Message..."
             placeholderTextColor="#666"

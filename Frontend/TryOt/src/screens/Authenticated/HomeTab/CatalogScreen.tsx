@@ -152,7 +152,8 @@ function CatalogScreen({
           style={styles.searchQueryInput}
           value={query}
           onChangeText={(text: string) => {
-            setQuery(text);
+            const englishOnlyText = text.replace(/[^a-zA-Z\s]/g, '');
+            setQuery(englishOnlyText);
           }}
           importantForAutofill="yes"
           returnKeyType="next"

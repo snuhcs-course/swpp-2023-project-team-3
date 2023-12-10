@@ -51,6 +51,7 @@ export const fetchClickLog = async (
     userId: number,
     ): Promise<ClickLog[]> => {
     try {
+        console.log("Fetching click log");
         const response = await axios.get(`http://3.34.1.54/history/item-click-view/${userId}`);
         return response.data;
     } catch (error) {

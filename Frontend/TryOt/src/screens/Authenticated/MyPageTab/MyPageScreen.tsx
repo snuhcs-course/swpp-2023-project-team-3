@@ -17,6 +17,7 @@ import {fetchFashionItemDetails} from "../../../api/itemDetailApi";
 import {FashionItem} from "../../../models/FashionItem";
 import {clickLogApi} from "../../../api/clickLogApi";
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {useIsFocused} from "@react-navigation/native";
 
 function MyPageScreen({
   navigation,
@@ -25,6 +26,7 @@ function MyPageScreen({
     (state: RootState) => state.user,
   );
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const [isGPTRefineOn, setIsGPTRefineOn] = React.useState(gptUsable);
 
@@ -71,7 +73,7 @@ function MyPageScreen({
       setClickLog(sortedIds);
     });
     fetchItemDetails();
-  }, []);
+  }, [isFocused]);
 
   //최근 아이템 디테일 불러오기
   const fetchItemDetails = useCallback(async () => {
@@ -133,7 +135,7 @@ function MyPageScreen({
                   style={styles.itemCatalog}
                   columnWrapperStyle={{ justifyContent: 'space-around' }}
                   data={items}
-                  numColumns={2}
+                  numColumns={items.length > 1 ? 2 : 1} // Adjust numColumns dynamically
                   keyExtractor={(item) => item.id}
                   renderItem={({ item }) => (
                       <CatalogItem
