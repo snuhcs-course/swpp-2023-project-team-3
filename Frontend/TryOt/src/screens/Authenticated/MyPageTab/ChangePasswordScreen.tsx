@@ -24,6 +24,12 @@ function ChangePasswordScreen({
   const [checkPasswordMessageError, setCheckPasswordMessageError] =
     useState('');
   const [doesOldPasswordMatch, setDoesOldPasswordMatch] = useState(true);
+  const [oldPassword, setOldPassword] = useState('');
+
+  const handleCurrentPasswordChange = (text: string) => {
+    console.log(text);
+    setOldPassword(text);
+  }
 
   const handlePasswordChange = (text: string) => {
     const minLength = 6; // Minimum password length
@@ -66,7 +72,7 @@ function ChangePasswordScreen({
 
   const handleChangePasswordButtonClick = useCallback(async () => {
     try {
-      await ChangeUserPassword(id, token, newPassword);
+      await ChangeUserPassword(id, oldPassword, newPassword)
       setDoesOldPasswordMatch(true);
       Alert.alert('Notification', 'Password changed successfully.');
       navigation.navigate('MyPage');
@@ -88,6 +94,7 @@ function ChangePasswordScreen({
           <View style={styles.inputContainer}>
             <BasicTextInput
               label={'Current Password'}
+              onChangeText={handleCurrentPasswordChange}
               secureTextEntry={true}
               isValid={doesOldPasswordMatch}
               errorMessage={'Current password is incorrect.'}

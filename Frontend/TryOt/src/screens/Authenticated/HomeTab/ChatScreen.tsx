@@ -97,6 +97,7 @@ function ChatScreen({
           renderItem={({item}) => (
             <View onStartShouldSetResponder={() => true}>
               <ChatBubble
+                  logId={route.params.chatroom}
                 who={'item' in item ? 'Tryot' : nickname}
                 info={item}
                 navigation={navigation}
@@ -109,7 +110,10 @@ function ChatScreen({
           style={styles.inputTextContainer}
           onStartShouldSetResponder={() => true}>
           <TextInput
-            onChangeText={text => setQuery(text)}
+            onChangeText={text => {
+              const englishOnlyText = text.replace(/[^a-zA-Z\s]/g, '');
+              setQuery(englishOnlyText);
+            }}
             value={query}
             placeholder="Message..."
             placeholderTextColor="#666"

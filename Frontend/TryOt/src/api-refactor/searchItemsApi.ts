@@ -3,6 +3,7 @@ import {SEARCH_URL} from './config/endpoint';
 
 interface SearchItemsResponse {
   statusCode?: number;
+  errorMessage?: string;
   user_id: number;
   log_id: number;
   text: string[]; //[오리지날 검색어, gpt 쿼리 1, gpt 쿼리 2, gpt 쿼리 3]
@@ -56,12 +57,8 @@ export const searchItemsApi = async (
       if (responseData.statusCode !== 200) {
         // Handle non-200 status code
         console.log(responseData);
-        const errorMessage =
-          responseData.statusCode === 400
-            ? 'Your query is not related to Fashion.'
-            : responseData.statusCode === 500
-            ? 'GPT is not available, please turn it off.'
-            : 'Search Failed. Please try again.';
+        const errorMessage = responseData.errorMessage ?? 'Search Failed. Please try again.';
+        console.log(errorMessage);
         throw new Error(errorMessage);
       }
     }

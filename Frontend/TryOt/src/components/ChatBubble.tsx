@@ -7,6 +7,7 @@ import ImageGridItem from './ImageGridItem';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackProps} from '../screens/Authenticated/HomeTab/HomeTab';
 import {ChatInfo} from '../models-refactor/chat/ChatComponent';
+import {clickLogApi} from "../api/clickLogApi";
 
 type ChatBubbleProps = {
   who: string;

@@ -23,6 +23,7 @@ import {FashionItem} from '../../../api-refactor/itemDetailApi';
 
 export type CatalogScreenProps = {
   Catalog: {
+    logId?: number;
     searchQuery: string;
     gpt_query1?: string;
     gpt_query2?: string;
@@ -78,6 +79,9 @@ function CatalogScreen({
       const response = await searchManager.search(
         searchQueries.length === 1 ? undefined : finalSearchQuery,
       );
+      if (response.log_id) {
+        setLogId(response.log_id);
+      }
       setLogId(response.log_id);
       setSearchQueries(response.text);
       searchManager.select(__targetIndex);
@@ -101,6 +105,7 @@ function CatalogScreen({
     route.params?.prevScreen,
     searchManager,
     searchQueries.length,
+      logId,
   ]);
 
   //refine search only changes the combination of gpt queries
@@ -133,9 +138,9 @@ function CatalogScreen({
   }, [navigation, searchManager, targetIndex]);
 
   const navigateToItemDetail = (item: FashionItem) => {
-    // @ts-ignore
+    // @ts-ignorenavigation.navigate('ItemDetail', {item});
     if (logId !== 0) {
-      clickLogApi(item.id, logId, 1);
+      searchManager.clickLog(item);
       navigation.navigate('ItemDetail', {item});
     }
   };
@@ -152,7 +157,8 @@ function CatalogScreen({
           style={styles.searchQueryInput}
           value={query}
           onChangeText={(text: string) => {
-            setQuery(text);
+            const englishOnlyText = text.replace(/[^a-zA-Z\s]/g, '');
+            setQuery(englishOnlyText);
           }}
           importantForAutofill="yes"
           returnKeyType="next"
