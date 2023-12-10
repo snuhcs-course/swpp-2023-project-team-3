@@ -51,7 +51,8 @@ def predict():
             if history_response.status_code == 200:
                 history_response = history_response.json()
             else :
-                return Response(response=json.dumps({"error":"history is not retrieved."}), status=500, mimetype="application/json")
+                return Response(response=json.dumps({"errorMessage": "Sorry, we couldn't retrieve the chat history at the moment. Please try again later.",
+                                                     "statusCode": "500"}), status=200, mimetype="application/json")
             
             gpt_response = gpt.get_response(user_text, history_response)
             if len(gpt_response['gpt_queries'])>0 :
@@ -99,4 +100,7 @@ def predict():
             else:
                 return Response(response=json.dumps(sendDict), status=200, mimetype="application/json")
 
-    return Response(response={"internal error"}, status=400, mimetype="application/json")
+    # Handling internal error with a more descriptive message
+    return Response(response=json.dumps({"errorMessage": "Internal server error. Please try again later or contact support if the issue persists.",
+                                         "statusCode": "400"}), 
+                    status=200, mimetype="application/json")

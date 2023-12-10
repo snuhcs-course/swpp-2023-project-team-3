@@ -41,10 +41,15 @@ class GPT(object):
         """
         cls.system_limit_template = """
             Never give an answer if the user asks you questions other than Fashion domain!
-            Don't suggest fashion item types outside of coats, denims, dresses, jackets, knitwear, skirt, tops and trousers.
             Your output should always be of a json format with the three keys "answer", "summary" and "fashion_items" as specified below, no matter the human input.
             Do not output anything other than the specified json markdown snippet code.
             You must output following the specified json format.
+            The fashion item suggestions you give to the user:
+            - will be used to search our fashion database (Farfetch).
+            - Our Farfetch dataset only includes women's fashion items in the following categories: coats, denims, dresses, jackets, knitwear, skirts, tops, or trousers.
+            - Prioritize general and relatable fashion items available on Farfetch; avoid specific brand names.
+            - Exclude items that do not exist on Farfetch, fall outside the specified categories, or are not women's clothing for user relevance.
+            - The goal is to provide practical and relevant fashion suggestions 
         """
         cls.human_template = "{question}"
         cls.ai_template = ""
