@@ -58,12 +58,14 @@ export default function ChatBubble({who, info, navigation}: ChatBubbleProps) {
           who == 'Tryot' ? styles.triangleLeft : styles.triangleRight,
         ]}
       />
-      {/* <Text>{who}</Text> */}
+      <Text style={{alignSelf: who == 'Tryot' ? 'flex-start' : 'flex-end'}}>
+        {who}
+      </Text>
       {'content' in info ? (
         <Text style={styles.content}>{info.content}</Text>
       ) : (
         <>
-          <Text style={[styles.content, {color: 'white'}]}>{info.answer}</Text>
+          <Text style={styles.content}>{info.answer}</Text>
           {isError ? (
             <Text style={styles.errormessage}>Error occurred</Text>
           ) : isLoading ? (
@@ -96,11 +98,12 @@ const styles = StyleSheet.create({
   },
   userContainer: {
     alignSelf: 'flex-end',
-    backgroundColor: '#4CAF50', // Green for user
+    backgroundColor: '#e9cff5', // point purple
   },
   otherContainer: {
     alignSelf: 'flex-start',
-    backgroundColor: '#000', // Light gray for others
+    backgroundColor: '#fff', // Light gray for others
+    borderWidth: 1,
   },
   triangle: {
     width: 0,
@@ -110,22 +113,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   triangleRight: {
-    borderRightWidth: 25,
-    borderBottomWidth: 20,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#4CAF50', // Match user container color
-    bottom: 10,
-    right: -10,
+    // borderRightWidth: 25,
+    // borderBottomWidth: 20,
+    // borderLeftColor: 'transparent',
+    // borderRightColor: 'transparent',
+    // borderBottomColor: '#c3b1cb', // Match user container color
+    // bottom: 10,
+    // right: -10,
   },
   triangleLeft: {
-    borderLeftWidth: 25,
-    borderBottomWidth: 20,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#000', // Match other container color
-    bottom: 10,
-    left: -10,
+    // borderLeftWidth: 25,
+    // borderBottomWidth: 20,
+    // borderLeftColor: 'transparent',
+    // borderRightColor: 'transparent',
+    // borderBottomColor: '#000', // Match other container color
+    // bottom: 10,
+    // left: -10,
   },
   title: {
     color: '#999',
