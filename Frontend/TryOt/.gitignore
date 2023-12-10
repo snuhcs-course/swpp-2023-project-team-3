@@ -67,3 +67,7 @@ yarn-error.log
 
 # bugfix
 !gradle-wrapper.jar
+
+package-lock.json
+package.json
+yarn.lock
