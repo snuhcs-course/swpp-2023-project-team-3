@@ -122,7 +122,6 @@ function ChatScreen({
             clearButtonMode="while-editing"
             blurOnSubmit={false}
             style={styles.inputText}
-            onSubmitEditing={onChatRequest}
           />
           <Pressable
             onPress={onChatRequest}
