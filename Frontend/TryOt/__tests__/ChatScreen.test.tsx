@@ -1,14 +1,19 @@
 // Chatbot.test.tsx
 
 import React from 'react';
-import { render, fireEvent, waitFor, RenderOptions } from '@testing-library/react-native';
-import { Provider } from 'react-redux'; // Assuming you use Redux, adjust as needed
-import { RouteProp } from '@react-navigation/native';
+import {
+  render,
+  fireEvent,
+  waitFor,
+  RenderOptions,
+} from '@testing-library/react-native';
+import {Provider} from 'react-redux'; // Assuming you use Redux, adjust as needed
+import {RouteProp} from '@react-navigation/native';
 
 import Chat from '../src/screens/Authenticated/HomeTab/ChatScreen'; // Import the Chat component
 import mockStore from './mockStore';
 import {RootState} from '../src/store/reducer';
-import { HomeStackProps } from '../src/screens/Authenticated/HomeTab/HomeTab';
+import {HomeStackProps} from '../src/screens/Authenticated/HomeTab/HomeTab';
 
 // Mock the navigation prop
 const navigation: any = {
@@ -21,30 +26,36 @@ const initialState = {
   user: {
     id: '3', // or some default value
     nickname: 'hey',
-  }
+  },
 }; // Add your initial state as needed
 
-const createRoute = (params: { searchQuery: string; chatroom?: number }): RouteProp<HomeStackProps, 'Chat'> => {
-  return { key: 'unique-key', name: 'Chat', params };
+const createRoute = (params: {
+  searchQuery: string;
+  chatroom?: number;
+}): RouteProp<HomeStackProps, 'Chat'> => {
+  return {key: 'unique-key', name: 'Chat', params};
 };
 
 const store = mockStore(initialState);
-const route = createRoute({ searchQuery: 'hello mr gpt tell me how to do a test', chatroom: 123 });
+const route = createRoute({
+  searchQuery: 'hello mr gpt tell me how to do a test',
+  chatroom: 123,
+});
 
-const { getByTestId } = render(
+const {getByTestId} = render(
   <Provider store={store}>
     <Chat navigation={navigation} route={route} />
-  </Provider>
+  </Provider>,
 );
 
 describe('Chat Component', () => {
   it('renders correctly', async () => {
-    jest.useFakeTimers()
-  
-    const { getByTestId} = render(
+    jest.useFakeTimers();
+
+    const {getByTestId} = render(
       <Provider store={store}>
         <Chat navigation={navigation} route={route} />
-      </Provider>
+      </Provider>,
     );
 
     const sendButton = getByTestId('sendButton');
@@ -53,22 +64,25 @@ describe('Chat Component', () => {
     fireEvent.press(sendButton);
 
     // Wait for the asynchronous operation to complete (if needed)
-    await waitFor(() => {
-      // Your assertions go here
-      expect(getByTestId('sendButton')).toBeTruthy();
-      // Additional assertions if needed
-    }, { timeout: 5000 });
+    await waitFor(
+      () => {
+        // Your assertions go here
+        expect(getByTestId('sendButton')).toBeTruthy();
+        // Additional assertions if needed
+      },
+      {timeout: 5000},
+    );
 
     // Snapshot testing (if needed)
     // expect(toJSON()).toMatchSnapshot();
   });
 
   it('handles user input and sends a chat request', async () => {
-    const route = createRoute({ searchQuery: 'Test', chatroom: 123 });
-    const { getByPlaceholderText, getByTestId, getByText } = render(
+    const route = createRoute({searchQuery: 'Test', chatroom: 123});
+    const {getByPlaceholderText, getByTestId, getByText} = render(
       <Provider store={store}>
         <Chat navigation={navigation} route={route} />
-      </Provider>
+      </Provider>,
     );
 
     const inputField = getByPlaceholderText('채팅을 입력해주세요');
@@ -89,12 +103,12 @@ describe('Chat Component', () => {
     // For example, check if the message is added to the chat messages state
   });
 
-  it('enables send button for non-empty input', async() => {
-    const route = createRoute({ searchQuery: 'Test', chatroom: 123 });
-    const { getByPlaceholderText, getByTestId, getByText } = render(
+  it('enables send button for non-empty input', async () => {
+    const route = createRoute({searchQuery: 'Test', chatroom: 123});
+    const {getByPlaceholderText, getByTestId, getByText} = render(
       <Provider store={store}>
         <Chat navigation={navigation} route={route} />
-      </Provider>
+      </Provider>,
     );
     const inputField = getByPlaceholderText('채팅을 입력해주세요');
     const sendButton = getByTestId('sendButton');
@@ -108,4 +122,3 @@ describe('Chat Component', () => {
     jest.runAllTimers();
   });
 });
-

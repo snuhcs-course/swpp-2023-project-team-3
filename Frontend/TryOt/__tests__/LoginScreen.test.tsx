@@ -5,57 +5,48 @@
 import React from 'react';
 import {render, screen, fireEvent} from '@testing-library/react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import LoginScreen from '../src/screens/Unauthenticated/LoginScreen';
+import LoginScreen from '../src/screens/UnAuthenticated/LoginScreen';
+import {Provider} from 'react-redux';
+import store from '../src/store';
 
 const user = {
-  Username: 'testUser',
-  Password: 'testPassword',
+  Username: 'admin2',
+  Password: 'admin1234',
 };
 
-describe('SignUp success', () => {
+describe('Login success', () => {
   jest.useFakeTimers();
-  it('snap shot', () => {
+  test('snap shot', () => {
     render(
+      <Provider store={store}>
         <NavigationContainer>
-            <LoginScreen />
+          <LoginScreen />
         </NavigationContainer>
+      </Provider>,
     );
     const json = screen.toJSON();
     expect(json).toMatchSnapshot();
   });
 
-  it('headers correctly', () => {
-    // jest.useFakeTimers()
-    const {getByText} = render(
-      <NavigationContainer>
-        <SignUpScreen />
-      </NavigationContainer>,
-    );
-    const header = getByText('Create an Account');
-    expect(header).toBeDefined();
-  });
-
-  it('submits form', () => {
+  test('submits form', () => {
     const {getAllByText, getByText} = render(
-      <NavigationContainer>
-        <SignUpScreen />
-      </NavigationContainer>,
+      <Provider store={store}>
+        <NavigationContainer>
+          <LoginScreen />
+        </NavigationContainer>
+      </Provider>,
     );
-    const email = getAllByText('Email')[0];
     const username = getAllByText('Username')[0];
     const password = getAllByText('Password')[0];
-    const confirm_password = getAllByText('Confirm Password')[0];
-    fireEvent.changeText(email, user.Email);
+    const remember_me = getAllByText('Remember Me')[0];
     fireEvent.changeText(username, user.Username);
     fireEvent.changeText(password, user.Password);
-    fireEvent.changeText(confirm_password, user.Password);
 
-    const onSubmit = getByText('Create Account');
+    const onSubmit = getByText('Sign In');
     fireEvent.press(onSubmit);
     expect(onSubmit).toBeDefined();
-    expect(email).toBeDefined();
     expect(username).toBeDefined();
     expect(password).toBeDefined();
-    expect(confirm_password).toBeDefined();
+    expect(remember_me).toBeDefined();
   });
 });
