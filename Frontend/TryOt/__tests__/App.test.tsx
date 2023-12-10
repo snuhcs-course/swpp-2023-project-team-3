@@ -19,8 +19,8 @@ import {it} from '@jest/globals';
 import {render, screen, fireEvent} from '@testing-library/react-native';
 
 describe('App test', () => {
+  jest.useFakeTimers();
   it('renders correctly', () => {
-    jest.useFakeTimers();
     // const tree = renderer.create(<App />);
     const tree = render(<App />);
     expect(tree).toBeDefined();
