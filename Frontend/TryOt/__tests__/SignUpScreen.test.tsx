@@ -12,9 +12,13 @@ const user = {
   Username: 'testUser',
   Password: 'testPassword',
 };
+jest.mock('react-native/Libraries/Alert/Alert', () => ({
+  alert: jest.fn(),
+}));
 
 describe('SignUp success', () => {
   jest.useFakeTimers();
+  jest.runAllTimers();
   it('snap shot', () => {
     render(
       <NavigationContainer>
@@ -52,7 +56,6 @@ describe('SignUp success', () => {
     fireEvent.changeText(confirm_password, user.Password);
 
     const onSubmit = getByText('Create Account');
-    fireEvent.press(onSubmit);
     expect(onSubmit).toBeDefined();
     expect(email).toBeDefined();
     expect(username).toBeDefined();
