@@ -97,6 +97,7 @@ function ChatScreen({
           renderItem={({item}) => (
             <View onStartShouldSetResponder={() => true}>
               <ChatBubble
+                  logId={route.params.chatroom}
                 who={'item' in item ? 'Tryot' : nickname}
                 info={item}
                 navigation={navigation}

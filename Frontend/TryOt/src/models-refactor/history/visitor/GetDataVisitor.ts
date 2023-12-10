@@ -3,6 +3,7 @@ import HistoryVisitor from './HistoryVisitor';
 import {HistoryTabStackProps} from '../../../screens/Authenticated/HistoryTab/HistoryTab';
 import ChatHistory from '../ChatHistory';
 import SearchHistory from '../SearchHistory';
+import {clickLogApi} from "../../../api/clickLogApi";
 
 export type HistoryCellData = {
   title: string;
@@ -36,6 +37,7 @@ class GetDataVisitor implements HistoryVisitor<HistoryCellData> {
       searchType: 'Catalog Search',
       onPress: () =>
         this.navigator.navigate('Catalog', {
+          logId: history.id,
           searchQuery: history.query,
           gpt_query1: history.gpt_query1,
           gpt_query2: history.gpt_query2,

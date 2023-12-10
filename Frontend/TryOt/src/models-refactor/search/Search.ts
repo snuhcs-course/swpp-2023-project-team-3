@@ -1,10 +1,12 @@
 import {FashionItem} from '../../api-refactor/itemDetailApi';
 import {searchItemsApi} from '../../api-refactor/searchItemsApi';
 import ProxyItem from '../items/ProxyItem';
+import {clickLogApi} from "../../api/clickLogApi";
 
 class Search {
   private userId: number;
   private apiBody: {
+    logId?: number;
     searchQuery: string;
     gpt_query1?: string | undefined;
     gpt_query2?: string | undefined;
@@ -38,9 +40,12 @@ class Search {
     if (query) {
       this.apiBody = {searchQuery: query};
     }
-    console.log(this.apiBody);
     const searchResponse = await searchItemsApi(this.userId, this.apiBody);
-    this.logId = searchResponse.log_id;
+    if (searchResponse.log_id) {
+      this.logId = searchResponse.log_id;
+    } else {
+      this.logId = this.apiBody.logId;
+    }
     this.text = searchResponse.text;
     this.items = [
       searchResponse.items.query,
@@ -100,6 +105,12 @@ class Search {
     console.log('next page');
     this.currPage += 1;
     await this.notifyObserver();
+  }
+
+  public async clickLog(item: FashionItem) {
+    if (this.logId) {
+      await clickLogApi(item.id, this.logId, 1);
+    }
   }
 }
 
