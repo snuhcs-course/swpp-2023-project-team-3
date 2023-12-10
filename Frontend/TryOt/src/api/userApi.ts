@@ -1,7 +1,8 @@
 import axios from 'axios';
 import {ClickLog} from "../models/ClickLog";
+import EncryptedStorage from "react-native-encrypted-storage";
 
-const BASE_URL = 'http://43.201.105.74/';
+const BASE_URL = 'http://3.34.1.54';
 
 interface ChangeUserPasswordResponse {
   response: string;
@@ -9,7 +10,7 @@ interface ChangeUserPasswordResponse {
   token: string;
 }
 
-//TODO: 리팩토링 필요
+
 export const ChangeUserPassword = async (
   userId: number,
   oldPassword: string,
@@ -17,24 +18,31 @@ export const ChangeUserPassword = async (
 ): Promise<string> => {
   try {
     const requestBody = {
-      user_id: userId, //테스트라서 10으로 고정
+      user_id: userId,
       old_password: oldPassword,
       new_password: newPassword,
     };
 
-    const response = await axios.post<ChangeUserPasswordResponse>(
-      BASE_URL,
-      requestBody,
-    );
+      const userToken = await EncryptedStorage.getItem('accessToken');
 
-    if (response.data.response === 'HTTP_200_OK') {
+      const headers = {
+          Authorization: `Token ${userToken}`, // Add the authorization header
+      };
+
+      const response = await axios.put<ChangeUserPasswordResponse>(
+          `${BASE_URL}/user/change-password/`, // Use template literals for string concatenation
+          requestBody,
+          { headers }
+      );
+
+      if (response.data.response === 'HTTP_200_OK') {
       return response.data.token;
     } else if (response.data.response === 'HTTP_400_BAD_REQUEST') {
       throw new Error('Old password is not correct');
     }
-
     return '';
   } catch (error) {
+      console.log(error);
     throw new Error(`API request failed`);
   }
 };
@@ -43,6 +51,7 @@ export const fetchClickLog = async (
     userId: number,
     ): Promise<ClickLog[]> => {
     try {
+        console.log("Fetching click log");
         const response = await axios.get(`http://3.34.1.54/history/item-click-view/${userId}`);
         return response.data;
     } catch (error) {

@@ -1,8 +1,8 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, Text, View} from 'react-native';
 import BasicTextInput from '../../../components/BasicTextInput';
 import BlackBasicButton from '../../../components/BlackBasicButton';
 import {ActivityIndicator} from 'react-native-paper';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {color, fontSize, vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
@@ -24,6 +24,12 @@ function ChangePasswordScreen({
   const [checkPasswordMessageError, setCheckPasswordMessageError] =
     useState('');
   const [doesOldPasswordMatch, setDoesOldPasswordMatch] = useState(true);
+  const [oldPassword, setOldPassword] = useState('');
+
+  const handleCurrentPasswordChange = (text: string) => {
+    console.log(text);
+    setOldPassword(text);
+  }
 
   const handlePasswordChange = (text: string) => {
     const minLength = 6; // Minimum password length
@@ -64,17 +70,19 @@ function ChangePasswordScreen({
     return isPasswordMatch && isNewPasswordValid;
   };
 
-  const handleChangePasswordButtonClick = async () => {
+  const handleChangePasswordButtonClick = useCallback(async () => {
     try {
-      await ChangeUserPassword(id, token, newPassword);
+      await ChangeUserPassword(id, oldPassword, newPassword)
       setDoesOldPasswordMatch(true);
-      navigation.navigate('MyPageScreen');
+      Alert.alert('Notification', 'Password changed successfully.');
+      navigation.navigate('MyPage');
     } catch (e) {
+      Alert.alert('Notification', 'Failed to change password. Try again later.');
       setDoesOldPasswordMatch(false);
-      navigation.navigate('MyPageScreen');
+      navigation.navigate('MyPage');
       console.log(e);
     }
-  };
+  }, [newPassword]);
 
   return (
     <View style={styles.root}>
@@ -86,6 +94,7 @@ function ChangePasswordScreen({
           <View style={styles.inputContainer}>
             <BasicTextInput
               label={'Current Password'}
+              onChangeText={handleCurrentPasswordChange}
               secureTextEntry={true}
               isValid={doesOldPasswordMatch}
               errorMessage={'Current password is incorrect.'}
@@ -126,8 +135,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     flexDirection: 'column',
-    paddingTop: 20,
-    paddingBottom: 20,
+    //paddingTop: 10,
+    paddingBottom: 10,
   },
 
   headerContainer: {
@@ -135,7 +144,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginTop: '10%',
-    paddingBottom: 20,
+    paddingBottom: 10,
     backgroundColor: 'white',
   },
 

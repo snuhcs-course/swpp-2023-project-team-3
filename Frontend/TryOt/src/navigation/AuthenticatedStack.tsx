@@ -28,7 +28,6 @@ export const Tab = createBottomTabNavigator<AuthenticatedStackProps>();
 
 createNativeStackNavigator<AuthenticatedStackProps>();
 const AuthenticatedStack: React.FC = () => {
-
     return (
             <Tab.Navigator
                 initialRouteName="HomeTab"
@@ -61,10 +60,17 @@ const AuthenticatedStack: React.FC = () => {
                 <Tab.Screen
                     name="HistoryTab"
                     component={HistoryTab}
-                    options={{
+                    options={({ route }) => ({
                         headerShown: false,
                         title: 'query history',
-                    }}
+                        tabBarStyle: (route => {
+                            const routeName = getFocusedRouteNameFromRoute(route) ?? 'null';
+                            if (routeName === 'ItemDetail' || routeName === 'Chat') {
+                                return { display: 'none' };
+                            }
+                            return;
+                        })(route),
+                    })}
                 />
                 <Tab.Screen
                     name="HomeTab"

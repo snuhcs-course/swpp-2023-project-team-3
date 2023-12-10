@@ -12,6 +12,10 @@ class ChatHistory implements HistoryElement {
   accept<T>(visitor: HistoryVisitor<T>) {
     return visitor.chatHistoryVisitor(this);
   }
+
+  public getHistory() {
+    return this.history;
+  }
 }
 
 export default ChatHistory;

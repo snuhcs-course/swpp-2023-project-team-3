@@ -8,37 +8,41 @@ import {useEffect, useState} from 'react';
 import {HomeStackProps} from './HomeTab';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-import {reloadSearchQueryHistory} from "../../../api/itemDetailApi";
-import {SearchQueryHistoryItem} from "../../../models/SearchQueryHistoryItem";
+import {reloadSearchQueryHistory} from '../../../api/itemDetailApi';
+import {SearchQueryHistoryItem} from '../../../models/SearchQueryHistoryItem';
 
-import HashtagChip from "../../../components/HashtagChip";
-import {MyPageTabStackProps} from "../MyPageTab/MyPageTab";
+import HashtagChip from '../../../components/HashtagChip';
+import {MyPageTabStackProps} from '../MyPageTab/MyPageTab';
 
 export type ItemDetailScreenProps = {
   ItemDetail: {
     item: FashionItem;
   };
-}
+};
 
-type ItemDetailScreenPropType = NativeStackScreenProps<HomeStackProps, 'ItemDetail'> | NativeStackScreenProps<MyPageTabStackProps, 'ItemDetail'>;
+type ItemDetailScreenPropType =
+  | NativeStackScreenProps<HomeStackProps, 'ItemDetail'>
+  | NativeStackScreenProps<MyPageTabStackProps, 'ItemDetail'>;
 
-function ItemDetailScreen({
-  route,
-}: ItemDetailScreenPropType) {
-  const item: FashionItem | null = route.params && 'item' in route.params ? route.params.item : null;
-  const imageUrl = item ? `https://tryot.s3.ap-northeast-2.amazonaws.com/item_img/${item.id}.jpg` : '';
+function ItemDetailScreen({navigation, route}: ItemDetailScreenPropType) {
+  const item: FashionItem | null =
+    route.params && 'item' in route.params ? route.params.item : null;
+  const imageUrl = item
+    ? `https://tryot.s3.ap-northeast-2.amazonaws.com/item_img/${item.id}.jpg`
+    : '';
   const [loading, setLoading] = useState(!item); // Set loading to true if item is null
-  const [uniqueQueries, setUniqueQueries] = useState<SearchQueryHistoryItem[]>([]);
+  const [uniqueQueries, setUniqueQueries] = useState<SearchQueryHistoryItem[]>(
+    [],
+  );
 
   //첫 클릭에서만 하면 됨.
   useEffect(() => {
     if (item) {
-      reloadSearchQueryHistory(item.id).then((response) => {
-
+      reloadSearchQueryHistory(item.id).then(response => {
         // Function to filter out duplicate queries
         const filterUniqueQueries = (history: SearchQueryHistoryItem[]) => {
-          const uniqueQueries: { [key: string]: boolean } = {};
-          return history.filter((item) => {
+          const uniqueQueries: {[key: string]: boolean} = {};
+          return history.filter(item => {
             if (!uniqueQueries[item.query]) {
               uniqueQueries[item.query] = true;
               return true;
@@ -57,6 +61,13 @@ function ItemDetailScreen({
       setLoading(false);
     }
   }, [item]);
+
+  const handleHashtagClick = (query: string) => {
+    (navigation as any).navigate('Catalog', {
+      searchQuery: query,
+      prevScreen: 'ItemDetails',
+    });
+  };
 
   const openPurchaseURl = () => {
     if (item) {
@@ -97,7 +108,11 @@ function ItemDetailScreen({
           <View style={styles.borderLine} />
           <View style={styles.queryLogContainer}>
             {uniqueQueries.map((item, index) => (
-                <HashtagChip key={index} label={item.query} />
+              <HashtagChip
+                key={index}
+                label={item.query}
+                onClick={() => handleHashtagClick(item.query)}
+              />
             ))}
           </View>
         </ScrollView>

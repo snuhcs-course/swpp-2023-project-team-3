@@ -1,4 +1,4 @@
-import ChatComponent from './ChatComponent';
+import ChatComponent, {ChatInfo} from './ChatComponent';
 
 class UserChat extends ChatComponent {
   protected children: ChatComponent[] = [];
@@ -22,12 +22,11 @@ class UserChat extends ChatComponent {
     return true;
   }
 
-  public getData(): {}[] {
-    const results = [];
+  public getData() {
+    let results: ChatInfo = [];
     for (const child of this.children) {
-      results.push(child.getData());
+      results = results.concat(child.getData());
     }
-
     return [{content: this.query}, ...results];
   }
 }

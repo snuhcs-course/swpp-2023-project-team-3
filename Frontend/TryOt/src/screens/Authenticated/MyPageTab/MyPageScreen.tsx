@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Switch, Modal, Portal, PaperProvider, ActivityIndicator} from 'react-native-paper';
 import CatalogItem from '../../../components/CatalogItem';
@@ -16,7 +16,8 @@ import {fetchClickLog} from "../../../api/userApi";
 import {fetchFashionItemDetails} from "../../../api/itemDetailApi";
 import {FashionItem} from "../../../models/FashionItem";
 import {clickLogApi} from "../../../api/clickLogApi";
-
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {useIsFocused} from "@react-navigation/native";
 
 function MyPageScreen({
   navigation,
@@ -24,6 +25,8 @@ function MyPageScreen({
   const {email, nickname, gender, username, gptUsable, id} = useSelector(
     (state: RootState) => state.user,
   );
+  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const [isGPTRefineOn, setIsGPTRefineOn] = React.useState(gptUsable);
 
@@ -36,8 +39,11 @@ function MyPageScreen({
   const showLogoutModal = () => setLogoutModalVisible(true);
   const hideLogoutModal = () => setLogoutModalVisible(false);
 
-  const handleLogout = () => {
-    showLogoutModal();
+  //TODO: 로그아웃 시 로그아웃 모달 띄우기
+  const handleLogout = async () => {
+    await EncryptedStorage.removeItem('accessToken');
+    dispatch(userSlice.actions.logoutUser());
+    console.log(id);
   };
 
   const handlePasswordChange = () => {
@@ -46,7 +52,7 @@ function MyPageScreen({
 
   const handleGPTRefineOn = (newValue: boolean) => {
     setIsGPTRefineOn(newValue);
-    userSlice.actions.setGPTUsable(isGPTRefineOn);
+    dispatch(userSlice.actions.setGPTUsable(newValue));
   };
 
   //유저의 클릭 로그 받아옴 (최신순)
@@ -67,7 +73,7 @@ function MyPageScreen({
       setClickLog(sortedIds);
     });
     fetchItemDetails();
-  }, []);
+  }, [isFocused]);
 
   //최근 아이템 디테일 불러오기
   const fetchItemDetails = useCallback(async () => {
@@ -99,7 +105,7 @@ function MyPageScreen({
             <Text style={styles.letter}>{username.at(0)}</Text>
           </View>
           <View style={styles.userTextContainer}>
-            <Text style={styles.username}>{nickname}</Text>
+            <Text style={styles.username}>{username}</Text>
             <Text style={styles.email}>{email}</Text>
           </View>
         </View>
@@ -111,33 +117,42 @@ function MyPageScreen({
         <TouchableOpacity onPress={handlePasswordChange}>
           <View style={styles.TableRow}>
             <Text style={styles.text}>Change Password</Text>
-            <Icon name="chevron-forward-outline" />
+            <Icon name="chevron-forward-outline" size={20}/>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleLogout}>
+        <TouchableOpacity onPress={()=>{showLogoutModal()}}>
           <View style={styles.TableRow}>
             <Text style={styles.text}>Logout</Text>
-            <Icon name="chevron-forward-outline" />
+            <Icon name="chevron-forward-outline" size={20}/>
           </View>
         </TouchableOpacity>
         <View style={styles.dividerBar} />
         <View style={styles.viewedItemsContainer}>
           <Text style={styles.viewedItemsHeader}>Recently Viewed Items</Text>
-          <FlatList
-              style={styles.itemCatalog}
-              columnWrapperStyle={{justifyContent: 'space-around'}}
-              data={items}
-              numColumns={2}
-              keyExtractor={item => item.id}
-              renderItem={({item}) => (
-                  <CatalogItem
-                      fashionItem={item}
-                      onNavigateToDetail={navigateToItemDetail}
-                  />
-              )}
-              contentContainerStyle={styles.catalogGrid}
-              onEndReachedThreshold={0.1}
-          />
+
+          {items.length > 0 ? (
+              <FlatList
+                  style={styles.itemCatalog}
+                  columnWrapperStyle={{ justifyContent: 'space-around' }}
+                  data={items}
+                  numColumns={items.length > 1 ? 2 : 1} // Adjust numColumns dynamically
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                      <CatalogItem
+                          fashionItem={item}
+                          onNavigateToDetail={navigateToItemDetail}
+                      />
+                  )}
+                  contentContainerStyle={styles.catalogGrid}
+                  onEndReachedThreshold={0.1}
+              />
+          ) : (
+              <View style={styles.emptyMessageContainer}>
+                <Text style={styles.emptyMessageText}>
+                  Looks like you haven't started your search yet!
+                </Text>
+              </View>
+          )}
         </View>
         <Portal>
           <Modal
@@ -171,7 +186,7 @@ function MyPageScreen({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: color.background,
-    paddingTop: 20,
+    paddingTop: 5,
   },
 
   userInfoContainer: {
@@ -213,6 +228,8 @@ const styles = StyleSheet.create({
 
   text: {
     color: 'black',
+    fontSize: fontSize.middle,
+    fontWeight: 'normal',
   },
 
   TableRow: {
@@ -249,12 +266,12 @@ const styles = StyleSheet.create({
 
   viewedItemsContainer: {
     backgroundColor: 'white',
-    padding: 10,
+    padding: 13,
   },
 
   viewedItemsHeader: {
     color: 'black',
-    fontSize: fontSize.middle,
+    fontSize: fontSize.large,
     fontWeight: 'bold',
   },
   itemCatalog: {
@@ -268,6 +285,18 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: 'white', // Adjust as needed
     width: '100%',
+  },
+  emptyMessageContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyMessageText: {
+    fontSize: fontSize.small,
+     margin: 10 * vh,
+    marginTop: 20 * vh,
+    marginBottom: 50 * vh,
+    textAlign: 'center',
   },
 });
 

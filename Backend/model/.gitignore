@@ -18,3 +18,7 @@ chatbot/.chatenv/*
 chatbot/model_config
 
 */.env
+
+search/.venv/*
+search/test.py
+chatbot/test.py

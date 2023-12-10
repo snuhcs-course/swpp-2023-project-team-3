@@ -1,6 +1,8 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   Keyboard,
@@ -16,50 +18,12 @@ import ChatBubble from '../../../components/ChatBubble';
 import {fontSize, vh, vw} from '../../../constants/design';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/reducer';
-import {gptChatApi} from '../../../api/gptChatApi';
-import {chatHistoryApi} from '../../../api/chatHistoryApi';
-
-type userMessage = {
-  id: number;
-  who: string;
-  content: string;
-};
-type gptMessage = {
-  id: number;
-  who: string;
-  user?: number;
-  chatroom: number;
-  summary?: string;
-  answer: string;
-  gpt_query1: string;
-  gpt_query2: string;
-  gpt_query3: string;
-  items: number[];
-};
-type errorMessage = {
-  id: number;
-  who: string;
-  content: string;
-  isError: boolean;
-};
-
-export type message = userMessage | gptMessage | errorMessage;
-
-export function isUserMessage(msg: any): msg is userMessage {
-  return (
-    typeof msg === 'object' &&
-    'id' in msg &&
-    'who' in msg &&
-    'content' in msg &&
-    typeof msg.id === 'number' &&
-    typeof msg.who === 'string' &&
-    typeof msg.content === 'string'
-  );
-}
+import ChatFacade from '../../../models-refactor/chat/ChatFacade';
+import {ChatInfo} from '../../../models-refactor/chat/ChatComponent';
 
 export type ChatScreenProps = {
   Chat: {
-    searchQuery: string;
+    searchQuery?: string;
     chatroom?: number;
   };
 };
@@ -68,124 +32,56 @@ function ChatScreen({
   navigation,
   route,
 }: NativeStackScreenProps<HomeStackProps, 'Chat'>) {
-  const {searchQuery} = route.params;
-  // states
-  const [messages, setMessages] = useState<message[]>([]);
-  const [query, setQuery] = useState<string>('');
-  const [chatroom, setChatroom] = useState<number | undefined>(
-    route.params.chatroom,
-  );
-  const [disableButton, setDisableButton] = useState<boolean>(false);
-  // flatlist ref
-  const flatlistRef = useRef<FlatList<message>>(null);
   // get user info
   const {id, nickname} = useSelector((state: RootState) => state.user);
+
+  // set chat manager
+  const chatManager = useMemo(
+    () => new ChatFacade(route.params.searchQuery, route.params.chatroom, id),
+    [id, route.params.chatroom, route.params.searchQuery],
+  );
+
+  // states
+  const [messages, setMessages] = useState<ChatInfo>([]);
+  const [query, setQuery] = useState<string>('');
+  const [disableButton, setDisableButton] = useState<boolean>(false);
+  // flatlist ref
+  const flatlistRef = useRef<FlatList<ChatInfo[number]>>(null);
 
   //scroll down function
   const scrollDownChats = useCallback(() => {
     flatlistRef.current?.scrollToEnd();
   }, []);
 
-  // query gptChat
-  const queryGpt = useCallback(
-    async (currQuery: string) => {
-      try {
-        const gptResponse = await gptChatApi(currQuery, id, chatroom);
-        let gptMessage: {
-          summary?: string;
-          answer: string;
-          gpt_query1: string;
-          gpt_query3: string;
-          query: string;
-          gpt_query2: string;
-          chatroom: number;
-          id: number;
-          user?: number;
-          items: {[p: number]: [number, number]};
-          who: string;
-        } = {
-          ...gptResponse,
-          id: 0,
-          who: 'Trytri',
-        };
-        // @ts-ignore
-        gptMessage.items = Object.keys(gptMessage.items).map(
-          (value: string) => +value,
-        );
-        if (chatroom !== gptMessage.chatroom) {
-          setChatroom(gptMessage.chatroom);
-        }
-        console.log(gptMessage);
-        setMessages(prevMsg => {
-          gptMessage.id = prevMsg[prevMsg.length - 1].id + 1;
-          // @ts-ignore
-          return prevMsg.concat(gptMessage);
-        });
-      } catch {
-        setMessages(prevMsg =>
-          prevMsg.concat({
-            id: prevMsg[prevMsg.length - 1].id + 1,
-            who: 'Trytri',
-            content: 'Error occurred with GPT. Please try again',
-            isError: true,
-          }),
-        );
-      }
-    },
-    [chatroom, id],
-  );
-
-  // chat request function
   const onChatRequest = useCallback(async () => {
     setDisableButton(true);
-
-    const currQuery = query;
+    try {
+      await chatManager.sendMessage(query);
+    } catch {
+      Alert.alert('Error occured', 'Pleas try again', [
+        {text: 'OK', onPress: () => navigation.pop()},
+      ]);
+    }
     setQuery('');
+    setDisableButton(false);
+  }, [chatManager, navigation, query]);
 
-    // adding user chat to message list
-    setMessages(prevMsg =>
-      prevMsg.concat({
-        id: prevMsg.length > 0 ? prevMsg[prevMsg.length - 1].id + 1 : 0,
-        who: nickname,
-        content: currQuery,
-      }),
-    );
-    await queryGpt(currQuery).then(() => setDisableButton(false));
-  }, [query, queryGpt, nickname]);
+  const setChatroom = useCallback(async () => {
+    chatManager.addObserver(setMessages);
+    setDisableButton(true);
+    try {
+      await chatManager.createOrLoadChatroom();
+    } catch {
+      Alert.alert('Error occured', 'Pleas try again', [
+        {text: 'OK', onPress: () => navigation.pop()},
+      ]);
+    }
+    setDisableButton(false);
+  }, [chatManager, navigation]);
 
   useEffect(() => {
-    async function setChattingroom() {
-      if (chatroom === undefined) {
-        setDisableButton(true);
-        setMessages([{id: 0, who: nickname, content: searchQuery}]);
-        await queryGpt(searchQuery).then(() => setDisableButton(false));
-      } else {
-        await chatHistoryApi(chatroom).then(chatHistory => {
-          let messageId = 0;
-          let historyMessages: message[] = [];
-          for (const history of chatHistory.user_chat) {
-            historyMessages = [
-              ...historyMessages,
-              {id: messageId, who: nickname, content: history.query},
-              {
-                id: messageId + 1,
-                who: 'Trytri',
-                chatroom: chatroom,
-                answer: history.gpt_chat[0].answer,
-                gpt_query1: history.gpt_chat[0].gpt_query1,
-                gpt_query2: history.gpt_chat[0].gpt_query2,
-                gpt_query3: history.gpt_chat[0].gpt_query3,
-                items: history.items,
-              },
-            ];
-            messageId += 2;
-          }
-          setMessages(historyMessages);
-        });
-      }
-    }
-    setChattingroom();
-  }, []);
+    setChatroom();
+  }, [setChatroom]);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -201,9 +97,9 @@ function ChatScreen({
           renderItem={({item}) => (
             <View onStartShouldSetResponder={() => true}>
               <ChatBubble
-                who={item.who}
-                msg={item}
-                isErrorMsg={'isError' in item && item.isError}
+                  logId={route.params.chatroom}
+                who={'item' in item ? 'Tryot' : nickname}
+                info={item}
                 navigation={navigation}
               />
             </View>
@@ -214,9 +110,12 @@ function ChatScreen({
           style={styles.inputTextContainer}
           onStartShouldSetResponder={() => true}>
           <TextInput
-            onChangeText={text => setQuery(text)}
+            onChangeText={text => {
+              const englishOnlyText = text.replace(/[^a-zA-Z\s]/g, '');
+              setQuery(englishOnlyText);
+            }}
             value={query}
-            placeholder="채팅을 입력해주세요"
+            placeholder="Message..."
             placeholderTextColor="#666"
             importantForAutofill="yes"
             returnKeyType="next"
@@ -230,10 +129,14 @@ function ChatScreen({
             style={styles.inputTextButton}
             testID = "sendButton"
             >
-            <Image
-              style={styles.inputTextButtonImage}
-              source={require('../../../assets/Icon/Send.png')}
-            />
+            {!disableButton ? (
+              <Image
+                style={styles.inputTextButtonImage}
+                source={require('../../../assets/Icon/Send.png')}
+              />
+            ) : (
+              <ActivityIndicator />
+            )}
           </Pressable>
         </View>
       </SafeAreaView>

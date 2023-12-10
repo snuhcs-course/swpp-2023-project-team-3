@@ -14,12 +14,11 @@ const ImageGridItem = ({
     onNavigateToDetail(fashionItem);
   };
 
+  const imageUrl = `https://tryot.s3.ap-northeast-2.amazonaws.com/item_img/${fashionItem.id}.jpg`;
+
   return (
     <TouchableOpacity onPress={navigateToDetail} style={styles.container}>
-      <Image
-        source={{uri: fashionItem.imageUrl[0].replace(/_54/, '_500')}}
-        style={styles.image}
-      />
+      <Image source={{uri: imageUrl}} style={styles.image} />
     </TouchableOpacity>
   );
 };

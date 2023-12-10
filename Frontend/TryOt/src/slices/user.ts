@@ -5,25 +5,15 @@ export interface LocalVariables {
   gptUsable: boolean;
 }
 
-const initialState: UserInfo & Token & LocalVariables = {
+
+const testUser: UserInfo & Token & LocalVariables = {
   id: 0,
   username: '',
   age: 0,
-  gender: 'F',
+  gender: 'M',
   email: '',
   token: '',
   nickname: '',
-  gptUsable: true,
-};
-
-const testUser: UserInfo & Token & LocalVariables = {
-  id: 2,
-  username: 'admin2',
-  age: 0,
-  gender: 'M',
-  email: 'admin2@admin.com',
-  token: '710201114a0c4ff56bcf82452b0f9c79e1fa1399',
-  nickname: 'admin2',
   gptUsable: true,
 };
 
@@ -41,6 +31,15 @@ const userSlice = createSlice({
     },
     setGPTUsable: (state, action) => {
       state.gptUsable = action.payload;
+    },
+    logoutUser(state) {
+      // Clear all user-related data
+      state.id = 0;
+      state.email = '';
+      state.username = '';
+      state.age = 0;
+      state.nickname = '';
+      state.gender = 'F';
     },
   },
   extraReducers: builder => {},

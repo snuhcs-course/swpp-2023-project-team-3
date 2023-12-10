@@ -2,29 +2,20 @@ import React, {StyleSheet, Text, View} from 'react-native';
 import {useCallback, useEffect, useState} from 'react';
 
 import {vw} from '../constants/design';
-import {
-  isUserMessage,
-  message,
-} from '../screens/Authenticated/HomeTab/ChatScreen';
 import {FashionItem} from '../models/FashionItem';
-import {fetchFashionItemDetails} from '../api/itemDetailApi';
 import ImageGridItem from './ImageGridItem';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackProps} from '../screens/Authenticated/HomeTab/HomeTab';
+import {ChatInfo} from '../models-refactor/chat/ChatComponent';
+import {clickLogApi} from "../api/clickLogApi";
 
 type ChatBubbleProps = {
   who: string;
-  msg: message;
-  isErrorMsg: boolean;
+  info: ChatInfo[number];
   navigation: NativeStackNavigationProp<HomeStackProps, 'Chat', undefined>;
 };
 
-export default function ChatBubble({
-  who,
-  msg,
-  isErrorMsg,
-  navigation,
-}: ChatBubbleProps) {
+export default function ChatBubble({who, info, navigation}: ChatBubbleProps) {
   const [fashionItems, setFashionItems] = useState<FashionItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
@@ -36,15 +27,15 @@ export default function ChatBubble({
     [navigation],
   );
   const fetchData = useCallback(async () => {
-    if (!isUserMessage(msg) && !isErrorMsg) {
+    if ('items' in info) {
       const itemData = await Promise.all(
-        msg.items.map(val => fetchFashionItemDetails(`${val}`)),
+        info.items.map(val => val.getDetail()),
       );
       return itemData;
     } else {
       return [];
     }
-  }, [isErrorMsg, msg]);
+  }, [info]);
 
   useEffect(() => {
     fetchData()
@@ -58,15 +49,11 @@ export default function ChatBubble({
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{who}</Text>
-      {isUserMessage(msg) ? (
-        isErrorMsg ? (
-          <Text style={styles.errormessage}>{msg.content}</Text>
-        ) : (
-          <Text style={styles.content}>{msg.content}</Text>
-        )
+      {'content' in info ? (
+        <Text style={styles.content}>{info.content}</Text>
       ) : (
         <>
-          <Text style={styles.content}>{msg.answer}</Text>
+          <Text style={styles.content}>{info.answer}</Text>
           {isError ? (
             <Text style={styles.errormessage}>Error occurred</Text>
           ) : isLoading ? (

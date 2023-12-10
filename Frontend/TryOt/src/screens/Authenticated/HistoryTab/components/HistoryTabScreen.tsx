@@ -1,13 +1,10 @@
 import React from 'react';
-import {historyDetailResponse} from '../../../../api/historyDetailApi';
 import {FlatList} from 'react-native-gesture-handler';
 import {StyleSheet, Text, View} from 'react-native';
 import {LoadingAndError} from '../../../../components/LoadingAndError';
 import {ActivityIndicator} from 'react-native-paper';
 import HistoryCell from './HistoryCell';
-import {NativeStackNavigationProp, NativeStackScreenProps} from '@react-navigation/native-stack';
-import {HistoryTabStackProps} from '../HistoryTab';
-import {HomeStackProps} from "../../HomeTab/HomeTab";
+import {HistoryCellData} from '../../../../models-refactor/history/visitor/GetDataVisitor';
 
 const LoadingView = () => {
   return (
@@ -21,13 +18,16 @@ const LoadingView = () => {
 const separatorItem = () => <View style={styles.separator} />;
 
 export type HistoryTabScreenProps = {
-  navigation: NativeStackNavigationProp<HistoryTabStackProps>;
-  histories: historyDetailResponse;
+  histories: HistoryCellData[];
   isLoading: boolean;
   isError: boolean;
 };
 
-function HistoryTabScreen({isLoading, isError, histories, navigation}: HistoryTabScreenProps) {
+function HistoryTabScreen({
+  isLoading,
+  isError,
+  histories,
+}: HistoryTabScreenProps) {
   return (
     <LoadingAndError
       isLoading={isLoading}
@@ -40,11 +40,10 @@ function HistoryTabScreen({isLoading, isError, histories, navigation}: HistoryTa
           data={histories}
           ListEmptyComponent={<></>}
           showsVerticalScrollIndicator={false}
-          renderItem={({item}) => (
-            <HistoryCell navigation={navigation} history={item} />
-          )}
+          renderItem={({item}) => <HistoryCell history={item} />}
           ItemSeparatorComponent={separatorItem}
-          keyExtractor={item => `${item.id}${item.timestamp.getTime()}`}
+          ListHeaderComponent={separatorItem}
+          keyExtractor={(_, index) => index.toString()}
         />
       </View>
     </LoadingAndError>
@@ -62,7 +61,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     width: '100%',
   },
-  separator: {backgroundColor: '#EEEEEE', height: 10},
+  separator: {backgroundColor: '#EEEEEE', height: 5},
 });
 
 const loadingStyles = StyleSheet.create({
