@@ -97,8 +97,8 @@ function ChatScreen({
           renderItem={({item}) => (
             <View onStartShouldSetResponder={() => true}>
               <ChatBubble
-                  logId={route.params.chatroom}
-                who={'item' in item ? 'Tryot' : nickname}
+                logId={route.params.chatroom}
+                who={'items' in item ? 'Tryot' : nickname}
                 info={item}
                 navigation={navigation}
               />
@@ -122,6 +122,7 @@ function ChatScreen({
             clearButtonMode="while-editing"
             blurOnSubmit={false}
             style={styles.inputText}
+            onSubmitEditing={onChatRequest}
           />
           <Pressable
             onPress={onChatRequest}
